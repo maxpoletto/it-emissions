@@ -1,15 +1,10 @@
-1. Easier Specification of Server Counts - done
-2. Non-linear Power Consumption - done
-3. Modeling Networking Gear - done
-4. Stochastic Workloads - todo
-5. Time-Dependent Variations - done
-6. More Granular Cooling Models - no
-7. Integrate Renewable Energy Sources - no
-8. Power Usage Effectiveness (PUE) as Dynamic - no
-9. Add Cost and Carbon Emission Tracking - done
-10. Visualization and Reporting - todo
-11. More modular design?
-12. Different simulation libraries like SimPy or Monte Carlo?
+- easier spect of server counts - done
+- non-linear power consumption - done
+- modeling networking gear - done
+- time-dependent variations - done
+- add carbon emission tracking - done
+- Visualization - done
+- Stochastic workloads / different simulation libraries like SimPy or Monte Carlo?
 
 Data center cooling
 https://www.techtarget.com/searchdatacenter/tip/How-to-calculate-data-center-cooling-requirements
