@@ -1,24 +1,27 @@
-from ipywidgets import FloatSlider, FloatText, HBox, Label, VBox
+"""Module to create a table of input fields to update a dictionary of parameters."""
+
+from ipywidgets import HBox, IntSlider, IntText, Label, VBox
 
 COLWIDTH = "120px"
 
-# Function to create a table of input fields to update a set of parameters.
-# 'parameters' is a nested dictionary of parameters with the following structure:
-# { "item1": { "param1": value1, "param2": value2, ... }, "item2": { ... }, ... }
-# 'update_func' is a function to be called when any input field is updated.
-# It takes a single input parameter, which is the updated parameters dictionary.
-# If 'sliders' is True, the input fields are sliders, else text boxes.
-# If 'column_major' is True, the rows are param1 ... paramN and the columns are item1 ... itemN,
-# else the rows are item1 ... itemN and the columns are param1 ... paramN.
 def create_inputs(parameters, update_func, sliders=False, column_major=False):
+    """Function to create a table of input fields to update a set of parameters.
+    'parameters' is a nested dictionary of parameters with the following structure:
+    { "item1": { "param1": value1, "param2": value2, ... }, "item2": { ... }, ... }
+    'update_func' is a function to be called when any input field is updated.
+    It takes a single input parameter, which is the updated parameters dictionary.
+    If 'sliders' is True, the input fields are sliders, else text boxes.
+    If 'column_major' is True, the rows are param1 ... paramN and the columns are item1 ... itemN,
+    else the rows are item1 ... itemN and the columns are param1 ... paramN.
+    """
     def create_input_fields(parameters, callback, input_fields):
         for key, params in parameters.items():
             input_fields[key] = {}
             for param, value in params.items():
                 if sliders:
-                    widget = FloatSlider(value=value, min=0, max=value*10, step=1, layout={"width": COLWIDTH})
+                    widget = IntSlider(value=value, min=0, max=value*10, step=1, layout={"width": COLWIDTH})
                 else:
-                    widget = FloatText(value=value, layout={"width": COLWIDTH})
+                    widget = IntText(value=value, layout={"width": COLWIDTH})
                 widget.observe(callback, names='value')
                 input_fields[key][param] = widget
         return input_fields
