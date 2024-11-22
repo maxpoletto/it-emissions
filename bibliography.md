@@ -18,3 +18,9 @@ Models as the First Step Towards Sustainable AI_. [arXiv:2208.00406v2](https://a
 * Rodriguez, C., et al. _Evaluating the Energy Consumption of Machine Learning: Systematic Literature Review and Experiments_. [arXiv:2408.15128v1](https://arxiv.org/pdf/2408.15128), 27 Aug 2024.
 
 * Tripp, C., et al. _Measuring the Energy Consumption and Efficiency of Deep Neural Networks: An Empirical Analysis and Design Recommendations_. [arXiv:2403.08151v1](https://arxiv.org/pdf/2403.08151), 13 Mar 2024.
+
+# Energy mix
+
+* Krebs, L, and Frischknecht, R. [_Umweltbilanz Strommixe Schweiz 2018_](https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf).
+
+
