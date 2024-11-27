@@ -1,43 +1,186 @@
 \documentclass[11pt]{article}
+\usepackage[margin=0.7in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{libertine}
 \renewcommand{\sfdefault}{fvs} % Use as sans-serif
 \renewcommand{\ttdefault}{fvm} % Use as monospace
+\renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
+\newcommand{\assumption}[1]{{\bf #1}}
 %\usepackage{helvet} % Helvetica font for sans-serif
 %\usepackage{courier} % Courier font for monospace
 \usepackage{hyperref}
 \usepackage[backend=biber,style=authoryear,autocite=inline]{biblatex}
 \usepackage{titlesec}
-
+\usepackage{enumitem}
 
 \titleformat{\section}{\sffamily\Large}{\thesection}{1em}{}
 \titleformat{\subsection}{\sffamily\large}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\sffamily\normalsize}{\thesubsubsection}{1em}{}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
 
 \addbibresource{ref.bib}
 
 \begin{document}
 
-\section*{AI energy consumption}
+\title{UZH IT \& AI Emissions Analysis}
+\date{27.11.2024}
 
+\section*{Introduction}
+
+We are trying to answer two questions:
 \begin{itemize}
-    \item \cite{castano2023exploring}
-    \item \cite{devries2023growing}
-    \item \cite{heguerte2023estimate}
-    \item \cite{gowda2024watt}
-    \item \cite{luccioni2023counting}
-    \item \cite{patterson2021carbon}
-    \item \cite{rodriguez2024evaluating}
-    \item \cite{tomlinson2024carbon}
-    \item \cite{tripp2024measuring}
+    \item Are there emissions savings in moving UZH's IT infrastructure to the cloud?
+    \item What is the impact of increased AI use (and, in particular, of LLMs) on UZH's emissions?
 \end{itemize}
 
-xxxx
+To this end, we need some UZH-specific information:
+\begin{enumerate}
+    \item The size of UZH's student and staff population, and a rough breakdown of
+        what kind of work they do (to roughly estimate their use of IT and AI).
+    \item Information about UZH's current IT infrastructure (number of servers,
+        classroom equipment, etc.), and also, very importantly, the energy utilization of any
+        campus data centers.
+    \item An estimate of the cloud compute capacity required to host UZH's current IT requirements.
+\end{enumerate}
 
-\section*{Energy mix}
-\begin{itemize}
-    \item \cite{krebs2018umweltbilanz}
-\end{itemize}
+In addition, we need more general information about the possible location of cloud data centers and
+LLM deployments, the embodied emissions of different types of IT equipment, and the carbon intensity
+of electricity in different regions.
+
+Below we describe our assumptions and uncertainties regarding these factors, and then describe
+our modeling approach.
+
+\section*{Data sources and unknowns}
+
+\cite{budennyy2022eco2ai}
+\cite{castano2023exploring}
+\cite{devries2023growing}
+\cite{gowda2024watt}
+\cite{heguerte2023estimate}
+\cite{luccioni2023counting}
+\cite{patterson2021carbon}
+\cite{rodriguez2024evaluating}
+\cite{tomlinson2024carbon}
+\cite{tripp2024measuring}
+
+\subsection*{UZH parameters}
+
+We have access to a spreadsheet (\texttt{2024-11-13\_Berechnung\_THG\_IKT\_2024.xls}) with
+counts and emissions factors for various types of IT equipment at UZH. It cites approximately
+10,000 laptops and monitors, 1,000 servers, 2,400 mobile phones,  150 classroom PCs, and a few
+hundred printers, copiers, and projectors.
+
+By contrast, Wikipedia \parencite{wikiuzh} cites approximately 28,000 students and 10,000 staff
+at UZH. Evidently the spreadsheet only lists university assets, not personal devices.
+
+\assumption{In modeling overall university IT emissions as well as potential LLM use,
+we assume that the entire university population has a laptop and a mobile phone.}
+
+We do not yet have any information about the breakdown of different functions or parameters, so
+\assumption{we assume that IT use is uniform across the university}. This assumption needs to be
+revisited.
+
+\subsection*{Embodied emissions}
+The estimation of embodied emissions introduces additional assumptions and uncertainties into
+the model. The secretiveness of major cloud providers makes it especially difficult
+to estimate the embodied emissions of cloud infrastructure. Our initial proposal was to ignore
+embodied emissions altogether, but that leaves a big gap.
+
+Below are some devices and their estimated embodied emissions, from various sources.
+
+\subsubsection*{Laptops}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|r|l|}
+\hline
+Production \& Disposal & \\
+(kg CO$_2$e) & Source \\ \hline
+121 & Ecoinvent  \\ \hline
+104 & \textcite{teehan2013} (low) \\ \hline
+338 & \textcite{teehan2013} (high) \\ \hline
+244 & \textcite{rarecoil} \\ \hline
+202 & \textcite{unctadder2024} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:laptops}
+\end{table}
+
+The Ecoinvent numbers appear to be outliers on the low end.
+
+The most comprehensive data comes from \textcite{rarecoil}, which lists manufacturer
+information for over 90 popular devices. Mean supply chain emissions are
+244 kg CO$_2$e with a standard deviation of 128 kg. We model laptop emissions using a normal
+distribution with those characteristics.
+
+\subsubsection*{Desktops}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|r|l|}
+\hline
+Production \& Disposal & \\
+(kg CO$_2$e) & Source \\ \hline
+238 & Ecoinvent \\ \hline
+303 & \textcite{teehan2013} \\ \hline
+403 & \textcite{unctadder2024} \\ \hline
+289 & \textcite{dellpcf} \\ \hline
+277 & \textcite{boavizta} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:desktops}
+\end{table}
+
+Most estimates are in the range of 250 - 400 kg CO$_2$e. The most detailed data comes from
+Dell's Product Carbon Footprints (\textcite{dellpcf}), which they publish for each of their products.
+A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $\sigma = 80$ kg.
+We model desktop emissions using a normal distribution with those characteristics.
+
+\subsubsection*{Servers}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|r|l|}
+\hline
+Production \& Disposal & \\
+(kg CO$_2$e) & Source \\ \hline
+383 & \textcite{teehan2013} \\ \hline
+1252 & \textcite{davy2021} (Dell) \\ \hline
+1912 & \textcite{davy2021} (EC2) \\ \hline
+899 & \textcite{boavizta} (medium server)\\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:servers}
+\end{table}
+
+\textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
+The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 330$ kg, the latter
+1912 kg with $\sigma = 885$ kg. We model server emissions using the distribution corresponding to Dell
+servers.
+
+
+
+\subsection*{Cloud data centers}
+
+\subsection*{Large language models}
+
+\subsection*{Electricity carbon intensity}
+
+\cite{krebs2018umweltbilanz}
+
+\section*{Modeling approach}
+
+\section*{Other considerations}
+
+We typically think of AI use as creating additional energy demands and GHG emissions.
+So far, this model does not include potential energy savings caused by AI, such as improvements
+to building energy management, campus logistics, etc.
+
+\textcite{tomlinson2024carbon} make the argument that tasks such as writing
+and illustrating can be done with fewer GHG emissions by AI than by humans. They compare the
+estimated emissions of an LLM performing the task to those of the average human, calculated
+by multiplying per-capita annual emissions by the time ($\approx 1$h) required to write or draw.
+Using this approach, AI is orders of magnitude cheaper than humans, whether one uses per-capita
+emissions from the US (15 t CO$_2$e/y) or India (1.9 t). Of course, this methodology focuses on
+a specific creative act: the LLM does not reduce the human's overall annual emissions.
 
 \printbibliography
 \end{document}
