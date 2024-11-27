@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{libertine}
+\renewcommand{\sfdefault}{fvs} % Use as sans-serif
+\renewcommand{\ttdefault}{fvm} % Use as monospace
+%\usepackage{helvet} % Helvetica font for sans-serif
+%\usepackage{courier} % Courier font for monospace
+\usepackage{hyperref}
+\usepackage[backend=biber,style=authoryear,autocite=inline]{biblatex}
+\usepackage{titlesec}
+
+
+\titleformat{\section}{\sffamily\Large}{\thesection}{1em}{}
+\titleformat{\subsection}{\sffamily\large}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\sffamily\normalsize}{\thesubsubsection}{1em}{}
+
+\addbibresource{ref.bib}
+
+\begin{document}
+
+\section*{AI energy consumption}
+
+\begin{itemize}
+    \item \cite{castano2023exploring}
+    \item \cite{devries2023growing}
+    \item \cite{heguerte2023estimate}
+    \item \cite{gowda2024watt}
+    \item \cite{luccioni2023counting}
+    \item \cite{patterson2021carbon}
+    \item \cite{rodriguez2024evaluating}
+    \item \cite{tomlinson2024carbon}
+    \item \cite{tripp2024measuring}
+\end{itemize}
+
+xxxx
+
+\section*{Energy mix}
+\begin{itemize}
+    \item \cite{krebs2018umweltbilanz}
+\end{itemize}
+
+\printbibliography
+\end{document}
