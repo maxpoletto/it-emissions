@@ -12,6 +12,7 @@
 \usepackage[backend=biber,style=authoryear,autocite=inline]{biblatex}
 \usepackage{titlesec}
 \usepackage{enumitem}
+\usepackage{titling}
 
 \titleformat{\section}{\sffamily\Large}{\thesection}{1em}{}
 \titleformat{\subsection}{\sffamily\large}{\thesubsection}{1em}{}
@@ -20,13 +21,14 @@
 \setlength{\parskip}{0.5em}
 
 \addbibresource{ref.bib}
+\title{UZH IT \& AI Emissions Analysis\vspace{-1em}}
+\author{Massimiliano Poletto}
+\date{\vspace{-1em}27.11.2024}
 
 \begin{document}
 
-\title{UZH IT \& AI Emissions Analysis}
-\date{27.11.2024}
-
-\section*{Introduction}
+\maketitle
+\section{Introduction}
 
 We are trying to answer two questions:
 \begin{itemize}
@@ -37,7 +39,7 @@ We are trying to answer two questions:
 To this end, we need some UZH-specific information:
 \begin{enumerate}
     \item The size of UZH's student and staff population, and a rough breakdown of
-        what kind of work they do (to roughly estimate their use of IT and AI).
+        what kind of work they do (to estimate their use of IT and AI).
     \item Information about UZH's current IT infrastructure (number of servers,
         classroom equipment, etc.), and also, very importantly, the energy utilization of any
         campus data centers.
@@ -51,20 +53,9 @@ of electricity in different regions.
 Below we describe our assumptions and uncertainties regarding these factors, and then describe
 our modeling approach.
 
-\section*{Data sources and unknowns}
+\section{Data sources and unknowns}
 
-\cite{budennyy2022eco2ai}
-\cite{castano2023exploring}
-\cite{devries2023growing}
-\cite{gowda2024watt}
-\cite{heguerte2023estimate}
-\cite{luccioni2023counting}
-\cite{patterson2021carbon}
-\cite{rodriguez2024evaluating}
-\cite{tomlinson2024carbon}
-\cite{tripp2024measuring}
-
-\subsection*{UZH population}
+\subsection{UZH population}
 
 We have access to a spreadsheet (\texttt{2024-11-13\_Berechnung\_THG\_IKT\_2024.xls}) with
 counts and emissions factors for various types of IT equipment at UZH. It reports approximately
@@ -81,21 +72,21 @@ We do not yet have any information about the breakdown of different functions or
 \assumption{we assume that IT use is uniform across the university}. This assumption needs to be
 revisited.
 
-\subsection*{Embodied emissions}
+\subsection{Embodied emissions}
 The estimation of embodied emissions introduces additional assumptions and uncertainties into
 the model. Our initial project proposal ignored embodied emissions altogether, but that leaves
 too big a gap.
 
 Below are some devices and their estimated embodied emissions, from various sources.
 
-\subsubsection*{Laptops}
+\subsubsection{Laptops}
 
 \begin{center}
 \begin{tabular}{|r|l|}
 \hline
-Production \& Disposal & \\
-(kg CO$_2$e) & Source \\ \hline
-121 & Ecoinvent  \\ \hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+121 & \textcite{ecoinvent}  \\ \hline
 104 & \textcite{teehan2013} (low) \\ \hline
 338 & \textcite{teehan2013} (high) \\ \hline
 244 & \textcite{rarecoil} \\ \hline
@@ -107,17 +98,17 @@ Production \& Disposal & \\
 The Ecoinvent numbers appear to be outliers on the low end.
 The most comprehensive data comes from \textcite{rarecoil}, which lists manufacturer
 information for over 90 popular devices. Mean supply chain emissions are
-244 kg CO$_2$e with a standard deviation of 128 kg.\
-\assumption{We model laptop supply chain emissions using a normal distribution with those characteristics.}
+244 kg CO$_2$e with a standard deviation of 128 kg.
+\assumption{We model laptop supply chain emissions using a truncated normal distribution with those characteristics.}
 
-\subsubsection*{Desktops}
+\subsubsection{Desktops}
 
 \begin{center}
 \begin{tabular}{|r|l|}
 \hline
-Production \& Disposal & \\
-(kg CO$_2$e) & Source \\ \hline
-238 & Ecoinvent \\ \hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+238 & \textcite{ecoinvent} \\ \hline
 303 & \textcite{teehan2013} \\ \hline
 403 & \textcite{unctadder2024} \\ \hline
 289 & \textcite{dellpcf} \\ \hline
@@ -129,15 +120,15 @@ Production \& Disposal & \\
 Most estimates are in the range of 250 - 400 kg CO$_2$e. The most detailed data comes from
 Dell's Product Carbon Footprints (\textcite{dellpcf}), which they publish for each of their products.
 A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $\sigma = 80$ kg.
-\assumption{We model desktop supply chain emissions using a normal distribution with those characteristics.}
+\assumption{We model desktop supply chain emissions using a truncated normal distribution with those characteristics.}
 
-\subsubsection*{Servers}
+\subsubsection{Servers}
 
 \begin{center}
 \begin{tabular}{|r|l|}
 \hline
-Production \& Disposal & \\
-(kg CO$_2$e) & Source \\ \hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
 383 & \textcite{teehan2013} \\ \hline
 1252 & \textcite{davy2021} (Dell) \\ \hline
 1912 & \textcite{davy2021} (EC2) \\ \hline
@@ -149,15 +140,16 @@ Production \& Disposal & \\
 \textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
 The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 330$ kg, the latter
 1912 kg with $\sigma = 885$ kg.
-\assumption{We model server supply chain emissions using the distribution corresponding to Dell servers.}
+\assumption{We model server supply chain emissions using a truncated normal distribution corresponding
+to Dell servers.}
 
-\subsubsection*{Smartphones}
+\subsubsection{Smartphones}
 
 \begin{center}
 \begin{tabular}{|r|l|}
 \hline
-Production \& Disposal & \\
-(kg CO$_2$e) & Source \\ \hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
 68 & \textcite{googlepixel8} (Pixel 8)\\ \hline
 54 & \textcite{appleiphone13} (iPhone 13)\\ \hline
 50 & \textcite{unctadder2024} \\ \hline
@@ -166,55 +158,112 @@ Production \& Disposal & \\
 \label{tab:embodied_emissions:phones}
 \end{center}
 
-\assumption{We model phones as having mean supply chain emissions of 50 kg CO$_2$e with $\sigma = 10$ kg.}
+\assumption{We model phone supply chain emissions using a truncated normal distribution with mean
+50 kg CO$_2$e and $\sigma = 10$ kg.}
 
-\subsubsection*{Other devices}
+\subsubsection{Other devices}
 
-We have found less data for other types devices. For now we model them with averages based
+We have found less data for other types of devices. For now we model them with averages based
 on a handful of sources.
 
 \begin{description}
     \item[Computer monitors] 344 kg CO$_2$e (\textcite{teehan2013}, \textcite{dellpcf})
     \item[Conference room displays] 753 kg CO$_2$e (scaling monitor by $(40''/27'')^2$)
-    \item[Printer/copier stations] 1167 kg CO$_2$e (Ecoinvent)
+    \item[Printer/copier stations] 1167 kg CO$_2$e (\textcite{ecoinvent})
     \item[Network equipment] We did not find reliable lifecycle assessments for routers and switches,
       and have no information about UZH network architecture. The vast majority ($80-95\%$) of
       lifecycle emissions of network gear stem from usage (\textcite{cisco2024}, \textcite{jacob2023}).
       For now, we model network equipment as a 5\% overhead on servers (1 router or switch for 20 servers).
-      (A typical data center rack contains 42 1U servers and one switch.)
+      (A typical data center rack contains 42 1U servers and one switch or router.)
 \end{description}
 
-\subsection*{Cloud data centers}
+\subsection{Operational emissions}
 
-The secretiveness of major cloud providers makes it difficult to estimate the embodied emissions of cloud
+For on-premise equipment, we would like to model the Swiss electricity mix (see below) and, ideally,
+daily variations in usage and electricity carbon intensity.
+Generic manufacturer estimates of lifetime usage-related emissions are therefore unsuitable.
+Unfortunately, there are few consistent sources of data on device power consumption.
+Based on a smattering of documents from Apple, Cisco, and Dell, we model
+power draw of different devices while under load as truncated normal distributions with the
+following initial parameters:
+
+\begin{center}
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Device} & \textbf{Mean (W)} & \textbf{$\sigma$ (W)} \\ \hline
+Laptop & 30 & 5 \\ \hline
+Desktop & 100 & 20 \\ \hline
+Server & 400 & 100 \\ \hline
+Phone & 5 & 2 \\ \hline
+Monitor & 50 & 10 \\ \hline
+Conference display & 120 & 25 \\ \hline
+Printer/copier & 1000 & 200 \\ \hline
+\end{tabular}
+\end{center}
+
+Initially, we assume a distribution of duty cycles and power draw when idle for each device.
+As a next step, we may simulate power draw at different times of day to integrate with
+hourly electricity mix data, but errors in those assumptions may swamp the relatively small
+hourly variations in Swiss electricity carbon intensity.
+
+\subsection{Cloud data centers}
+
+The secretiveness of major cloud providers makes it difficult to estimate the embodied and operational emissions of cloud
 infrastructure. The best resource we have been able to find is the Datavizta API (\textcite{boavizta}).
 
 Lacking information about UZH's workloads, we model a hypothetical UZH cloud footprint as follows:
 \begin{itemize}
     \item One-for-one replacement of one campus server with one Azure D8S\_v3 instance (2x Intel
       Xeon, 8 cores, 32 GB RAM, 2TB SSD) (\cite{msftvms}).
-      \item Deployment to Microsoft Azure's ``Switzerland North'' region .
-      \item Estimation of annual emissions via Datavizta, assuming constant 50\% load: 31 kg CO$_2$e for usage,
+    \item Deployment to Microsoft Azure's ``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland North}'' region .
+    \item Estimation of annual emissions via Datavizta, assuming constant 50\% load: 31 kg CO$_2$e for usage,
       97 kg CO$_2$e for manufacturing.
 \end{itemize}
 
-\subsection*{Large language models}
+\subsection{Large language models}
 
-\subsection*{Electricity carbon intensity}
+Energy consumption of LLMs is being studied extensively (\textcite{budennyy2022eco2ai},
+\textcite{castano2023exploring},
+\textcite{devries2023growing},
+\textcite{gowda2024watt},
+\textcite{harding2024watts}, 
+\textcite{heguerte2023estimate},
+\textcite{luccioni2022estimating},
+\textcite{luccioni2023counting},
+\textcite{patterson2021carbon}, 
+\textcite{rodriguez2024evaluating},
+\textcite{tripp2024measuring}). 
 
-\cite{krebs2018umweltbilanz}
+The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request,
+or approximately 10x the energy of a traditional search engine query. Indications are that this
+number is decreasing as model hardware and software improve, even though overall energy use is increasing
+due to increased utilization.
 
-\section*{Modeling approach}
+Nevertheless, for the model we assume that queries consume 3 Wh each, and we model per-capita daily
+queries using a truncated normal distribution with mean 15 and $\sigma = 5$.
 
-\section*{Other considerations}
+\subsection{Electricity carbon intensity}
 
-\subsection*{Other IT components}
+The Swiss Federal Office for the Environment published an extensive report (\textcite{krebs2018umweltbilanz})
+on the environmental impact of electricity generation in Switzerland in 2018.
+
+However, for the purposes of the model, we use data from \textcite{electricitymaps}. Specifically,
+we use the carbon emissions for electricity {\em consumption} in Switzerland for 2023 at hourly
+granularity, then aggregate the data into two-hour blocks, and compute the mean of each two
+hour block over the course of the year. This gives us twelve data points that describe average
+carbon intensity variation over the course of the day.
+
+\section{Modeling approach}
+
+\section{Other considerations}
+
+\subsection{Other IT components}
 
 For now, we do not attempt to model changes in network infrastructure or utilization due to
 move to the cloud or increased LLM use. See \textcite{jacob2023} for an overview of
 network sustainability.
 
-\subsection*{Potential AI benefits}
+\subsection{Potential AI benefits}
 
 We typically think of AI use as creating additional energy demands and GHG emissions.
 So far, this model does not include potential energy savings caused by AI, such as improvements
