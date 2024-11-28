@@ -64,14 +64,14 @@ our modeling approach.
 \cite{tomlinson2024carbon}
 \cite{tripp2024measuring}
 
-\subsection*{UZH parameters}
+\subsection*{UZH population}
 
 We have access to a spreadsheet (\texttt{2024-11-13\_Berechnung\_THG\_IKT\_2024.xls}) with
-counts and emissions factors for various types of IT equipment at UZH. It cites approximately
+counts and emissions factors for various types of IT equipment at UZH. It reports approximately
 10,000 laptops and monitors, 1,000 servers, 2,400 mobile phones,  150 classroom PCs, and a few
 hundred printers, copiers, and projectors.
 
-By contrast, Wikipedia \parencite{wikiuzh} cites approximately 28,000 students and 10,000 staff
+By contrast, \textcite{wikiuzh} reports approximately 28,000 students and 10,000 staff
 at UZH. Evidently the spreadsheet only lists university assets, not personal devices.
 
 \assumption{In modeling overall university IT emissions as well as potential LLM use,
@@ -83,16 +83,14 @@ revisited.
 
 \subsection*{Embodied emissions}
 The estimation of embodied emissions introduces additional assumptions and uncertainties into
-the model. The secretiveness of major cloud providers makes it especially difficult
-to estimate the embodied emissions of cloud infrastructure. Our initial proposal was to ignore
-embodied emissions altogether, but that leaves a big gap.
+the model. Our initial project proposal ignored embodied emissions altogether, but that leaves
+too big a gap.
 
 Below are some devices and their estimated embodied emissions, from various sources.
 
 \subsubsection*{Laptops}
 
-\begin{table}[h]
-\centering
+\begin{center}
 \begin{tabular}{|r|l|}
 \hline
 Production \& Disposal & \\
@@ -104,19 +102,17 @@ Production \& Disposal & \\
 202 & \textcite{unctadder2024} \\ \hline
 \end{tabular}
 \label{tab:embodied_emissions:laptops}
-\end{table}
+\end{center}
 
 The Ecoinvent numbers appear to be outliers on the low end.
-
 The most comprehensive data comes from \textcite{rarecoil}, which lists manufacturer
 information for over 90 popular devices. Mean supply chain emissions are
-244 kg CO$_2$e with a standard deviation of 128 kg. We model laptop emissions using a normal
-distribution with those characteristics.
+244 kg CO$_2$e with a standard deviation of 128 kg.\
+\assumption{We model laptop supply chain emissions using a normal distribution with those characteristics.}
 
 \subsubsection*{Desktops}
 
-\begin{table}[h]
-\centering
+\begin{center}
 \begin{tabular}{|r|l|}
 \hline
 Production \& Disposal & \\
@@ -128,17 +124,16 @@ Production \& Disposal & \\
 277 & \textcite{boavizta} \\ \hline
 \end{tabular}
 \label{tab:embodied_emissions:desktops}
-\end{table}
+\end{center}
 
 Most estimates are in the range of 250 - 400 kg CO$_2$e. The most detailed data comes from
 Dell's Product Carbon Footprints (\textcite{dellpcf}), which they publish for each of their products.
 A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $\sigma = 80$ kg.
-We model desktop emissions using a normal distribution with those characteristics.
+\assumption{We model desktop supply chain emissions using a normal distribution with those characteristics.}
 
 \subsubsection*{Servers}
 
-\begin{table}[h]
-\centering
+\begin{center}
 \begin{tabular}{|r|l|}
 \hline
 Production \& Disposal & \\
@@ -149,16 +144,59 @@ Production \& Disposal & \\
 899 & \textcite{boavizta} (medium server)\\ \hline
 \end{tabular}
 \label{tab:embodied_emissions:servers}
-\end{table}
+\end{center}
 
 \textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
 The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 330$ kg, the latter
-1912 kg with $\sigma = 885$ kg. We model server emissions using the distribution corresponding to Dell
-servers.
+1912 kg with $\sigma = 885$ kg.
+\assumption{We model server supply chain emissions using the distribution corresponding to Dell servers.}
 
+\subsubsection*{Smartphones}
 
+\begin{center}
+\begin{tabular}{|r|l|}
+\hline
+Production \& Disposal & \\
+(kg CO$_2$e) & Source \\ \hline
+68 & \textcite{googlepixel8} (Pixel 8)\\ \hline
+54 & \textcite{appleiphone13} (iPhone 13)\\ \hline
+50 & \textcite{unctadder2024} \\ \hline
+50 & \textcite{lovehagen2023} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:phones}
+\end{center}
+
+\assumption{We model phones as having mean supply chain emissions of 50 kg CO$_2$e with $\sigma = 10$ kg.}
+
+\subsubsection*{Other devices}
+
+We have found less data for other types devices. For now we model them with averages based
+on a handful of sources.
+
+\begin{description}
+    \item[Computer monitors] 344 kg CO$_2$e (\textcite{teehan2013}, \textcite{dellpcf})
+    \item[Conference room displays] 753 kg CO$_2$e (scaling monitor by $(40''/27'')^2$)
+    \item[Printer/copier stations] 1167 kg CO$_2$e (Ecoinvent)
+    \item[Network equipment] We did not find reliable lifecycle assessments for routers and switches,
+      and have no information about UZH network architecture. The vast majority ($80-95\%$) of
+      lifecycle emissions of network gear stem from usage (\textcite{cisco2024}, \textcite{jacob2023}).
+      For now, we model network equipment as a 5\% overhead on servers (1 router or switch for 20 servers).
+      (A typical data center rack contains 42 1U servers and one switch.)
+\end{description}
 
 \subsection*{Cloud data centers}
+
+The secretiveness of major cloud providers makes it difficult to estimate the embodied emissions of cloud
+infrastructure. The best resource we have been able to find is the Datavizta API (\textcite{boavizta}).
+
+Lacking information about UZH's workloads, we model a hypothetical UZH cloud footprint as follows:
+\begin{itemize}
+    \item One-for-one replacement of one campus server with one Azure D8S\_v3 instance (2x Intel
+      Xeon, 8 cores, 32 GB RAM, 2TB SSD) (\cite{msftvms}).
+      \item Deployment to Microsoft Azure's ``Switzerland North'' region .
+      \item Estimation of annual emissions via Datavizta, assuming constant 50\% load: 31 kg CO$_2$e for usage,
+      97 kg CO$_2$e for manufacturing.
+\end{itemize}
 
 \subsection*{Large language models}
 
@@ -169,6 +207,14 @@ servers.
 \section*{Modeling approach}
 
 \section*{Other considerations}
+
+\subsection*{Other IT components}
+
+For now, we do not attempt to model changes in network infrastructure or utilization due to
+move to the cloud or increased LLM use. See \textcite{jacob2023} for an overview of
+network sustainability.
+
+\subsection*{Potential AI benefits}
 
 We typically think of AI use as creating additional energy demands and GHG emissions.
 So far, this model does not include potential energy savings caused by AI, such as improvements
