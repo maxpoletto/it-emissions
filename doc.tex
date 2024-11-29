@@ -23,7 +23,7 @@
 \addbibresource{ref.bib}
 \title{UZH IT \& AI Emissions Analysis\vspace{-1em}}
 \author{Massimiliano Poletto}
-\date{\vspace{-1em}27.11.2024}
+\date{\vspace{-1em}29.11.2024}
 
 \begin{document}
 
@@ -38,20 +38,19 @@ We are trying to answer two questions:
 
 To this end, we need some UZH-specific information:
 \begin{enumerate}
-    \item The size of UZH's student and staff population, and a rough breakdown of
+    \item The size of UZH's student and staff population and a rough breakdown of
         what kind of work they do (to estimate their use of IT and AI).
     \item Information about UZH's current IT infrastructure (number of servers,
-        classroom equipment, etc.), and also, very importantly, the energy utilization of any
+        classroom equipment, etc.) and the energy use (electricity bills) of any
         campus data centers.
     \item An estimate of the cloud compute capacity required to host UZH's current IT requirements.
 \end{enumerate}
 
-In addition, we need more general information about the possible location of cloud data centers and
+In addition, we need information about the possible location of cloud data centers and
 LLM deployments, the embodied emissions of different types of IT equipment, and the carbon intensity
 of electricity in different regions.
 
-Below we describe our assumptions and uncertainties regarding these factors, and then describe
-our modeling approach.
+We describe our modeling approach and our assumptions and uncertainties regarding these factors.
 
 \section{Data sources and unknowns}
 
@@ -68,8 +67,8 @@ at UZH. Evidently the spreadsheet only lists university assets, not personal dev
 \assumption{In modeling overall university IT emissions as well as potential LLM use,
 we assume that the entire university population has a laptop and a mobile phone.}
 
-We do not yet have any information about the breakdown of different functions or parameters, so
-\assumption{we assume that IT use is uniform across the university}. This assumption needs to be
+We do not yet have any information about the breakdown of different functions / job roles, so
+\assumption{we assume that IT use is uniform across the university}. This assumption should be
 revisited.
 
 \subsection{Embodied emissions}
@@ -77,7 +76,7 @@ The estimation of embodied emissions introduces additional assumptions and uncer
 the model. Our initial project proposal ignored embodied emissions altogether, but that leaves
 too big a gap.
 
-Below are some devices and their estimated embodied emissions, from various sources.
+We did some research on the estimated embodied emissions of different types of devices.
 
 \subsubsection{Laptops}
 
@@ -163,7 +162,7 @@ to Dell servers.}
 
 \subsubsection{Other devices}
 
-We have found less data for other types of devices. For now we model them with averages based
+We found less data for other types of devices. For now, we model them with averages based
 on a handful of sources.
 
 \begin{description}
@@ -182,8 +181,8 @@ on a handful of sources.
 For on-premise equipment, we would like to model the Swiss electricity mix (see below) and, ideally,
 daily variations in usage and electricity carbon intensity.
 Generic manufacturer estimates of lifetime usage-related emissions are therefore unsuitable.
-Unfortunately, there are few consistent sources of data on device power consumption.
-Based on a smattering of documents from Apple, Cisco, and Dell, we model
+There are surprisingly few sources of data on device power consumption (as opposed to CO$_2$ emissions).
+Based on a smattering of data sheets, primarily from Apple, Cisco, and Dell, we model
 power draw of different devices while under load as truncated normal distributions with the
 following initial parameters:
 
@@ -207,6 +206,7 @@ hourly electricity mix data, but errors in those assumptions may swamp the relat
 hourly variations in Swiss electricity carbon intensity.
 
 \subsection{Cloud data centers}
+\label{sec:cloud_data_centers}
 
 The secretiveness of major cloud providers makes it difficult to estimate the embodied and operational emissions of cloud
 infrastructure. The best resource we have been able to find is the Datavizta API (\textcite{boavizta}).
@@ -235,12 +235,15 @@ Energy consumption of LLMs is being studied extensively (\textcite{budennyy2022e
 \textcite{tripp2024measuring}). 
 
 The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request,
-or approximately 10x the energy of a traditional search engine query. Indications are that this
-number is decreasing as model hardware and software improve, even though overall energy use is increasing
-due to increased utilization.
+or approximately 10x the energy of a traditional search engine query. This number appears to be decreasing
+rapidly as model hardware and software improve, even though overall energy use is increasing due to
+increased utilization.
 
 Nevertheless, for the model we assume that queries consume 3 Wh each, and we model per-capita daily
 queries using a truncated normal distribution with mean 15 and $\sigma = 5$.
+
+LLMs are distributed and the location that serves any particular request is unknown, so we use the 
+average European electricity mix to compute carbon intensity.
 
 \subsection{Electricity carbon intensity}
 
@@ -248,12 +251,57 @@ The Swiss Federal Office for the Environment published an extensive report (\tex
 on the environmental impact of electricity generation in Switzerland in 2018.
 
 However, for the purposes of the model, we use data from \textcite{electricitymaps}. Specifically,
-we use the carbon emissions for electricity {\em consumption} in Switzerland for 2023 at hourly
-granularity, then aggregate the data into two-hour blocks, and compute the mean of each two
+we use the carbon emissions for electricity {\em consumption} (not generation) in Switzerland for 2023
+at hourly granularity, then aggregate the data into two-hour blocks, and compute the mean of each two
 hour block over the course of the year. This gives us twelve data points that describe average
 carbon intensity variation over the course of the day.
 
 \section{Modeling approach}
+
+At a high level, we model IT emissions primarily bottom-up, based on device counts and
+characteristics, and use a Monte Carlo approach to account for uncertainties.
+
+For on-campus data centers, we would like to use end-to-end data on electricity use (electric bills)
+to evaluate our model.
+
+\subsection{Campus emissions}
+
+We instantiate as many devices as specified in the UZH spreadsheet, plus enough laptops and phones
+to cover the rest of the university population.
+
+For each device instance, we sample from the appropriate distribution of embodied emissions,
+power draw, and duty cycles to obtain the devices characteristics.
+
+Combining power draw and duty cycle with the Swiss electricity mix, we compute annual operational
+emissions and add them to the embodied emissions scaled by the device type's expected lifetime.
+
+As mentioned, a possible future refinement will be to model the duty cycle as a function of time of day
+and incorporate finer-grained electricity mix data.
+
+\subsection{Cloud emissions}
+
+We model cloud emissions based on the assumptions and data described in
+Section~\ref{sec:cloud_data_centers}. We suggest working with UZH's cloud vendor to obtain
+more accurate data.
+
+\subsection{LLM emissions}
+
+We model LLM emissions by sampling from the per-capita daily query distribution and computing
+the carbon intensity of each query based on the average European electricity mix. While there 
+are many uncertainties about the level of LLM adoption, there appears to be reasonable consensus
+in the literature about the energy consumption of each query.
+
+\section{Missing data}
+
+The following data would improve the accuracy of our model (in roughly decreasing order of utility):
+\begin{itemize}
+    \item Campus data center energy use (e.g., at the granularity of monthly electricity bills).
+    \item Current campus data center workloads (to better model transition to the cloud).
+    \item Academic calendar (e.g., how many days per year is the university full vs operating
+        at lower levels).
+    \item Common or otherwise representative pieces of equipment (servers, routers, standard desktops, etc.).
+    \item Rough breakdown of UZH's population by field / role.
+\end{itemize}
 
 \section{Other considerations}
 
