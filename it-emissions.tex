@@ -5,7 +5,7 @@
 \renewcommand{\sfdefault}{fvs} % Use as sans-serif
 \renewcommand{\ttdefault}{fvm} % Use as monospace
 \renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
-\newcommand{\assumption}[1]{{\bf #1}}
+\newcommand{\assumption}[1]{{#1}}
 %\usepackage{helvet} % Helvetica font for sans-serif
 %\usepackage{courier} % Courier font for monospace
 \usepackage{hyperref}
@@ -23,7 +23,7 @@
 \addbibresource{ref.bib}
 \title{UZH IT \& AI Emissions Analysis\vspace{-1em}}
 \author{Massimiliano Poletto}
-\date{\vspace{-1em}Last modified: 3.12.2024}
+\date{\vspace{-1em}Last modified: 18.12.2024}
 
 \begin{document}
 
@@ -52,6 +52,48 @@ of electricity in different regions.
 
 We describe our modeling approach and our assumptions and uncertainties regarding these factors.
 
+\section{Modeling approach}
+
+At a high level, we model IT emissions primarily bottom-up, based on device counts and
+estimates of their characteristics (embodied emissions, power utilization, and duty cycle).
+
+The model can operate in two modes: deterministic, where each device type has a fixed set of
+characteristics based on the mean of values we found in the literature, and stochastic, where
+we pick device characteristics from truncated normal distributions with the mean and standard
+deviation of the literature values. Of course, normality is a strong and probably incorrect
+assumption, but it is a simple initial way to model the uncertainty in our estimates.
+
+\subsection{Campus emissions}
+
+We instantiate as many devices as specified in the UZH spreadsheet, plus enough laptops and phones
+to cover the rest of the university population.
+
+For each device instance, we pick embodied emissions, power draw, and duty cycles either
+deterministically or by sampling from the appropriate distribution.
+
+Combining power draw and duty cycle estimates with ground-truth data about the Swiss electricity mix,
+we estimate annual operational emissions and add them to the embodied emissions scaled by the device
+type's expected lifetime.
+
+For on-campus data centers, for which presumably there are electricity bills or other measures of
+overall energy use, we would like to use that data to evaluate our model.
+
+A possible future refinement will be to model the duty cycle as a function of time of day
+and incorporate finer-grained electricity mix data.
+
+\subsection{Cloud emissions}
+
+We model cloud emissions based on the assumptions and data described in
+Section~\ref{sec:cloud_data_centers}. We suggest working with UZH's cloud vendor to obtain
+more accurate data.
+
+\subsection{LLM emissions}
+
+We model LLM emissions by sampling from the per-capita daily query distribution and computing
+the carbon intensity of each query based on the average European electricity mix. While there 
+are many uncertainties about the level of LLM adoption, there appears to be reasonable consensus
+in the literature about the energy consumption of each query.
+
 \section{Data sources and unknowns}
 
 \subsection{UZH population}
@@ -66,17 +108,17 @@ at UZH. Evidently the spreadsheet only lists university assets, not personal dev
 
 \assumption{In modeling overall university IT emissions as well as potential LLM use,
 we assume that the entire university population has a laptop and a mobile phone.}
-
 We do not yet have any information about the breakdown of different functions / job roles, so
-\assumption{we assume that IT use is uniform across the university}. This assumption should be
-revisited.
+\assumption{we assume that IT use is uniform across the university}. Both of these assumptions
+should be revisited.
 
 \subsection{Embodied emissions}
-The estimation of embodied emissions introduces additional assumptions and uncertainties into
-the model. Our initial project proposal ignored embodied emissions altogether, but that leaves
-too big a gap.
 
-We did some research on the estimated embodied emissions of different types of devices.
+For several device types, especially end-user devices such as phones and laptops, embodied emissions
+comprise a majority of lifetime emissions. However, the exact amount of these emissions varies
+widely between different sources. Our approach has been to find several studies and industry references,
+and then estimate means and standard deviations from those that seemed most comprehensive and reliable
+(for example, Dell's Product Carbon Footprint reports about its servers).
 
 \subsubsection{Laptops}
 
@@ -119,7 +161,7 @@ information for over 90 popular devices. Mean supply chain emissions are
 Most estimates are in the range of 250 - 400 kg CO$_2$e. The most detailed data comes from
 Dell's Product Carbon Footprints (\textcite{dellpcf}), which they publish for each of their products.
 A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $\sigma = 80$ kg.
-\assumption{We model desktop supply chain emissions using a truncated normal distribution with those characteristics.}
+\assumption{We model desktop supply chain emissions using these statistics.}
 
 \subsubsection{Servers}
 
@@ -139,8 +181,7 @@ A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $
 \textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
 The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 330$ kg, the latter
 1912 kg with $\sigma = 885$ kg.
-\assumption{We model server supply chain emissions using a truncated normal distribution corresponding
-to Dell servers.}
+\assumption{We model server supply chain emissions using the statistics corresponding to Dell servers.}
 
 \subsubsection{Smartphones}
 
@@ -157,8 +198,7 @@ to Dell servers.}
 \label{tab:embodied_emissions:phones}
 \end{center}
 
-\assumption{We model phone supply chain emissions using a truncated normal distribution with mean
-50 kg CO$_2$e and $\sigma = 10$ kg.}
+\assumption{We model phone supply chain emissions using mean 50 kg CO$_2$e and $\sigma = 10$ kg.}
 
 \subsubsection{Other devices}
 
@@ -183,8 +223,7 @@ daily variations in usage and electricity carbon intensity.
 Generic manufacturer estimates of lifetime usage-related emissions are therefore unsuitable.
 There are surprisingly few sources of data on device power consumption (as opposed to CO$_2$ emissions).
 Based on a smattering of data sheets, primarily from Apple, Cisco, and Dell, we model
-power draw of different devices while under load as truncated normal distributions with the
-following initial parameters:
+power draw of different devices while under load using the following initial parameters:
 
 \begin{center}
 \begin{tabular}{|l|r|r|}
@@ -200,8 +239,8 @@ Printer/copier & 1000 & 200 \\ \hline
 \end{tabular}
 \end{center}
 
-Initially, we assume a distribution of duty cycles and power draw when idle for each device.
-As a next step, we may simulate power draw at different times of day to integrate with
+We assume a distribution of duty cycles and power draw when idle for each device.
+In the future, we may simulate power draw at different times of day to integrate with
 hourly electricity mix data, but errors in those assumptions may swamp the relatively small
 hourly variations in Swiss electricity carbon intensity.
 
@@ -255,41 +294,6 @@ we use the carbon emissions for electricity {\em consumption} (not generation) i
 at hourly granularity, then aggregate the data into two-hour blocks, and compute the mean of each two
 hour block over the course of the year. This gives us twelve data points that describe average
 carbon intensity variation over the course of the day.
-
-\section{Modeling approach}
-
-At a high level, we model IT emissions primarily bottom-up, based on device counts and
-characteristics, and use a Monte Carlo approach to account for uncertainties.
-
-For on-campus data centers, we would like to use end-to-end data on electricity use (electric bills)
-to evaluate our model.
-
-\subsection{Campus emissions}
-
-We instantiate as many devices as specified in the UZH spreadsheet, plus enough laptops and phones
-to cover the rest of the university population.
-
-For each device instance, we sample from the appropriate distribution of embodied emissions,
-power draw, and duty cycles to obtain the devices characteristics.
-
-Combining power draw and duty cycle with the Swiss electricity mix, we compute annual operational
-emissions and add them to the embodied emissions scaled by the device type's expected lifetime.
-
-As mentioned, a possible future refinement will be to model the duty cycle as a function of time of day
-and incorporate finer-grained electricity mix data.
-
-\subsection{Cloud emissions}
-
-We model cloud emissions based on the assumptions and data described in
-Section~\ref{sec:cloud_data_centers}. We suggest working with UZH's cloud vendor to obtain
-more accurate data.
-
-\subsection{LLM emissions}
-
-We model LLM emissions by sampling from the per-capita daily query distribution and computing
-the carbon intensity of each query based on the average European electricity mix. While there 
-are many uncertainties about the level of LLM adoption, there appears to be reasonable consensus
-in the literature about the energy consumption of each query.
 
 \section{Missing data}
 
