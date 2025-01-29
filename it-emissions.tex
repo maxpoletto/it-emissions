@@ -103,11 +103,11 @@ counts and emissions factors for various types of IT equipment at UZH. It report
 10,000 laptops and monitors, 1,000 servers, 2,400 mobile phones,  150 classroom PCs, and a few
 hundred printers, copiers, and projectors.
 
-By contrast, \textcite{wikiuzh} reports approximately 28,000 students and 10,000 staff
+By contrast, \textcite{uzhprofile} reports approximately 28,000 students and 7,300 staff
 at UZH. Evidently the spreadsheet only lists university assets, not personal devices.
 
 \assumption{In modeling overall university IT emissions as well as potential LLM use,
-we assume that the entire university population has a laptop and a mobile phone.}
+we assume that 90\% of the university population, 32,000 people, have a laptop and a mobile phone.}
 We do not yet have any information about the breakdown of different functions / job roles, so
 \assumption{we assume that IT use is uniform across the university}. Both of these assumptions
 should be revisited.
@@ -276,13 +276,34 @@ Energy consumption of LLMs is being studied extensively (\textcite{budennyy2022e
 The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request,
 or approximately 10x the energy of a traditional search engine query. This number appears to be decreasing
 rapidly as model hardware and software improve, even though overall energy use is increasing due to
-increased utilization.
-
-Nevertheless, for the model we assume that queries consume 3 Wh each, and we model per-capita daily
-queries using a truncated normal distribution with mean 15 and $\sigma = 5$.
+increased utilization. Nevertheless, for the model we assume that queries consume 3 Wh each.
+We assume that on average every user will issue 15 queries per day.
 
 LLMs are distributed and the location that serves any particular request is unknown, so we use the 
 average European electricity mix to compute carbon intensity.
+
+The embodied emissions and training emissions of LLMs are difficult to estimate and attribute precisely.
+However, \textcite{devries2023growing} provides the following information about ChatGPT:
+\begin{itemize}
+    \item Operational power consumption of 500 MWh / day.
+    \item Approximately 1300 MWh consumed in training.
+    \item Approximately 4000 servers.
+\end{itemize}
+
+Assuming a relatively clean grid at 200 g CO$_2$e / kWh (a low estimate), and that each server has embodied emissions of 4 t CO$_2$e (a high estimate),
+we obtain:
+\begin{itemize}
+    \item 100 t CO$_2$e / day operational emissions.
+    \item 260 t CO$_2$e training emissions.
+    \item 16 kt CO$_2$e total embodied emissions.
+\end{itemize}
+
+After one year of operation, operational emissions are approximately 36 kt CO$_2$e, whereas training and embodied emissions are about 16 kt CO$_2$e,
+so operational emissions account for $\approx 70\%$ of the total. With less conservative assumptions (dirtier grid, lower embodied emissions),
+the proportion of operational emissions increases further.
+
+As a result, when modeling overall LLM emissions, we multiply estimated operational emissions by 1.4 to account for training and embodied emissions.
+We acknowledge that this is, at best, a rough estimate based on just one LLM.
 
 \subsection{Electricity carbon intensity}
 
