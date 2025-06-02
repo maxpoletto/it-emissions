@@ -114,22 +114,19 @@
 <body>
     <div class="container">
         <h1>IT Emissions Calculator</h1>
-        
-        <div class="two-column">
-            <div class="section">
-                <div class="section-title">Embodied Emissions (kg CO2e)</div>
-                <table class="input-table" id="embodied-table"></table>
-            </div>
-            
-            <div class="section">
-                <div class="section-title">Power Consumption (W)</div>
-                <table class="input-table" id="power-table"></table>
-            </div>
-        </div>
-        
         <div class="section">
             <div class="section-title">Device Information</div>
             <table class="input-table" id="device-table"></table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Embodied Emissions (kg CO2e)</div>
+            <table class="input-table" id="embodied-table"></table>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Power Consumption (W)</div>
+            <table class="input-table" id="power-table"></table>
         </div>
         
         <div class="two-column">
@@ -144,16 +141,14 @@
             </div>
         </div>
         
-        <div class="two-column">
-            <div class="section">
-                <div class="section-title">LLM Usage</div>
-                <table class="input-table" id="llm-usage-table"></table>
-            </div>
-            
-            <div class="section">
-                <div class="section-title">LLM Power</div>
-                <table class="input-table" id="llm-power-table"></table>
-            </div>
+        <div class="section">
+            <div class="section-title">LLM Usage</div>
+            <table class="input-table" id="llm-usage-table"></table>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">LLM Power</div>
+            <table class="input-table" id="llm-power-table"></table>
         </div>
         
         <div class="controls">
@@ -416,7 +411,22 @@
             Object.values(data).forEach(item => {
                 Object.keys(item).forEach(param => paramNames.add(param));
             });
-            const sortedParamNames = Array.from(paramNames).sort();
+            
+            // Define preferred order for specific parameters
+            const preferredOrder = ['average', 'stdev', 'lower_bound', 'upper_bound'];
+            const sortedParamNames = [];
+            
+            // Add preferred parameters first (in order)
+            preferredOrder.forEach(param => {
+                if (paramNames.has(param)) {
+                    sortedParamNames.push(param);
+                    paramNames.delete(param);
+                }
+            });
+            
+            // Add remaining parameters alphabetically
+            const remainingParams = Array.from(paramNames).sort();
+            sortedParamNames.push(...remainingParams);
             
             // Create header
             const headerRow = document.createElement('tr');
