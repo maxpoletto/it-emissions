@@ -689,6 +689,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeTables();
             
+            // Read initial checkbox state before first calculation
+            deterministic = document.getElementById('deterministic-checkbox').checked;
+            
             // Set up deterministic checkbox
             document.getElementById('deterministic-checkbox').addEventListener('change', function(e) {
                 deterministic = e.target.checked;
