@@ -4,178 +4,337 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Emissions Calculator</title>
+    <link rel="stylesheet" href="assets/css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
+        /* Override and extend existing styles for calculator-specific needs */
+        .emissions-calculator {
+            padding-left: var(--page-margin);
+            padding-right: var(--page-margin);
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        @media(max-width: 700px) {
+            .emissions-calculator {
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+            }
         }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
+        
+        .calculator-section {
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            border-radius: 0.5rem;
+            background: rgba(var(--c-white), 1);
         }
-        .section {
-            margin-bottom: 25px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
+        
+        @media(max-width: 700px) {
+            .calculator-section {
+                margin-bottom: 2rem;
+                padding: 1rem;
+            }
         }
+        
         .section-title {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 1.125rem;
+            line-height: 1.4;
+            font-weight: 600;
+            color: rgba(var(--c-black), 1);
+            margin-bottom: 1rem;
         }
-        .input-table {
+        
+        @media(max-width: 700px) {
+            .section-title {
+                font-size: 1rem;
+            }
+        }
+        
+        .parameter-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
         }
-        .input-table th, .input-table td {
-            border: 1px solid #ccc;
-            padding: 5px;
+        
+        .parameter-table th,
+        .parameter-table td {
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            padding: 0.5rem;
             text-align: center;
-            min-width: 120px;
+            vertical-align: middle;
         }
-        .input-table th {
-            background-color: #f0f0f0;
-            font-weight: bold;
+        
+        .parameter-table th {
+            background-color: rgba(var(--c-grey-light), 1);
+            font-weight: 600;
+            font-size: 0.875rem;
+            line-height: 1.4;
+            color: rgba(var(--c-black), 1);
         }
-        .input-table input {
+        
+        .parameter-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background-color: rgba(var(--c-grey-light), 0.5);
+        }
+        
+        .parameter-table input {
             width: 100%;
             border: none;
-            padding: 3px;
+            padding: 0.25rem;
             text-align: center;
+            font-size: 0.875rem;
+            background: transparent;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
         }
+        
+        .parameter-table input:focus {
+            background-color: rgba(var(--c-blue-light), 1);
+            outline: none;
+        }
+        
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 1rem;
             align-items: center;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
+            margin: 2rem 0;
+            padding: 1rem;
+            background-color: rgba(var(--c-grey-light), 1);
+            border-radius: 0.5rem;
         }
-        .rerun-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
+        
+        .controls label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            font-weight: 400;
+            color: rgba(var(--c-text-grey), 1);
         }
-        .rerun-btn:hover {
-            background-color: #218838;
+        
+        .controls input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
         }
-        .results {
-            margin-top: 30px;
+        
+        .results-section {
+            margin-top: 3rem;
         }
+        
         .results-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 2rem;
         }
-        .results-table th, .results-table td {
-            border: 1px solid #ccc;
-            padding: 8px;
+        
+        .results-table th,
+        .results-table td {
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            padding: 0.75rem;
             text-align: left;
         }
+        
         .results-table th {
-            background-color: #f0f0f0;
-            font-weight: bold;
+            background-color: rgba(var(--c-grey-light), 1);
+            font-weight: 600;
+            color: rgba(var(--c-black), 1);
         }
+        
+        .results-table td {
+            color: rgba(var(--c-text-grey), 1);
+        }
+        
+        .results-table tr:last-child td {
+            font-weight: 600;
+            color: rgba(var(--c-black), 1);
+            background-color: rgba(var(--c-blue), 0.05);
+        }
+        
         .chart-container {
             width: 100%;
             height: 400px;
-            margin-top: 20px;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(var(--c-white), 1);
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            border-radius: 0.5rem;
         }
+        
+        @media(max-width: 700px) {
+            .chart-container {
+                height: 300px;
+                padding: 1rem;
+            }
+        }
+        
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 1.5rem;
         }
-        @media (max-width: 768px) {
+        
+        @media(max-width: 900px) {
             .two-column {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+        
+        /* Use site's button styles */
+        .rerun-btn {
+            background-color: rgba(var(--c-blue), 1);
+            color: rgba(var(--c-white), 1);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            font-weight: 400;
+            transition: background-color 0.2s ease-in-out;
+        }
+        
+        .rerun-btn:hover {
+            background-color: rgba(var(--c-blue), 0.8);
+        }
+        
+        @media(max-width: 700px) {
+            .rerun-btn {
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Header with logo styling */
+        .header-with-logo {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .uzh-logo {
+            height: 4rem;
+            width: auto;
+            flex-shrink: 0;
+        }
+        
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 2rem;
+            line-height: 1.2;
+            font-weight: 600;
+            margin: 0;
+            color: rgba(var(--c-black), 1);
+        }
+        
+        @media(max-width: 700px) {
+            .header-with-logo {
+            }
+            
+            .uzh-logo {
+                height: 3rem;
+            }
+            
+            .header-title {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>IT Emissions Calculator</h1>
-        <div class="section">
-            <div class="section-title">Device Information</div>
-            <table class="input-table" id="device-table"></table>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Embodied Emissions (kg CO2e)</div>
-            <table class="input-table" id="embodied-table"></table>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">Power Consumption (W)</div>
-            <table class="input-table" id="power-table"></table>
-        </div>
-        
-        <div class="two-column">
-            <div class="section">
-                <div class="section-title">Data Center Parameters</div>
-                <table class="input-table" id="datacenter-table"></table>
+    <main>
+        <div class="emissions-calculator">
+            <!-- Page Title using site's typography -->
+            <div class="l-SiteWidth">
+                <div class="header-with-logo">
+                    <img src="assets/uzh_logo.svg" alt="UZH Logo" class="uzh-logo">
+                    <h1 class="t-text-h1 header-title">IT Emissions Calculator</h1>
+                </div>
             </div>
             
-            <div class="section">
-                <div class="section-title">Cloud Parameters</div>
-                <table class="input-table" id="cloud-table"></table>
+            <!-- Main Content Area -->
+            <div class="l-SiteWidth">
+                <!-- Device Information Section -->
+                <section class="calculator-section">
+                    <h2 class="section-title">Device Information</h2>
+                    <table class="parameter-table" id="device-table"></table>
+                </section>
+                
+                <!-- Two Column Layout for Emissions and Power -->
+                <div class="two-column">
+                    <section class="calculator-section">
+                        <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
+                        <table class="parameter-table" id="embodied-table"></table>
+                    </section>
+                    
+                    <section class="calculator-section">
+                        <h2 class="section-title">Power Consumption (W)</h2>
+                        <table class="parameter-table" id="power-table"></table>
+                    </section>
+                </div>
+                
+                <!-- Two Column Layout for Data Center and Cloud -->
+                <div class="two-column">
+                    <section class="calculator-section">
+                        <h2 class="section-title">Data Center Parameters</h2>
+                        <table class="parameter-table" id="datacenter-table"></table>
+                    </section>
+                    
+                    <section class="calculator-section">
+                        <h2 class="section-title">Cloud Parameters</h2>
+                        <table class="parameter-table" id="cloud-table"></table>
+                    </section>
+                </div>
+                
+                <!-- Two Column Layout for LLM Parameters -->
+                <div class="two-column">
+                    <section class="calculator-section">
+                        <h2 class="section-title">LLM Usage</h2>
+                        <table class="parameter-table" id="llm-usage-table"></table>
+                    </section>
+                    
+                    <section class="calculator-section">
+                        <h2 class="section-title">LLM Power</h2>
+                        <table class="parameter-table" id="llm-power-table"></table>
+                    </section>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <label>
+                        <input type="checkbox" id="deterministic-checkbox"> 
+                        <span>Deterministic</span>
+                    </label>
+                    <button class="rerun-btn" onclick="updateDevices()">Rerun Calculation</button>
+                </div>
+                
+                <!-- Results Section -->
+                <section class="results-section">
+                    <h2 class="t-text-h2" style="margin-bottom: 1.5rem;">Results</h2>
+                    
+                    <table class="results-table" id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Embodied (kg CO2e)</th>
+                                <th>Usage (kg CO2e)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-tbody">
+                        </tbody>
+                    </table>
+                    
+                    <div class="chart-container">
+                        <canvas id="emissions-chart"></canvas>
+                    </div>
+                </section>
             </div>
         </div>
-        
-        <div class="section">
-            <div class="section-title">LLM Usage</div>
-            <table class="input-table" id="llm-usage-table"></table>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">LLM Power</div>
-            <table class="input-table" id="llm-power-table"></table>
-        </div>
-        
-        <div class="controls">
-            <label>
-                <input type="checkbox" id="deterministic-checkbox"> Deterministic
-            </label>
-            <button class="rerun-btn" onclick="updateDevices()">Rerun</button>
-        </div>
-        
-        <div class="results">
-            <table class="results-table" id="results-table">
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Embodied (kg CO2e)</th>
-                        <th>Usage (kg CO2e)</th>
-                    </tr>
-                </thead>
-                <tbody id="results-tbody">
-                </tbody>
-            </table>
-            
-            <div class="chart-container">
-                <canvas id="emissions-chart"></canvas>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script>
         // Global variables
@@ -445,8 +604,6 @@
                 // Device name cell
                 const deviceCell = document.createElement('td');
                 deviceCell.textContent = device;
-                deviceCell.style.fontWeight = 'bold';
-                deviceCell.style.textAlign = 'left';
                 row.appendChild(deviceCell);
                 
                 // Parameter cells
@@ -636,20 +793,33 @@
                     datasets: [{
                         label: 'Embodied (kg CO2e)',
                         data: embodiedData,
-                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(0, 40, 165, 0.8)',
+                        borderColor: 'rgba(0, 40, 165, 1)',
                         borderWidth: 1
                     }, {
                         label: 'Usage (kg CO2e)',
                         data: usageData,
-                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(0, 40, 165, 0.5)',
+                        borderColor: 'rgba(0, 40, 165, 1)',
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'CO2e Emissions Breakdown',
+                            font: {
+                                size: 16,
+                                weight: 600
+                            }
+                        },
+                        legend: {
+                            display: true
+                        }
+                    },
                     scales: {
                         x: {
                             stacked: true,
@@ -664,15 +834,6 @@
                                 display: true,
                                 text: 'kg CO2e'
                             }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'CO2e Emissions Breakdown'
-                        },
-                        legend: {
-                            display: true
                         }
                     }
                 }
