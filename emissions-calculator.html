@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Emissions Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .input-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .input-table th, .input-table td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .input-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .input-table input {
+            width: 100%;
+            border: none;
+            padding: 3px;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .rerun-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .rerun-btn:hover {
+            background-color: #218838;
+        }
+        .results {
+            margin-top: 30px;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .results-table th, .results-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .results-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IT Emissions Calculator</h1>
+        
+        <div class="two-column">
+            <div class="section">
+                <div class="section-title">Embodied Emissions (kg CO2e)</div>
+                <table class="input-table" id="embodied-table"></table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Power Consumption (W)</div>
+                <table class="input-table" id="power-table"></table>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Device Information</div>
+            <table class="input-table" id="device-table"></table>
+        </div>
+        
+        <div class="two-column">
+            <div class="section">
+                <div class="section-title">Data Center Parameters</div>
+                <table class="input-table" id="datacenter-table"></table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Cloud Parameters</div>
+                <table class="input-table" id="cloud-table"></table>
+            </div>
+        </div>
+        
+        <div class="two-column">
+            <div class="section">
+                <div class="section-title">LLM Usage</div>
+                <table class="input-table" id="llm-usage-table"></table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">LLM Power</div>
+                <table class="input-table" id="llm-power-table"></table>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <label>
+                <input type="checkbox" id="deterministic-checkbox"> Deterministic
+            </label>
+            <button class="rerun-btn" onclick="updateDevices()">Rerun</button>
+        </div>
+        
+        <div class="results">
+            <table class="results-table" id="results-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Embodied (kg CO2e)</th>
+                        <th>Usage (kg CO2e)</th>
+                    </tr>
+                </thead>
+                <tbody id="results-tbody">
+                </tbody>
+            </table>
+            
+            <div class="chart-container">
+                <canvas id="emissions-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let deterministic = false;
+        let devices = {};
+        let emissionsIntensity = {};
+        let cloudInstances = 0;
+        let llmQueries = null;
+        let chart = null;
+
+        // Data structures (converted from Python)
+        const people = {
+            'uzh population': {
+                'students': 28000,
+                'staff': 10000,
+            }
+        };
+
+        const deviceInfo = {
+            'laptops': { 
+                'lifetime': 4,
+                'count': 32000,
+            },
+            'desktops': { 
+                'lifetime': 6,
+                'count': 150,
+            },
+            'servers': { 
+                'lifetime': 5,
+                'count': 1028,
+            },
+            'smartphones': { 
+                'lifetime': 3,
+                'count': 32000,
+            },
+            'wall displays': {
+                'lifetime': 6,
+                'count': 360,
+            },
+            'monitors': { 
+                'lifetime': 6,
+                'count': 10325,
+            },
+            'printers': { 
+                'lifetime': 6,
+                'count': 1000,
+            },
+        };
+
+        const embodiedEmissionsKgCo2e = {
+            'laptops': {
+                'average': 244,
+                'stdev': 128,
+                'lower_bound': 104,
+                'upper_bound': 372,
+            },
+            'desktops': {
+                'average': 289,
+                'stdev': 80,
+                'lower_bound': 209,
+                'upper_bound': 403,
+            },
+            'servers': {
+                'average': 1252,
+                'stdev': 330,
+                'lower_bound': 383,
+                'upper_bound': 1582,
+            },
+            'smartphones': {
+                'average': 50,
+                'stdev': 10,
+                'lower_bound': 30,
+                'upper_bound': 70,
+            },
+            'monitors': {
+                'average': 344,
+                'stdev': 50,
+                'lower_bound': 294,
+                'upper_bound': 394,
+            },
+            'wall displays': {
+                'average': 753,
+                'stdev': 109,
+                'lower_bound': 644,
+                'upper_bound': 862,
+            },
+            'printers': {
+                'average': 1167,
+                'stdev': 200,
+                'lower_bound': 967,
+                'upper_bound': 1367,
+            },
+        };
+
+        const powerW = {
+            'laptops': {
+                'average': 30,
+                'stdev': 5,
+                'lower_bound': 20,
+                'upper_bound': 40,
+                'standby': 1,
+            },
+            'desktops': {
+                'average': 100,
+                'stdev': 20,
+                'lower_bound': 60,
+                'upper_bound': 200,
+                'standby': 1,
+            },
+            'servers': {
+                'average': 400,
+                'stdev': 100,
+                'lower_bound': 200,
+                'upper_bound': 600,
+                'standby': 1,
+            },
+            'smartphones': {
+                'average': 5,
+                'stdev': 2,
+                'lower_bound': 3,
+                'upper_bound': 7,
+                'standby': 0,
+            },
+            'monitors': {
+                'average': 50,
+                'stdev': 10,
+                'lower_bound': 30,
+                'upper_bound': 90,
+                'standby': 1,
+            },
+            'wall displays': {
+                'average': 250,
+                'stdev': 50,
+                'lower_bound': 150,
+                'upper_bound': 350,
+                'standby': 1,
+            },
+            'printers': {
+                'average': 1000,
+                'stdev': 200,
+                'lower_bound': 600,
+                'upper_bound': 1400,
+                'standby': 90,
+            },
+        };
+
+        const dataCenter = {
+            'DC PUE': {
+                'Value x100': 200,
+            },
+        };
+
+        const cloudData = {
+            'cloud': {
+                '% servers in cloud': 0,
+                'cloud srv/local srv': 1,
+                'embod. kgCO2e/y': 97,
+                'usage kgCO2e/y': 31,
+                'PUE x100': 110,
+            }
+        };
+
+        const llmUsage = {
+            'LLM daily user queries': {
+                'average': 15,
+                'stdev': 5,
+                'lower_bound': 0,
+                'upper_bound': 30,
+            },
+        };
+
+        const llmPower = {
+            'LLM power': {
+                'average query Wh': 3.5,
+                'emissions intensity g CO2e / kWh': 226,
+                'training ovhd %': 40,
+            },
+        };
+
+        const dutyCycle6h = {
+            'laptops': [0.1, 0.5, 1.0, 0.3],
+            'desktops': [0.1, 0.5, 1.0, 0.3],
+            'servers': [0.8, 0.8, 0.8, 0.8],
+            'smartphones': [0.0, 0.0, 0.0, 0.5],
+            'monitors': [0.1, 0.5, 1.0, 0.3],
+            'wall displays': [0.0, 0.3, 0.6, 0.1],
+            'printers': [0.0, 0.0, 0.01, 0.0],
+        };
+
+        // Emissions class
+        class Emissions {
+            static gco2PerKwhByHours = {
+                'ch': [63, 58, 58, 52, 49, 47, 45, 45, 49, 54, 62, 63]
+            };
+
+            static atHour(hour, country) {
+                return this.gco2PerKwhByHours[country][Math.floor(hour / 2)];
+            }
+
+            static average(country) {
+                const values = this.gco2PerKwhByHours[country];
+                return values.reduce((a, b) => a + b, 0) / values.length;
+            }
+        }
+
+        // Utility functions
+        function truncatedNormal(mu, sigma, minValue, maxValue, n) {
+            if (n === 0) return [];
+            if (deterministic) return Array(n).fill(mu);
+            
+            const results = [];
+            for (let i = 0; i < n; i++) {
+                let value;
+                do {
+                    // Box-Muller transform for normal distribution
+                    const u1 = Math.random();
+                    const u2 = Math.random();
+                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                    value = mu + sigma * z0;
+                } while (value < minValue || value > maxValue);
+                results.push(Math.floor(value));
+            }
+            return results;
+        }
+
+        // Generate input tables
+        function createInputTable(tableId, data, callback) {
+            const table = document.getElementById(tableId);
+            table.innerHTML = '';
+            
+            // Get all unique parameter names
+            const paramNames = new Set();
+            Object.values(data).forEach(item => {
+                Object.keys(item).forEach(param => paramNames.add(param));
+            });
+            const sortedParamNames = Array.from(paramNames).sort();
+            
+            // Create header
+            const headerRow = document.createElement('tr');
+            headerRow.appendChild(document.createElement('th')); // Empty cell for device names
+            sortedParamNames.forEach(param => {
+                const th = document.createElement('th');
+                th.textContent = param;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+            
+            // Create rows for each device
+            Object.keys(data).forEach(device => {
+                const row = document.createElement('tr');
+                
+                // Device name cell
+                const deviceCell = document.createElement('td');
+                deviceCell.textContent = device;
+                deviceCell.style.fontWeight = 'bold';
+                deviceCell.style.textAlign = 'left';
+                row.appendChild(deviceCell);
+                
+                // Parameter cells
+                sortedParamNames.forEach(param => {
+                    const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = data[device][param] || 0;
+                    input.addEventListener('change', (e) => {
+                        data[device][param] = parseFloat(e.target.value) || 0;
+                        if (callback) callback();
+                    });
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                });
+                
+                table.appendChild(row);
+            });
+        }
+
+        // Initialize all input tables
+        function initializeTables() {
+            createInputTable('embodied-table', embodiedEmissionsKgCo2e, updateDevices);
+            createInputTable('power-table', powerW, updateDevices);
+            createInputTable('device-table', deviceInfo, updateDevices);
+            createInputTable('datacenter-table', dataCenter, updateDevices);
+            createInputTable('cloud-table', cloudData, updateDevices);
+            createInputTable('llm-usage-table', llmUsage, updateDevices);
+            createInputTable('llm-power-table', llmPower, updateDevices);
+        }
+
+        // Generate device instances
+        function generateDevices() {
+            devices = {};
+            emissionsIntensity = {};
+            
+            Object.keys(deviceInfo).forEach(device => {
+                devices[device] = {};
+                
+                let n = deviceInfo[device]['count'];
+                if (device === 'servers') {
+                    cloudInstances = Math.floor(cloudData['cloud']['% servers in cloud'] * n / 100);
+                    n -= cloudInstances;
+                }
+                
+                const stats = embodiedEmissionsKgCo2e[device];
+                devices[device]['annual_embodied_emissions'] = truncatedNormal(
+                    stats['average'], stats['stdev'], stats['lower_bound'], stats['upper_bound'], n
+                ).map(x => x / deviceInfo[device]['lifetime']);
+                
+                devices[device]['power_w'] = truncatedNormal(
+                    powerW[device]['average'], powerW[device]['stdev'], 
+                    powerW[device]['lower_bound'], powerW[device]['upper_bound'], n
+                );
+                
+                devices[device]['standby_w'] = Array(n).fill(powerW[device]['standby']);
+                
+                // Compute emissions intensity
+                const dutyCycle = dutyCycle6h[device];
+                const r = Math.floor(24 / dutyCycle.length);
+                emissionsIntensity[device] = [];
+                for (let i = 0; i < 24; i++) {
+                    const cycleIndex = Math.floor(i / r);
+                    const duty = dutyCycle[cycleIndex];
+                    const emission = Emissions.atHour(i, 'ch');
+                    emissionsIntensity[device].push(duty * emission);
+                }
+            });
+            
+            const q = llmUsage['LLM daily user queries'];
+            const p = people['uzh population']['students'] + people['uzh population']['staff'];
+            llmQueries = truncatedNormal(q['average'], q['stdev'], q['lower_bound'], q['upper_bound'], p);
+        }
+
+        // Calculate device emissions
+        function deviceEmissionsKgco2e(device) {
+            const intensitySum = emissionsIntensity[device].reduce((a, b) => a + b, 0);
+            const powerSum = devices[device]['power_w'].reduce((a, b) => a + b, 0);
+            const u = powerSum * intensitySum * 365 / (1000 * 1000);
+            const m = devices[device]['annual_embodied_emissions'].reduce((a, b) => a + b, 0);
+            return [u, m];
+        }
+
+        // Calculate cloud emissions
+        function cloudEmissionsKgco2e() {
+            const u = cloudInstances * cloudData['cloud']['cloud srv/local srv'] * 
+                     cloudData['cloud']['usage kgCO2e/y'] * cloudData['cloud']['PUE x100'] / 100;
+            const m = cloudInstances * cloudData['cloud']['cloud srv/local srv'] * 
+                     cloudData['cloud']['embod. kgCO2e/y'];
+            return [u, m];
+        }
+
+        // Calculate LLM emissions
+        function llmEmissionsKgco2e() {
+            const e = llmPower['LLM power']['average query Wh'];
+            const i = llmPower['LLM power']['emissions intensity g CO2e / kWh'];
+            const queriesSum = llmQueries.reduce((a, b) => a + b, 0);
+            const u = queriesSum * 365 * e * i / (1000 * 1000);
+            const m = u * llmPower['LLM power']['training ovhd %'] / 100;
+            return [u, m];
+        }
+
+        // Update results display
+        function refreshOutput() {
+            let total = 0;
+            const data = [];
+            
+            // Device emissions
+            Object.keys(deviceInfo).forEach(device => {
+                const [u, m] = deviceEmissionsKgco2e(device);
+                total += u + m;
+                data.push({
+                    category: device,
+                    embodied: m,
+                    usage: u
+                });
+            });
+            
+            // DC cooling
+            const [serverU] = deviceEmissionsKgco2e('servers');
+            const dcCoolingU = serverU * (dataCenter['DC PUE']['Value x100'] - 100) / 100;
+            data.push({
+                category: 'DC cooling',
+                embodied: null,
+                usage: dcCoolingU
+            });
+            total += dcCoolingU;
+            
+            // Cloud
+            const [cloudU, cloudM] = cloudEmissionsKgco2e();
+            data.push({
+                category: 'Cloud',
+                embodied: cloudM,
+                usage: cloudU
+            });
+            total += cloudU + cloudM;
+            
+            // LLM
+            const [llmU, llmM] = llmEmissionsKgco2e();
+            data.push({
+                category: 'LLM',
+                embodied: llmM,
+                usage: llmU
+            });
+            total += llmU + llmM;
+            
+            // Total
+            data.push({
+                category: 'Total',
+                embodied: null,
+                usage: total
+            });
+            
+            // Update table
+            const tbody = document.getElementById('results-tbody');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.category}</td>
+                    <td>${row.embodied !== null ? Math.round(row.embodied) : ''}</td>
+                    <td>${Math.round(row.usage)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Update chart
+            updateChart(data.slice(0, -1)); // Exclude total row
+        }
+
+        // Update chart
+        function updateChart(data) {
+            const ctx = document.getElementById('emissions-chart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            const labels = data.map(d => d.category);
+            const embodiedData = data.map(d => d.embodied || 0);
+            const usageData = data.map(d => d.usage || 0);
+            
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Embodied (kg CO2e)',
+                        data: embodiedData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Usage (kg CO2e)',
+                        data: usageData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Category'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'kg CO2e'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'CO2e Emissions Breakdown'
+                        },
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Main update function
+        function updateDevices() {
+            generateDevices();
+            refreshOutput();
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTables();
+            
+            // Set up deterministic checkbox
+            document.getElementById('deterministic-checkbox').addEventListener('change', function(e) {
+                deterministic = e.target.checked;
+            });
+            
+            // Initial calculation
+            updateDevices();
+        });
+    </script>
+</body>
+</html> 
