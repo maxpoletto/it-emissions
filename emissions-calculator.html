@@ -184,6 +184,11 @@
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
         }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+        }
         
         @media(max-width: 900px) {
             .two-column {
@@ -307,7 +312,7 @@
 <body>
     <main>
         <div class="emissions-calculator">
-            <!-- Page Title using site's typography -->
+            <!-- Page Title using UZH typography -->
             <div class="l-SiteWidth">
                 <div class="header-with-logo">
                     <img src="assets/uzh_logo.svg" alt="UZH Logo" class="uzh-logo">
@@ -317,14 +322,16 @@
             
             <!-- Main Content Area -->
             <div class="l-SiteWidth">
-                <!-- Device Information Section -->
-                <section class="calculator-section">
-                    <h2 class="section-title">Device Information</h2>
-                    <table class="parameter-table" id="device-table"></table>
-                </section>
                 
-                <!-- Two Column Layout for Emissions and Power -->
-                <div class="two-column">
+                <!-- Three column layout for Device Information, Embodied Emissions, and Power Consumption -->
+                <div class="three-column">
+                    <section class="calculator-section">
+                        <div class="table-header">
+                            <h2 class="section-title">Device Information</h2>
+                        </div>
+                        <table class="parameter-table" id="device-table"></table>
+                   </section>
+
                     <section class="calculator-section">
                         <div class="table-header">
                             <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
