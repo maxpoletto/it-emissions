@@ -78,12 +78,21 @@
             font-weight: 600;
             background-color: rgba(var(--c-grey-light), 0.5);
         }
-        
+        /* Hide the up/down arrows in numeric input fields */
+        .parameter-table input::-webkit-outer-spin-button,
+        .parameter-table input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* Do the same for Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
         .parameter-table input {
             width: 100%;
             border: none;
-            padding: 0.25rem;
-            text-align: center;
+            padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+            text-align: right;
             font-size: 0.875rem;
             background: transparent;
             border-radius: 0.25rem;
@@ -243,6 +252,56 @@
                 font-size: 1.5rem;
             }
         }
+        
+        /* Collapsible table functionality */
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .expand-toggle {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: rgba(var(--c-blue), 1);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+        
+        .expand-toggle:hover {
+            background-color: rgba(var(--c-blue), 0.1);
+        }
+        
+        .expand-toggle:focus {
+            outline: 2px solid rgba(var(--c-blue), 0.5);
+        }
+        
+        .additional-columns {
+            display: none;
+        }
+        
+        .additional-columns.visible {
+            display: table-cell;
+        }
+        
+        .additional-headers {
+            display: none;
+        }
+        
+        .additional-headers.visible {
+            display: table-cell;
+        }
+        
+        @media(max-width: 700px) {
+            .expand-toggle {
+                font-size: 0.875rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -267,12 +326,18 @@
                 <!-- Two Column Layout for Emissions and Power -->
                 <div class="two-column">
                     <section class="calculator-section">
-                        <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
+                        <div class="table-header">
+                            <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
+                            <button class="expand-toggle" onclick="toggleTableExpansion('embodied-table')" id="embodied-toggle">&gt;&gt;</button>
+                        </div>
                         <table class="parameter-table" id="embodied-table"></table>
                     </section>
                     
                     <section class="calculator-section">
-                        <h2 class="section-title">Power Consumption (W)</h2>
+                        <div class="table-header">
+                            <h2 class="section-title">Power Consumption (W)</h2>
+                            <button class="expand-toggle" onclick="toggleTableExpansion('power-table')" id="power-toggle">&gt;&gt;</button>
+                        </div>
                         <table class="parameter-table" id="power-table"></table>
                     </section>
                 </div>
@@ -560,7 +625,7 @@
             return results;
         }
 
-        // Generate input tables
+        // Generate input tables with collapsible functionality
         function createInputTable(tableId, data, callback) {
             const table = document.getElementById(tableId);
             table.innerHTML = '';
@@ -587,14 +652,43 @@
             const remainingParams = Array.from(paramNames).sort();
             sortedParamNames.push(...remainingParams);
             
+            // Determine essential and additional columns based on table type
+            let essentialColumns = [];
+            let additionalColumns = [];
+            
+            if (tableId === 'embodied-table') {
+                essentialColumns = ['average'];
+                additionalColumns = sortedParamNames.filter(p => p !== 'average');
+            } else if (tableId === 'power-table') {
+                essentialColumns = ['average', 'standby'];
+                additionalColumns = sortedParamNames.filter(p => !essentialColumns.includes(p));
+            } else {
+                // For other tables, show all columns normally
+                essentialColumns = sortedParamNames;
+                additionalColumns = [];
+            }
+            
             // Create header
             const headerRow = document.createElement('tr');
             headerRow.appendChild(document.createElement('th')); // Empty cell for device names
-            sortedParamNames.forEach(param => {
+            
+            // Add essential column headers
+            essentialColumns.forEach(param => {
                 const th = document.createElement('th');
                 th.textContent = param;
                 headerRow.appendChild(th);
             });
+            
+            // Add additional column headers (hidden by default for collapsible tables)
+            additionalColumns.forEach(param => {
+                const th = document.createElement('th');
+                th.textContent = param;
+                if (tableId === 'embodied-table' || tableId === 'power-table') {
+                    th.className = 'additional-headers';
+                }
+                headerRow.appendChild(th);
+            });
+            
             table.appendChild(headerRow);
             
             // Create rows for each device
@@ -606,9 +700,26 @@
                 deviceCell.textContent = device;
                 row.appendChild(deviceCell);
                 
-                // Parameter cells
-                sortedParamNames.forEach(param => {
+                // Essential parameter cells
+                essentialColumns.forEach(param => {
                     const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = data[device][param] || 0;
+                    input.addEventListener('change', (e) => {
+                        data[device][param] = parseFloat(e.target.value) || 0;
+                        if (callback) callback();
+                    });
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                });
+                
+                // Additional parameter cells (hidden by default for collapsible tables)
+                additionalColumns.forEach(param => {
+                    const cell = document.createElement('td');
+                    if (tableId === 'embodied-table' || tableId === 'power-table') {
+                        cell.className = 'additional-columns';
+                    }
                     const input = document.createElement('input');
                     input.type = 'number';
                     input.value = data[device][param] || 0;
@@ -622,6 +733,29 @@
                 
                 table.appendChild(row);
             });
+        }
+
+        // Toggle table expansion
+        function toggleTableExpansion(tableId) {
+            const table = document.getElementById(tableId);
+            const toggle = document.getElementById(tableId.replace('-table', '-toggle'));
+            
+            const additionalHeaders = table.querySelectorAll('.additional-headers');
+            const additionalColumns = table.querySelectorAll('.additional-columns');
+            
+            const isExpanded = additionalHeaders.length > 0 && additionalHeaders[0].classList.contains('visible');
+            
+            if (isExpanded) {
+                // Collapse
+                additionalHeaders.forEach(el => el.classList.remove('visible'));
+                additionalColumns.forEach(el => el.classList.remove('visible'));
+                toggle.textContent = '>>';
+            } else {
+                // Expand
+                additionalHeaders.forEach(el => el.classList.add('visible'));
+                additionalColumns.forEach(el => el.classList.add('visible'));
+                toggle.textContent = '<<';
+            }
         }
 
         // Initialize all input tables
