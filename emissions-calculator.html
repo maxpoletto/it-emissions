@@ -417,13 +417,14 @@
     </main>
 
     <script>
-        // Global variables
+        // Globals
         let stochastic = false;
         let devices = {};
         let emissionsIntensity = {};
         let cloudInstances = 0;
         let llmQueries = null;
-        let chart = null;
+        let deviceChart = null;
+        let llmChart = null;
 
         const people = {
             'uzh population': {
@@ -579,6 +580,8 @@
         };
 
         const dutyCycle6h = {
+            // Fraction of time active during 0:00-5:59, 6:00-11:59, 12:00-17:59, 18:00-23:59.
+            // Just a guess, but probably not unreasonable.
             'laptops': [0.1, 0.5, 1.0, 0.3],
             'desktops': [0.1, 0.5, 1.0, 0.3],
             'servers': [0.8, 0.8, 0.8, 0.8],
@@ -588,7 +591,7 @@
             'printers': [0.0, 0.0, 0.01, 0.0],
         };
 
-        // Emissions class
+        // Per-country emissions intensity (g CO2e / kWh). Only CH for now.
         class Emissions {
             static gco2PerKwhByHours = {
                 'ch': [63, 58, 58, 52, 49, 47, 45, 45, 49, 54, 62, 63]
@@ -604,20 +607,22 @@
             }
         }
 
-        // Utility functions
+        // Returns a list of n values from a truncated normal distribution.
+        // If stochastic is false, returns a list of n values all equal to mu.
         function truncatedNormal(mu, sigma, minValue, maxValue, n) {
             if (n === 0) return [];
             if (!stochastic) return Array(n).fill(mu);
-            
+
             const results = [];
+            let value;
             for (let i = 0; i < n; i++) {
-                let value;
                 do {
                     // Box-Muller transform for normal distribution
-                    const u1 = Math.random();
-                    const u2 = Math.random();
-                    const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-                    value = mu + sigma * z0;
+                    // https://stackoverflow.com/questions/25582882/javascript-math-random-normal-distribution-gaussian-bell-curve
+                    const u = 1 - Math.random(); // Tranform [0, 1) to (0, 1] to not break Math.log.
+                    const v = Math.random();
+                    const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+                    value = mu + sigma * z;
                 } while (value < minValue || value > maxValue);
                 results.push(Math.floor(value));
             }
@@ -714,7 +719,6 @@
             });
         }
 
-        // Toggle table expansion
         function toggleTableExpansion(tableId) {
             const table = document.getElementById(tableId);
             const toggle = document.getElementById(tableId.replace('-table', '-toggle'));
@@ -737,7 +741,6 @@
             }
         }
 
-        // Initialize all input tables
         function initializeTables() {
             createCollapsibleTable('device-table', deviceInfo, ["count", "lifetime"], ["count", "lifetime"], updateDevices);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ["mean", "stdev", "min", "max"], ["mean"], updateDevices);
@@ -775,9 +778,9 @@
                     powerW[device]['mean'], powerW[device]['stdev'], 
                     powerW[device]['min'], powerW[device]['max'], n
                 );
-                
+
                 devices[device]['standby_w'] = Array(n).fill(powerW[device]['standby']);
-                
+
                 // Compute emissions intensity
                 const dutyCycle = dutyCycle6h[device];
                 const r = Math.floor(24 / dutyCycle.length);
@@ -809,19 +812,19 @@
 
         // Calculate cloud emissions
         function cloudEmissionsKgCO2e() {
-            const u = cloudInstances * compute['Cloud instances per 100 local servers'] * 
+            const u = cloudInstances * compute['Cloud instances per 100 local servers'] / 100 *
                      compute['Cloud instance usage kg CO2e/y'] * compute['Cloud PUE (x100)'] / 100;
-            const m = cloudInstances * compute['Cloud instances per 100 local servers'] * 
+            const m = cloudInstances * compute['Cloud instances per 100 local servers'] / 100 *
                      compute['Cloud instance embodied kg CO2e/y'];
             return [u, m];
         }
 
         // Calculate LLM emissions
         function llmEmissionsKgCO2e() {
-            const i = llms['Emissions intensity g CO2e / kWh'];
+            const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
             const nqueries = llms['Mean daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
             // Divide by 1000 to convert Wh to kWh and by 100 again to convert g CO2e to kg CO2e.
-            const u = nqueries * 365 * llms['Mean query Wh'] * i / (1000 * 1000);
+            const u = nqueries * 365 * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
             const m = u * llms['Training overhead %'] / 100;
             return [u, m];
         }
@@ -835,35 +838,29 @@
             const usageGrowth = llms['Annual usage growth %'] / 100;
             const efficiencyGrowth = llms['Annual efficiency growth %'] / 100;
             
+            let usage = baseUsage;
+            let energyPerQuery = baseEnergyPerQuery;
             const projection = [];
-            
             for (let year = 0; year < 5; year++) {
-                // Usage grows each year
-                const usageFactor = Math.pow(1 + usageGrowth, year);
-                // Efficiency improves each year (reduces energy consumption)
-                const efficiencyFactor = Math.pow(1 - efficiencyGrowth, year);
-                
-                const adjustedUsage = baseUsage * usageFactor;
-                const adjustedEnergyPerQuery = baseEnergyPerQuery * efficiencyFactor;
-                
-                // Calculate usage emissions
-                const usageEmissions = adjustedUsage * 365 * adjustedEnergyPerQuery * emissionsIntensity / (1000 * 1000);
-                // Calculate embodied emissions (training overhead)
+                const usageEmissions = usage * 365 * energyPerQuery * emissionsIntensity / (1000 * 1000);
                 const embodiedEmissions = usageEmissions * trainingOverhead;
+                const totalEmissions = usageEmissions + embodiedEmissions;
                 
                 projection.push({
                     year: new Date().getFullYear() + year,
                     usage: usageEmissions,
                     embodied: embodiedEmissions,
-                    total: usageEmissions + embodiedEmissions
+                    total: totalEmissions
                 });
+
+                usage *= 1 + usageGrowth;
+                energyPerQuery *= 1 - efficiencyGrowth;
             }
             
             return projection;
         }
 
-        // Update results display
-        function refreshOutput() {
+        function updateData() {
             let total = 0;
             const data = [];
             
@@ -911,8 +908,10 @@
                 embodied: null,
                 usage: total
             });
-            
-            // Update table
+            return data;
+        }
+
+        function refreshTable(data) {
             const tbody = document.getElementById('results-tbody');
             tbody.innerHTML = '';
             data.forEach(row => {
@@ -924,24 +923,21 @@
                 `;
                 tbody.appendChild(tr);
             });
-            
-            // Update chart
-            updateChart(data.slice(0, -1)); // Exclude total row
         }
 
-        // Update chart
-        function updateChart(data) {
+        // Update device chart
+        function refreshDeviceChart(data) {
             const ctx = document.getElementById('emissions-chart').getContext('2d');
             
-            if (chart) {
-                chart.destroy();
+            if (deviceChart) {
+                deviceChart.destroy();
             }
-            
+
             const labels = data.map(d => d.category);
             const embodiedData = data.map(d => d.embodied || 0);
             const usageData = data.map(d => d.usage || 0);
-            
-            chart = new Chart(ctx, {
+
+            deviceChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -995,11 +991,7 @@
             });
         }
 
-        // Global variable for LLM projection chart
-        let llmChart = null;
-
-        // Update LLM projection chart
-        function updateLLMProjectionChart() {
+        function refreshLLMChart() {
             const ctx = document.getElementById('llm-projection-chart').getContext('2d');
             
             if (llmChart) {
@@ -1065,29 +1057,31 @@
             });
         }
 
-        // Main update function
+        function refreshOutput() {
+            let data = updateData();
+            refreshTable(data);
+            refreshDeviceChart(data.slice(0, -1)); // Exclude total row
+            refreshLLMChart();
+        }
+
         function updateDevices() {
             generateDevices();
             refreshOutput();
-            updateLLMProjectionChart();
         }
 
-        // Initialize the application
+        // Entry point.
         document.addEventListener('DOMContentLoaded', function() {
             initializeTables();
             populationText();
             
-            // Read initial checkbox state before first calculation
+            // Simulation mode (deterministic by default)
             stochastic = document.getElementById('stocastic-checkbox').checked;
-            
-            // Set up stochastic checkbox
             document.getElementById('stocastic-checkbox').addEventListener('change', function(e) {
                 stochastic = e.target.checked;
             });
             
-            // Initial calculation
             updateDevices();
         });
     </script>
 </body>
-</html> 
+</html>
