@@ -38,14 +38,14 @@
             border-radius: 0.5rem;
             background: rgba(var(--c-white), 1);
         }
-        
+
         @media(max-width: 700px) {
             .calculator-section {
                 margin-bottom: 2rem;
                 padding: 1rem;
             }
         }
-        
+
         .section-title {
             font-size: 1.125rem;
             line-height: 1.4;
@@ -53,19 +53,19 @@
             color: rgba(var(--c-black), 1);
             margin-bottom: 1rem;
         }
-        
+
         @media(max-width: 700px) {
             .section-title {
                 font-size: 1rem;
             }
         }
-        
+
         .parameter-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 1rem;
         }
-        
+
         .parameter-table th,
         .parameter-table td {
             border: 1px solid rgba(var(--c-grey), 0.2);
@@ -88,7 +88,7 @@
             line-height: 1.4;
             color: rgba(var(--c-black), 1);
         }
-        
+
         .parameter-table td:first-child {
             text-align: left;
             font-weight: 600;
@@ -114,12 +114,12 @@
             border-radius: 0.25rem;
             transition: background-color 0.2s;
         }
-        
+
         .parameter-table input:focus {
             background-color: rgba(var(--c-blue-light), 1);
             outline: none;
         }
-        
+
         .controls {
             display: flex;
             gap: 1rem;
@@ -129,7 +129,7 @@
             background-color: rgba(var(--c-grey-light), 1);
             border-radius: 0.5rem;
         }
-        
+
         .controls label {
             display: flex;
             align-items: center;
@@ -139,22 +139,22 @@
             font-weight: 400;
             color: rgba(var(--c-text-grey), 1);
         }
-        
+
         .controls input[type="checkbox"] {
             width: 1rem;
             height: 1rem;
         }
-        
+
         .results-section {
             margin-top: 1rem;
         }
-        
+
         .results-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 2rem;
         }
-        
+
         .results-table th,
         .results-table td {
             border: 1px solid rgba(var(--c-grey), 0.2);
@@ -175,17 +175,17 @@
             font-weight: 600;
             color: rgba(var(--c-black), 1);
         }
-        
+
         .results-table td {
             color: rgba(var(--c-text-grey), 1);
         }
-        
+
         .results-table tr:last-child td {
             font-weight: 600;
             color: rgba(var(--c-black), 1);
             background-color: rgba(var(--c-blue), 0.05);
         }
-        
+
         .chart-container {
             width: 100%;
             height: 400px;
@@ -196,14 +196,14 @@
             border: 1px solid rgba(var(--c-grey), 0.2);
             border-radius: 0.5rem;
         }
-        
+
         @media(max-width: 700px) {
             .chart-container {
                 height: 300px;
                 padding: 1rem;
             }
         }
-        
+
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -214,14 +214,14 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 1.5rem;
         }
-        
+
         @media(max-width: 900px) {
             .two-column {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
         }
-        
+
         /* Use site's button styles */
         .rerun-btn {
             background-color: rgba(var(--c-blue), 1);
@@ -235,17 +235,17 @@
             font-weight: 400;
             transition: background-color 0.2s ease-in-out;
         }
-        
+
         .rerun-btn:hover {
             background-color: rgba(var(--c-blue), 0.8);
         }
-        
+
         @media(max-width: 700px) {
             .rerun-btn {
                 font-size: 0.75rem;
             }
         }
-        
+
         /* Header with logo styling */
         .header-with-logo {
             position: relative;
@@ -253,13 +253,13 @@
             align-items: center;
             margin-bottom: 2rem;
         }
-        
+
         .uzh-logo {
             height: 4rem;
             width: auto;
             flex-shrink: 0;
         }
-        
+
         .header-title {
             flex: 1;
             text-align: center;
@@ -269,20 +269,20 @@
             margin: 0;
             color: rgba(var(--c-black), 1);
         }
-        
+
         @media(max-width: 700px) {
             .header-with-logo {
             }
-            
+
             .uzh-logo {
                 height: 3rem;
             }
-            
+
             .header-title {
                 font-size: 1.5rem;
             }
         }
-        
+
         /* Collapsible table functionality */
         .table-header {
             display: flex;
@@ -290,7 +290,7 @@
             justify-content: space-between;
             margin-bottom: 1rem;
         }
-        
+
         .expand-toggle {
             background: none;
             border: none;
@@ -302,31 +302,31 @@
             transition: background-color 0.2s;
             user-select: none;
         }
-        
+
         .expand-toggle:hover {
             background-color: rgba(var(--c-blue), 0.1);
         }
-        
+
         .expand-toggle:focus {
             outline: 2px solid rgba(var(--c-blue), 0.5);
         }
-        
+
         .additional-columns {
             display: none;
         }
-        
+
         .additional-columns.visible {
             display: table-cell;
         }
-        
+
         .additional-headers {
             display: none;
         }
-        
+
         .additional-headers.visible {
             display: table-cell;
         }
-        
+
         @media(max-width: 700px) {
             .expand-toggle {
                 font-size: 0.875rem;
@@ -344,7 +344,7 @@
                     <h1 class="t-text-h1 header-title">IT Emissions Calculator</h1>
                 </div>
             </div>
-            
+
             <!-- Main Content Area -->
             <div class="l-SiteWidth">
                 <div class="intro-text">
@@ -372,7 +372,7 @@
                         </div>
                         <table class="parameter-table" id="embodied-table"></table>
                     </section>
-                    
+
                     <section class="calculator-section">
                         <div class="table-header">
                             <h2 class="section-title">Power Consumption (W)</h2>
@@ -388,7 +388,7 @@
                         <h2 class="section-title">Compute Parameters</h2>
                         <table class="parameter-table" id="compute-table"></table>
                     </section>
-                    
+
                     <section class="calculator-section">
                         <h2 class="section-title">LLM Parameters</h2>
                         <table class="parameter-table" id="llm-table"></table>
@@ -398,12 +398,12 @@
                 <!-- Controls -->
                 <div class="controls">
                     <label>
-                        <input type="checkbox" id="stocastic-checkbox"> 
+                        <input type="checkbox" id="stocastic-checkbox">
                         <span>Stochastic</span>
                     </label>
                     <button class="rerun-btn" onclick="updateDevices()">Rerun Calculation</button>
                 </div>
-                
+
                 <!-- Results Section -->
                 <h2 class="section-title">Results</h2>
                 <div class="two-column">
@@ -451,19 +451,19 @@
         };
 
         const deviceInfo = {
-            'Laptops': { 
+            'Laptops': {
                 'Lifetime': 4,
                 'Count': 32000,
             },
-            'Desktops': { 
+            'Desktops': {
                 'Lifetime': 6,
                 'Count': 150,
             },
-            'Servers': { 
+            'Servers': {
                 'Lifetime': 5,
                 'Count': 1028,
             },
-            'Smartphones': { 
+            'Smartphones': {
                 'Lifetime': 3,
                 'Count': 32000,
             },
@@ -471,11 +471,11 @@
                 'Lifetime': 6,
                 'Count': 360,
             },
-            'Monitors': { 
+            'Monitors': {
                 'Lifetime': 6,
                 'Count': 10325,
             },
-            'Printers': { 
+            'Printers': {
                 'Lifetime': 6,
                 'Count': 1000,
             },
@@ -659,7 +659,7 @@
                     }
                 });
             });
-            
+
             // Headers for all_params, but only display default_display_params
             const headerRow = document.createElement('tr');
             headerRow.appendChild(document.createElement('th')); // Empty cell for row
@@ -672,16 +672,16 @@
                 }
             });
             table.appendChild(headerRow);
-            
+
             // Create rows
             Object.keys(data).forEach(key => {
                 const row = document.createElement('tr');
-                
+
                 // Row name cell
                 const deviceCell = document.createElement('td');
                 deviceCell.textContent = key;
                 row.appendChild(deviceCell);
-                
+
                 all_params.forEach(param => {
                     const cell = document.createElement('td');
                     if (!default_display_params.includes(param)) {
@@ -705,21 +705,21 @@
         function createKeyValueTable(tableId, data, callback) {
             const table = document.getElementById(tableId);
             table.innerHTML = '';
-            
+
             // Create header
             const headerRow = document.createElement('tr');
             headerRow.innerHTML = '<th>Parameter</th><th>Value</th>';
             table.appendChild(headerRow);
-            
+
             // Create rows for each parameter
             Object.keys(data).forEach(paramKey => {
                 const row = document.createElement('tr');
-                
+
                 // Parameter name cell
                 const keyCell = document.createElement('td');
                 keyCell.textContent = paramKey;
                 row.appendChild(keyCell);
-                
+
                 // Value input cell
                 const valueCell = document.createElement('td');
                 const input = document.createElement('input');
@@ -731,7 +731,7 @@
                 });
                 valueCell.appendChild(input);
                 row.appendChild(valueCell);
-                
+
                 table.appendChild(row);
             });
         }
@@ -739,12 +739,12 @@
         function toggleTableExpansion(tableId) {
             const table = document.getElementById(tableId);
             const toggle = document.getElementById(tableId.replace('-table', '-toggle'));
-            
+
             const additionalHeaders = table.querySelectorAll('.additional-headers');
             const additionalColumns = table.querySelectorAll('.additional-columns');
-            
+
             const isExpanded = additionalHeaders.length > 0 && additionalHeaders[0].classList.contains('visible');
-            
+
             if (isExpanded) {
                 // Collapse
                 additionalHeaders.forEach(el => el.classList.remove('visible'));
@@ -776,23 +776,23 @@
         function generateDevices() {
             devices = {};
             emissionsIntensity = {};
-            
+
             Object.keys(deviceInfo).forEach(device => {
                 devices[device] = {};
-                
+
                 let n = deviceInfo[device]['Count'];
                 if (device === 'Servers') {
                     cloudInstances = Math.floor(compute['Cloud % servers in cloud'] * n / 100);
                     n -= cloudInstances;
                 }
-                
+
                 const stats = embodiedEmissionsKgCo2e[device];
                 devices[device]['annual_embodied_emissions'] = truncatedNormal(
                     stats['Mean'], stats['Stdev'], stats['Min'], stats['Max'], n
                 ).map(x => x / deviceInfo[device]['Lifetime']);
-                
+
                 devices[device]['power_w'] = truncatedNormal(
-                    powerW[device]['Mean'], powerW[device]['Stdev'], 
+                    powerW[device]['Mean'], powerW[device]['Stdev'],
                     powerW[device]['Min'], powerW[device]['Max'], n
                 );
 
@@ -854,7 +854,7 @@
             const trainingOverhead = llms['Training overhead %'] / 100;
             const usageGrowth = llms['Annual usage growth %'] / 100;
             const efficiencyGrowth = llms['Annual efficiency growth %'] / 100;
-            
+
             let usage = baseUsage;
             let energyPerQuery = baseEnergyPerQuery;
             const projection = [];
@@ -862,7 +862,7 @@
                 const usageEmissions = usage * 365 * energyPerQuery * emissionsIntensity / (1000 * 1000);
                 const embodiedEmissions = usageEmissions * trainingOverhead;
                 const totalEmissions = usageEmissions + embodiedEmissions;
-                
+
                 projection.push({
                     year: new Date().getFullYear() + year,
                     usage: usageEmissions,
@@ -873,14 +873,14 @@
                 usage *= 1 + usageGrowth;
                 energyPerQuery *= 1 - efficiencyGrowth;
             }
-            
+
             return projection;
         }
 
         function updateData() {
             let total = 0;
             const data = [];
-            
+
             // Device emissions
             Object.keys(deviceInfo).forEach(device => {
                 const [u, m] = deviceEmissionsKgCO2e(device);
@@ -891,7 +891,7 @@
                     usage: u
                 });
             });
-            
+
             // DC cooling
             const dcCoolingU = dataCenterCoolingEmissionsKgCO2e();
             data.push({
@@ -900,7 +900,7 @@
                 usage: dcCoolingU
             });
             total += dcCoolingU;
-            
+
             // Cloud
             const [cloudU, cloudM] = cloudEmissionsKgCO2e();
             data.push({
@@ -909,7 +909,7 @@
                 usage: cloudU
             });
             total += cloudU + cloudM;
-            
+
             // LLM
             const [llmU, llmM] = llmEmissionsKgCO2e();
             data.push({
@@ -918,7 +918,7 @@
                 usage: llmU
             });
             total += llmU + llmM;
-            
+
             // Total
             data.push({
                 category: 'Total',
@@ -945,7 +945,7 @@
         // Update device chart
         function refreshDeviceChart(data) {
             const ctx = document.getElementById('emissions-chart').getContext('2d');
-            
+
             if (deviceChart) {
                 deviceChart.destroy();
             }
@@ -1010,16 +1010,16 @@
 
         function refreshLLMChart() {
             const ctx = document.getElementById('llm-projection-chart').getContext('2d');
-            
+
             if (llmChart) {
                 llmChart.destroy();
             }
-            
+
             const projectionData = llmEmissionsProjection();
             const labels = projectionData.map(d => d.year.toString());
             const embodiedData = projectionData.map(d => Math.round(d.embodied));
             const usageData = projectionData.map(d => Math.round(d.usage));
-            
+
             llmChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1090,13 +1090,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeTables();
             populationText();
-            
+
             // Simulation mode (deterministic by default)
             stochastic = document.getElementById('stocastic-checkbox').checked;
             document.getElementById('stocastic-checkbox').addEventListener('change', function(e) {
                 stochastic = e.target.checked;
             });
-            
+
             updateDevices();
         });
     </script>
