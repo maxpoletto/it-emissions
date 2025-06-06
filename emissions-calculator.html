@@ -746,6 +746,50 @@
             });
         }
 
+        // Create key-value input table for simple parameter sets
+        function createKeyValueTable(tableId, data, callback) {
+            const table = document.getElementById(tableId);
+            table.innerHTML = '';
+            
+            // Create header
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th>Parameter</th><th>Value</th>';
+            table.appendChild(headerRow);
+            
+            // For nested data structures like cloudData['cloud'], extract the inner object
+            let params = data;
+            if (Object.keys(data).length === 1) {
+                const firstKey = Object.keys(data)[0];
+                if (typeof data[firstKey] === 'object' && !Array.isArray(data[firstKey])) {
+                    params = data[firstKey];
+                }
+            }
+            
+            // Create rows for each parameter
+            Object.keys(params).forEach(paramKey => {
+                const row = document.createElement('tr');
+                
+                // Parameter name cell
+                const keyCell = document.createElement('td');
+                keyCell.textContent = paramKey;
+                row.appendChild(keyCell);
+                
+                // Value input cell
+                const valueCell = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.value = params[paramKey];
+                input.addEventListener('change', (e) => {
+                    params[paramKey] = parseFloat(e.target.value) || 0;
+                    if (callback) callback();
+                });
+                valueCell.appendChild(input);
+                row.appendChild(valueCell);
+                
+                table.appendChild(row);
+            });
+        }
+
         // Toggle table expansion
         function toggleTableExpansion(tableId) {
             const table = document.getElementById(tableId);
@@ -774,10 +818,10 @@
             createInputTable('embodied-table', embodiedEmissionsKgCo2e, updateDevices);
             createInputTable('power-table', powerW, updateDevices);
             createInputTable('device-table', deviceInfo, updateDevices);
-            createInputTable('datacenter-table', dataCenter, updateDevices);
-            createInputTable('cloud-table', cloudData, updateDevices);
+            createKeyValueTable('datacenter-table', dataCenter, updateDevices);
+            createKeyValueTable('cloud-table', cloudData, updateDevices);
             createInputTable('llm-usage-table', llmUsage, updateDevices);
-            createInputTable('llm-power-table', llmPower, updateDevices);
+            createKeyValueTable('llm-power-table', llmPower, updateDevices);
         }
 
         // Generate device instances
