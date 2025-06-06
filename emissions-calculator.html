@@ -323,11 +323,11 @@
             <!-- Main Content Area -->
             <div class="l-SiteWidth">
                 
-                <!-- Three column layout for Device Information, Embodied Emissions, and Power Consumption -->
+                <!-- Three column layout for Device Population, Embodied Emissions, and Power Consumption -->
                 <div class="three-column">
                     <section class="calculator-section">
                         <div class="table-header">
-                            <h2 class="section-title">Device Information</h2>
+                            <h2 class="section-title">Device Population</h2>
                         </div>
                         <table class="parameter-table" id="device-table"></table>
                    </section>
@@ -562,9 +562,9 @@
         const cloudData = {
             'cloud': {
                 '% servers in cloud': 0,
-                'cloud srv/local srv': 1,
-                'embod. kgCO2e/y': 97,
-                'usage kgCO2e/y': 31,
+                'cloud server/local server': 1,
+                'embodied kg CO2e/y': 97,
+                'usage kg CO2e/y': 31,
                 'PUE x100': 110,
             }
         };
@@ -640,7 +640,11 @@
             // Get all unique parameter names
             const paramNames = new Set();
             Object.values(data).forEach(item => {
-                Object.keys(item).forEach(param => paramNames.add(param));
+                console.log("item", item);
+                Object.keys(item).forEach(param => {
+                    console.log("param", param);
+                    paramNames.add(param);
+                });
             });
             
             // Define preferred order for specific parameters
@@ -830,10 +834,10 @@
 
         // Calculate cloud emissions
         function cloudEmissionsKgco2e() {
-            const u = cloudInstances * cloudData['cloud']['cloud srv/local srv'] * 
-                     cloudData['cloud']['usage kgCO2e/y'] * cloudData['cloud']['PUE x100'] / 100;
-            const m = cloudInstances * cloudData['cloud']['cloud srv/local srv'] * 
-                     cloudData['cloud']['embod. kgCO2e/y'];
+            const u = cloudInstances * cloudData['cloud']['cloud server/local server'] * 
+                     cloudData['cloud']['usage kg CO2e/y'] * cloudData['cloud']['PUE x100'] / 100;
+            const m = cloudInstances * cloudData['cloud']['cloud server/local server'] * 
+                     cloudData['cloud']['embodied kg CO2e/y'];
             return [u, m];
         }
 
@@ -932,7 +936,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Embodied (kg CO2e)',
+                        label: 'Embodied (kg CO2e/y)',
                         data: embodiedData,
                         backgroundColor: 'rgba(0, 40, 165, 0.8)',
                         borderColor: 'rgba(0, 40, 165, 1)',
