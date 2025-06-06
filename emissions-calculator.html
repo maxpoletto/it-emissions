@@ -7,14 +7,21 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Override and extend existing styles for calculator-specific needs */
         .emissions-calculator {
-            padding-left: var(--page-margin);
-            padding-right: var(--page-margin);
-            margin-top: 2.5rem;
-            margin-bottom: 2.5rem;
+            max-width: none !important;
+            width: 95vw !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 5vw !important;
+            padding-right: 5vw !important;
         }
-        
+        .emissions-calculator .l-SiteWidth {
+            max-width: none !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
         @media(max-width: 700px) {
             .emissions-calculator {
                 margin-top: 2rem;
