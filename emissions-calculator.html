@@ -28,7 +28,9 @@
                 margin-bottom: 2rem;
             }
         }
-        
+        .intro-text {
+            margin-bottom: 2rem;
+        }
         .calculator-section {
             margin-bottom: 2.5rem;
             padding: 1.5rem;
@@ -329,7 +331,15 @@
             
             <!-- Main Content Area -->
             <div class="l-SiteWidth">
-                
+                <div class="intro-text">
+                    <p>
+                        This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
+                    </p>
+                    <p>
+                        For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
+                    </p>
+                    <p id="population-text"></p>
+                </div>
                 <!-- Three column layout for Device Population, Embodied Emissions, and Power Consumption -->
                 <div class="three-column">
                     <section class="calculator-section">
@@ -411,7 +421,6 @@
         let llmQueries = null;
         let chart = null;
 
-        // Data structures (converted from Python)
         const people = {
             'uzh population': {
                 'students': 28000,
@@ -557,8 +566,8 @@
         };
 
         const llms = {
-            'mean daily user queries': 15,
-            'mean query Wh': 3.5,
+            'Mean daily user queries': 15,
+            'Mean query Wh': 3.5,
             'Emissions intensity g CO2e / kWh': 226,
             'Training overhead %': 40,
         };
@@ -731,6 +740,12 @@
             createKeyValueTable('llm-table', llms, updateDevices);
         }
 
+        function populationText() {
+            const population = people['uzh population']['students'] + people['uzh population']['staff'];
+            document.getElementById('population-text').innerHTML = `
+                Assumes a total population of ${population} people (${people['uzh population']['students']} students, ${people['uzh population']['staff']} staff).`;
+        }
+
         // Generate device instances
         function generateDevices() {
             devices = {};
@@ -798,9 +813,9 @@
         // Calculate LLM emissions
         function llmEmissionsKgCO2e() {
             const i = llms['Emissions intensity g CO2e / kWh'];
-            const nqueries = llms['mean daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
+            const nqueries = llms['Mean daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
             // Divide by 1000 to convert Wh to kWh and by 100 again to convert g CO2e to kg CO2e.
-            const u = nqueries * 365 * llms['mean query Wh'] * i / (1000 * 1000);
+            const u = nqueries * 365 * llms['Mean query Wh'] * i / (1000 * 1000);
             const m = u * llms['Training overhead %'] / 100;
             return [u, m];
         }
@@ -947,6 +962,7 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeTables();
+            populationText();
             
             // Read initial checkbox state before first calculation
             stochastic = document.getElementById('stocastic-checkbox').checked;
