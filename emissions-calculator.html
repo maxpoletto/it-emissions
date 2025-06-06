@@ -632,121 +632,62 @@
             return results;
         }
 
-        // Generate input tables with collapsible functionality
-        function createInputTable(tableId, data, callback) {
+        // Generate multi-column collapsible input tables
+        function createCollapsibleTable(tableId, data, all_params, default_display_params, callback) {
             const table = document.getElementById(tableId);
             table.innerHTML = '';
-            
-            // Get all unique parameter names
-            const paramNames = new Set();
-            Object.values(data).forEach(item => {
-                console.log("item", item);
-                Object.keys(item).forEach(param => {
-                    console.log("param", param);
-                    paramNames.add(param);
+
+            // Check that each row of data contains all_params
+            Object.keys(data).forEach(key => {
+                all_params.forEach(param => {
+                    if (!data[key].hasOwnProperty(param)) {
+                        throw new Error(`Data does not contain parameter ${param}`);
+                    }
                 });
             });
             
-            // Define preferred order for specific parameters
-            const preferredOrder = ['average', 'stdev', 'lower_bound', 'upper_bound'];
-            const sortedParamNames = [];
-            
-            // Add preferred parameters first (in order)
-            preferredOrder.forEach(param => {
-                if (paramNames.has(param)) {
-                    sortedParamNames.push(param);
-                    paramNames.delete(param);
-                }
-            });
-            
-            // Add remaining parameters alphabetically
-            const remainingParams = Array.from(paramNames).sort();
-            sortedParamNames.push(...remainingParams);
-            
-            // Determine essential and additional columns based on table type
-            let essentialColumns = [];
-            let additionalColumns = [];
-            
-            if (tableId === 'embodied-table') {
-                essentialColumns = ['average'];
-                additionalColumns = sortedParamNames.filter(p => p !== 'average');
-            } else if (tableId === 'power-table') {
-                essentialColumns = ['average', 'standby'];
-                additionalColumns = sortedParamNames.filter(p => !essentialColumns.includes(p));
-            } else {
-                // For other tables, show all columns normally
-                essentialColumns = sortedParamNames;
-                additionalColumns = [];
-            }
-            
-            // Create header
+            // Headers for all_params, but only display default_display_params
             const headerRow = document.createElement('tr');
-            headerRow.appendChild(document.createElement('th')); // Empty cell for device names
-            
-            // Add essential column headers
-            essentialColumns.forEach(param => {
+            headerRow.appendChild(document.createElement('th')); // Empty cell for row
+            all_params.forEach(param => {
                 const th = document.createElement('th');
                 th.textContent = param;
                 headerRow.appendChild(th);
-            });
-            
-            // Add additional column headers (hidden by default for collapsible tables)
-            additionalColumns.forEach(param => {
-                const th = document.createElement('th');
-                th.textContent = param;
-                if (tableId === 'embodied-table' || tableId === 'power-table') {
+                if (!default_display_params.includes(param)) {
                     th.className = 'additional-headers';
                 }
-                headerRow.appendChild(th);
             });
-            
             table.appendChild(headerRow);
             
-            // Create rows for each device
-            Object.keys(data).forEach(device => {
+            // Create rows
+            Object.keys(data).forEach(key => {
                 const row = document.createElement('tr');
                 
-                // Device name cell
+                // Row name cell
                 const deviceCell = document.createElement('td');
-                deviceCell.textContent = device;
+                deviceCell.textContent = key;
                 row.appendChild(deviceCell);
                 
-                // Essential parameter cells
-                essentialColumns.forEach(param => {
+                all_params.forEach(param => {
                     const cell = document.createElement('td');
-                    const input = document.createElement('input');
-                    input.type = 'number';
-                    input.value = data[device][param] || 0;
-                    input.addEventListener('change', (e) => {
-                        data[device][param] = parseFloat(e.target.value) || 0;
-                        if (callback) callback();
-                    });
-                    cell.appendChild(input);
-                    row.appendChild(cell);
-                });
-                
-                // Additional parameter cells (hidden by default for collapsible tables)
-                additionalColumns.forEach(param => {
-                    const cell = document.createElement('td');
-                    if (tableId === 'embodied-table' || tableId === 'power-table') {
+                    if (!default_display_params.includes(param)) {
                         cell.className = 'additional-columns';
                     }
                     const input = document.createElement('input');
                     input.type = 'number';
-                    input.value = data[device][param] || 0;
+                    input.value = data[key][param] || 0;
                     input.addEventListener('change', (e) => {
-                        data[device][param] = parseFloat(e.target.value) || 0;
+                        data[key][param] = parseFloat(e.target.value) || 0;
                         if (callback) callback();
                     });
                     cell.appendChild(input);
                     row.appendChild(cell);
                 });
-                
                 table.appendChild(row);
             });
         }
 
-        // Create key-value input table for simple parameter sets
+        // Create key-value input tables
         function createKeyValueTable(tableId, data, callback) {
             const table = document.getElementById(tableId);
             table.innerHTML = '';
@@ -815,12 +756,12 @@
 
         // Initialize all input tables
         function initializeTables() {
-            createInputTable('embodied-table', embodiedEmissionsKgCo2e, updateDevices);
-            createInputTable('power-table', powerW, updateDevices);
-            createInputTable('device-table', deviceInfo, updateDevices);
+            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ["average", "stdev", "lower_bound", "upper_bound"], ["average"], updateDevices);
+            createCollapsibleTable('power-table', powerW, ["average", "stdev", "lower_bound", "upper_bound", "standby"], ["average", "standby"], updateDevices);
+            createCollapsibleTable('device-table', deviceInfo, ["count", "lifetime"], ["count", "lifetime"], updateDevices);
             createKeyValueTable('datacenter-table', dataCenter, updateDevices);
             createKeyValueTable('cloud-table', cloudData, updateDevices);
-            createInputTable('llm-usage-table', llmUsage, updateDevices);
+            createCollapsibleTable('llm-usage-table', llmUsage, ["average", "stdev", "lower_bound", "upper_bound"], ["average"], updateDevices);
             createKeyValueTable('llm-power-table', llmPower, updateDevices);
         }
 
