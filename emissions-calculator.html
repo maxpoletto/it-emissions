@@ -146,7 +146,7 @@
         }
         
         .results-section {
-            margin-top: 3rem;
+            margin-top: 1rem;
         }
         
         .results-table {
@@ -189,7 +189,8 @@
         .chart-container {
             width: 100%;
             height: 400px;
-            margin-top: 2rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
             padding: 1.5rem;
             background: rgba(var(--c-white), 1);
             border: 1px solid rgba(var(--c-grey), 0.2);
@@ -404,29 +405,30 @@
                 </div>
                 
                 <!-- Results Section -->
-                <section class="results-section">
-                    <h2 class="t-text-h2" style="margin-bottom: 1.5rem;">Results</h2>
-                    
-                    <table class="results-table" id="results-table">
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Embodied (kg CO2e)</th>
-                                <th>Usage (kg CO2e)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="results-tbody">
-                        </tbody>
-                    </table>
-                    
-                    <div class="chart-container">
-                        <canvas id="emissions-chart"></canvas>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="llm-projection-chart"></canvas>
-                    </div>
-                </section>
+                <h2 class="section-title">Results</h2>
+                <div class="two-column">
+                    <section class="results-section">
+                        <table class="results-table" id="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Embodied (kg CO2e)</th>
+                                    <th>Usage (kg CO2e)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-tbody">
+                            </tbody>
+                        </table>
+                    </section>
+                    <section class="results-section">
+                        <div class="chart-container">
+                            <canvas id="emissions-chart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="llm-projection-chart"></canvas>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     </main>
