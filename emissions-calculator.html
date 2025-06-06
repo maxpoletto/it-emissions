@@ -407,6 +407,10 @@
                     <div class="chart-container">
                         <canvas id="emissions-chart"></canvas>
                     </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="llm-projection-chart"></canvas>
+                    </div>
                 </section>
             </div>
         </div>
@@ -570,6 +574,8 @@
             'Mean query Wh': 3.5,
             'Emissions intensity g CO2e / kWh': 226,
             'Training overhead %': 40,
+            'Annual usage growth %': 20,
+            'Annual efficiency growth %': 30,
         };
 
         const dutyCycle6h = {
@@ -820,6 +826,42 @@
             return [u, m];
         }
 
+        // Calculate LLM emissions projection over 5 years
+        function llmEmissionsProjection() {
+            const baseUsage = llms['Mean daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
+            const baseEnergyPerQuery = llms['Mean query Wh'];
+            const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
+            const trainingOverhead = llms['Training overhead %'] / 100;
+            const usageGrowth = llms['Annual usage growth %'] / 100;
+            const efficiencyGrowth = llms['Annual efficiency growth %'] / 100;
+            
+            const projection = [];
+            
+            for (let year = 0; year < 5; year++) {
+                // Usage grows each year
+                const usageFactor = Math.pow(1 + usageGrowth, year);
+                // Efficiency improves each year (reduces energy consumption)
+                const efficiencyFactor = Math.pow(1 - efficiencyGrowth, year);
+                
+                const adjustedUsage = baseUsage * usageFactor;
+                const adjustedEnergyPerQuery = baseEnergyPerQuery * efficiencyFactor;
+                
+                // Calculate usage emissions
+                const usageEmissions = adjustedUsage * 365 * adjustedEnergyPerQuery * emissionsIntensity / (1000 * 1000);
+                // Calculate embodied emissions (training overhead)
+                const embodiedEmissions = usageEmissions * trainingOverhead;
+                
+                projection.push({
+                    year: new Date().getFullYear() + year,
+                    usage: usageEmissions,
+                    embodied: embodiedEmissions,
+                    total: usageEmissions + embodiedEmissions
+                });
+            }
+            
+            return projection;
+        }
+
         // Update results display
         function refreshOutput() {
             let total = 0;
@@ -953,10 +995,81 @@
             });
         }
 
+        // Global variable for LLM projection chart
+        let llmChart = null;
+
+        // Update LLM projection chart
+        function updateLLMProjectionChart() {
+            const ctx = document.getElementById('llm-projection-chart').getContext('2d');
+            
+            if (llmChart) {
+                llmChart.destroy();
+            }
+            
+            const projectionData = llmEmissionsProjection();
+            const labels = projectionData.map(d => d.year.toString());
+            const embodiedData = projectionData.map(d => Math.round(d.embodied));
+            const usageData = projectionData.map(d => Math.round(d.usage));
+            
+            llmChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Training/Embodied (kg CO2e/y)',
+                        data: embodiedData,
+                        backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Usage (kg CO2e/y)',
+                        data: usageData,
+                        backgroundColor: 'rgba(220, 53, 69, 0.5)',
+                        borderColor: 'rgba(220, 53, 69, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'LLM Emissions 5-Year Projection',
+                            font: {
+                                size: 16,
+                                weight: 600
+                            }
+                        },
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'kg CO2e/year'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         // Main update function
         function updateDevices() {
             generateDevices();
             refreshOutput();
+            updateLLMProjectionChart();
         }
 
         // Initialize the application
