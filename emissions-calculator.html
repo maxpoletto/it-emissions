@@ -70,14 +70,21 @@
         .parameter-table td {
             border: 1px solid rgba(var(--c-grey), 0.2);
             padding: 0.5rem;
-            text-align: center;
             vertical-align: middle;
         }
-        
+
+        .parameter-table th:first-child,
+        .parameter-table td:first-child {
+            text-align: left;
+        }
+        .parameter-table th:not(:first-child),
+        .parameter-table td:not(:first-child) {
+            text-align: right;
+        }
         .parameter-table th {
             background-color: rgba(var(--c-grey-light), 1);
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             line-height: 1.4;
             color: rgba(var(--c-black), 1);
         }
@@ -152,9 +159,17 @@
         .results-table td {
             border: 1px solid rgba(var(--c-grey), 0.2);
             padding: 0.75rem;
+        }
+
+        .results-table th:first-child,
+        .results-table td:first-child {
             text-align: left;
         }
-        
+        .results-table th:not(:first-child),
+        .results-table td:not(:first-child) {
+            text-align: right;
+        }
+
         .results-table th {
             background-color: rgba(var(--c-grey-light), 1);
             font-weight: 600;
@@ -434,130 +449,130 @@
         };
 
         const deviceInfo = {
-            'laptops': { 
-                'lifetime': 4,
-                'count': 32000,
+            'Laptops': { 
+                'Lifetime': 4,
+                'Count': 32000,
             },
-            'desktops': { 
-                'lifetime': 6,
-                'count': 150,
+            'Desktops': { 
+                'Lifetime': 6,
+                'Count': 150,
             },
-            'servers': { 
-                'lifetime': 5,
-                'count': 1028,
+            'Servers': { 
+                'Lifetime': 5,
+                'Count': 1028,
             },
-            'smartphones': { 
-                'lifetime': 3,
-                'count': 32000,
+            'Smartphones': { 
+                'Lifetime': 3,
+                'Count': 32000,
             },
-            'wall displays': {
-                'lifetime': 6,
-                'count': 360,
+            'Wall displays': {
+                'Lifetime': 6,
+                'Count': 360,
             },
-            'monitors': { 
-                'lifetime': 6,
-                'count': 10325,
+            'Monitors': { 
+                'Lifetime': 6,
+                'Count': 10325,
             },
-            'printers': { 
-                'lifetime': 6,
-                'count': 1000,
+            'Printers': { 
+                'Lifetime': 6,
+                'Count': 1000,
             },
         };
 
         const embodiedEmissionsKgCo2e = {
-            'laptops': {
-                'mean': 244,
-                'stdev': 128,
-                'min': 104,
-                'max': 372,
+            'Laptops': {
+                'Mean': 244,
+                'Stdev': 128,
+                'Min': 104,
+                'Max': 372,
             },
-            'desktops': {
-                'mean': 289,
-                'stdev': 80,
-                'min': 209,
-                'max': 403,
+            'Desktops': {
+                'Mean': 289,
+                'Stdev': 80,
+                'Min': 209,
+                'Max': 403,
             },
-            'servers': {
-                'mean': 1252,
-                'stdev': 330,
-                'min': 383,
-                'max': 1582,
+            'Servers': {
+                'Mean': 1252,
+                'Stdev': 330,
+                'Min': 383,
+                'Max': 1582,
             },
-            'smartphones': {
-                'mean': 50,
-                'stdev': 10,
-                'min': 30,
-                'max': 70,
+            'Smartphones': {
+                'Mean': 50,
+                'Stdev': 10,
+                'Min': 30,
+                'Max': 70,
             },
-            'monitors': {
-                'mean': 344,
-                'stdev': 50,
-                'min': 294,
-                'max': 394,
+            'Monitors': {
+                'Mean': 344,
+                'Stdev': 50,
+                'Min': 294,
+                'Max': 394,
             },
-            'wall displays': {
-                'mean': 753,
-                'stdev': 109,
-                'min': 644,
-                'max': 862,
+            'Wall displays': {
+                'Mean': 753,
+                'Stdev': 109,
+                'Min': 644,
+                'Max': 862,
             },
-            'printers': {
-                'mean': 1167,
-                'stdev': 200,
-                'min': 967,
-                'max': 1367,
+            'Printers': {
+                'Mean': 1167,
+                'Stdev': 200,
+                'Min': 967,
+                'Max': 1367,
             },
         };
 
         const powerW = {
-            'laptops': {
-                'mean': 30,
-                'stdev': 5,
-                'min': 20,
-                'max': 40,
-                'standby': 1,
+            'Laptops': {
+                'Mean': 30,
+                'Stdev': 5,
+                'Min': 20,
+                'Max': 40,
+                'Standby': 1,
             },
-            'desktops': {
-                'mean': 100,
-                'stdev': 20,
-                'min': 60,
-                'max': 200,
-                'standby': 1,
+            'Desktops': {
+                'Mean': 100,
+                'Stdev': 20,
+                'Min': 60,
+                'Max': 200,
+                'Standby': 1,
             },
-            'servers': {
-                'mean': 400,
-                'stdev': 100,
-                'min': 200,
-                'max': 600,
-                'standby': 1,
+            'Servers': {
+                'Mean': 400,
+                'Stdev': 100,
+                'Min': 200,
+                'Max': 600,
+                'Standby': 1,
             },
-            'smartphones': {
-                'mean': 5,
-                'stdev': 2,
-                'min': 3,
-                'max': 7,
-                'standby': 0,
+            'Smartphones': {
+                'Mean': 5,
+                'Stdev': 2,
+                'Min': 3,
+                'Max': 7,
+                'Standby': 0,
             },
-            'monitors': {
-                'mean': 50,
-                'stdev': 10,
-                'min': 30,
-                'max': 90,
-                'standby': 1,
+            'Monitors': {
+                'Mean': 50,
+                'Stdev': 10,
+                'Min': 30,
+                'Max': 90,
+                'Standby': 1,
             },
-            'wall displays': {
-                'mean': 250,
-                'stdev': 50,
-                'min': 150,
-                'max': 350,
-                'standby': 1,
+            'Wall displays': {
+                'Mean': 250,
+                'Stdev': 50,
+                'Min': 150,
+                'Max': 350,
+                'Standby': 1,
             },
-            'printers': {
-                'mean': 1000,
-                'stdev': 200,
-                'min': 600,
-                'max': 1400,
-                'standby': 90,
+            'Printers': {
+                'Mean': 1000,
+                'Stdev': 200,
+                'Min': 600,
+                'Max': 1400,
+                'Standby': 90,
             },
         };
 
@@ -582,13 +597,13 @@
         const dutyCycle6h = {
             // Fraction of time active during 0:00-5:59, 6:00-11:59, 12:00-17:59, 18:00-23:59.
             // Just a guess, but probably not unreasonable.
-            'laptops': [0.1, 0.5, 1.0, 0.3],
-            'desktops': [0.1, 0.5, 1.0, 0.3],
-            'servers': [0.8, 0.8, 0.8, 0.8],
-            'smartphones': [0.0, 0.0, 0.0, 0.5],
-            'monitors': [0.1, 0.5, 1.0, 0.3],
-            'wall displays': [0.0, 0.3, 0.6, 0.1],
-            'printers': [0.0, 0.0, 0.01, 0.0],
+            'Laptops': [0.1, 0.5, 1.0, 0.3],
+            'Desktops': [0.1, 0.5, 1.0, 0.3],
+            'Servers': [0.8, 0.8, 0.8, 0.8],
+            'Smartphones': [0.0, 0.0, 0.0, 0.5],
+            'Monitors': [0.1, 0.5, 1.0, 0.3],
+            'Wall displays': [0.0, 0.3, 0.6, 0.1],
+            'Printers': [0.0, 0.0, 0.01, 0.0],
         };
 
         // Per-country emissions intensity (g CO2e / kWh). Only CH for now.
@@ -742,9 +757,9 @@
         }
 
         function initializeTables() {
-            createCollapsibleTable('device-table', deviceInfo, ["count", "lifetime"], ["count", "lifetime"], updateDevices);
-            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ["mean", "stdev", "min", "max"], ["mean"], updateDevices);
-            createCollapsibleTable('power-table', powerW, ["mean", "stdev", "min", "max", "standby"], ["mean", "standby"], updateDevices);
+            createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime'], ['Count', 'Lifetime'], updateDevices);
+            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateDevices);
+            createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateDevices);
             createKeyValueTable('compute-table', compute, updateDevices);
             createKeyValueTable('llm-table', llms, updateDevices);
         }
@@ -763,23 +778,23 @@
             Object.keys(deviceInfo).forEach(device => {
                 devices[device] = {};
                 
-                let n = deviceInfo[device]['count'];
-                if (device === 'servers') {
+                let n = deviceInfo[device]['Count'];
+                if (device === 'Servers') {
                     cloudInstances = Math.floor(compute['Cloud % servers in cloud'] * n / 100);
                     n -= cloudInstances;
                 }
                 
                 const stats = embodiedEmissionsKgCo2e[device];
                 devices[device]['annual_embodied_emissions'] = truncatedNormal(
-                    stats['mean'], stats['stdev'], stats['min'], stats['max'], n
-                ).map(x => x / deviceInfo[device]['lifetime']);
+                    stats['Mean'], stats['Stdev'], stats['Min'], stats['Max'], n
+                ).map(x => x / deviceInfo[device]['Lifetime']);
                 
                 devices[device]['power_w'] = truncatedNormal(
-                    powerW[device]['mean'], powerW[device]['stdev'], 
-                    powerW[device]['min'], powerW[device]['max'], n
+                    powerW[device]['Mean'], powerW[device]['Stdev'], 
+                    powerW[device]['Min'], powerW[device]['Max'], n
                 );
 
-                devices[device]['standby_w'] = Array(n).fill(powerW[device]['standby']);
+                devices[device]['standby_w'] = Array(n).fill(powerW[device]['Standby']);
 
                 // Compute emissions intensity
                 const dutyCycle = dutyCycle6h[device];
@@ -805,7 +820,7 @@
 
         // Calculate data center cooling emissions
         function dataCenterCoolingEmissionsKgCO2e() {
-            const [serverU, _] = deviceEmissionsKgCO2e('servers');
+            const [serverU, _] = deviceEmissionsKgCO2e('Servers');
             const dcCoolingU = serverU * (compute['Campus data center PUE (x100)'] - 100) / 100;
             return dcCoolingU;
         }
