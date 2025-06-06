@@ -330,7 +330,7 @@
                             <h2 class="section-title">Device Population</h2>
                         </div>
                         <table class="parameter-table" id="device-table"></table>
-                   </section>
+                    </section>
 
                     <section class="calculator-section">
                         <div class="table-header">
@@ -348,33 +348,20 @@
                         <table class="parameter-table" id="power-table"></table>
                     </section>
                 </div>
-                
+
                 <!-- Two Column Layout for Data Center and Cloud -->
                 <div class="two-column">
                     <section class="calculator-section">
-                        <h2 class="section-title">Data Center Parameters</h2>
-                        <table class="parameter-table" id="datacenter-table"></table>
+                        <h2 class="section-title">Compute Parameters</h2>
+                        <table class="parameter-table" id="compute-table"></table>
                     </section>
                     
                     <section class="calculator-section">
-                        <h2 class="section-title">Cloud Parameters</h2>
-                        <table class="parameter-table" id="cloud-table"></table>
+                        <h2 class="section-title">LLM Parameters</h2>
+                        <table class="parameter-table" id="llm-table"></table>
                     </section>
                 </div>
-                
-                <!-- Two Column Layout for LLM Parameters -->
-                <div class="two-column">
-                    <section class="calculator-section">
-                        <h2 class="section-title">LLM Usage</h2>
-                        <table class="parameter-table" id="llm-usage-table"></table>
-                    </section>
-                    
-                    <section class="calculator-section">
-                        <h2 class="section-title">LLM Power</h2>
-                        <table class="parameter-table" id="llm-power-table"></table>
-                    </section>
-                </div>
-                
+
                 <!-- Controls -->
                 <div class="controls">
                     <label>
@@ -553,37 +540,20 @@
             },
         };
 
-        const dataCenter = {
-            'DC PUE': {
-                'Value x100': 200,
-            },
+        const compute = {
+            'Campus data center PUE (x100)': 200,
+            'Cloud PUE (x100)': 110,
+            'Cloud % servers in cloud': 0,
+            'Cloud instances per 100 local servers': 100,
+            'Cloud instance embodied kg CO2e/y': 97,
+            'Cloud instance usage kg CO2e/y': 31,
         };
 
-        const cloudData = {
-            'cloud': {
-                '% servers in cloud': 0,
-                'cloud server/local server': 1,
-                'embodied kg CO2e/y': 97,
-                'usage kg CO2e/y': 31,
-                'PUE x100': 110,
-            }
-        };
-
-        const llmUsage = {
-            'LLM daily user queries': {
-                'average': 15,
-                'stdev': 5,
-                'lower_bound': 0,
-                'upper_bound': 30,
-            },
-        };
-
-        const llmPower = {
-            'LLM power': {
-                'average query Wh': 3.5,
-                'emissions intensity g CO2e / kWh': 226,
-                'training ovhd %': 40,
-            },
+        const llms = {
+            'Average daily user queries': 15,
+            'Average query Wh': 3.5,
+            'Emissions intensity g CO2e / kWh': 226,
+            'Training overhead %': 40,
         };
 
         const dutyCycle6h = {
@@ -697,17 +667,8 @@
             headerRow.innerHTML = '<th>Parameter</th><th>Value</th>';
             table.appendChild(headerRow);
             
-            // For nested data structures like cloudData['cloud'], extract the inner object
-            let params = data;
-            if (Object.keys(data).length === 1) {
-                const firstKey = Object.keys(data)[0];
-                if (typeof data[firstKey] === 'object' && !Array.isArray(data[firstKey])) {
-                    params = data[firstKey];
-                }
-            }
-            
             // Create rows for each parameter
-            Object.keys(params).forEach(paramKey => {
+            Object.keys(data).forEach(paramKey => {
                 const row = document.createElement('tr');
                 
                 // Parameter name cell
@@ -719,9 +680,9 @@
                 const valueCell = document.createElement('td');
                 const input = document.createElement('input');
                 input.type = 'number';
-                input.value = params[paramKey];
+                input.value = data[paramKey];
                 input.addEventListener('change', (e) => {
-                    params[paramKey] = parseFloat(e.target.value) || 0;
+                    data[paramKey] = parseFloat(e.target.value) || 0;
                     if (callback) callback();
                 });
                 valueCell.appendChild(input);
@@ -756,13 +717,11 @@
 
         // Initialize all input tables
         function initializeTables() {
+            createCollapsibleTable('device-table', deviceInfo, ["count", "lifetime"], ["count", "lifetime"], updateDevices);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ["average", "stdev", "lower_bound", "upper_bound"], ["average"], updateDevices);
             createCollapsibleTable('power-table', powerW, ["average", "stdev", "lower_bound", "upper_bound", "standby"], ["average", "standby"], updateDevices);
-            createCollapsibleTable('device-table', deviceInfo, ["count", "lifetime"], ["count", "lifetime"], updateDevices);
-            createKeyValueTable('datacenter-table', dataCenter, updateDevices);
-            createKeyValueTable('cloud-table', cloudData, updateDevices);
-            createCollapsibleTable('llm-usage-table', llmUsage, ["average", "stdev", "lower_bound", "upper_bound"], ["average"], updateDevices);
-            createKeyValueTable('llm-power-table', llmPower, updateDevices);
+            createKeyValueTable('compute-table', compute, updateDevices);
+            createKeyValueTable('llm-table', llms, updateDevices);
         }
 
         // Generate device instances
@@ -775,7 +734,7 @@
                 
                 let n = deviceInfo[device]['count'];
                 if (device === 'servers') {
-                    cloudInstances = Math.floor(cloudData['cloud']['% servers in cloud'] * n / 100);
+                    cloudInstances = Math.floor(compute['Cloud % servers in cloud'] * n / 100);
                     n -= cloudInstances;
                 }
                 
@@ -802,14 +761,10 @@
                     emissionsIntensity[device].push(duty * emission);
                 }
             });
-            
-            const q = llmUsage['LLM daily user queries'];
-            const p = people['uzh population']['students'] + people['uzh population']['staff'];
-            llmQueries = truncatedNormal(q['average'], q['stdev'], q['lower_bound'], q['upper_bound'], p);
         }
 
         // Calculate device emissions
-        function deviceEmissionsKgco2e(device) {
+        function deviceEmissionsKgCO2e(device) {
             const intensitySum = emissionsIntensity[device].reduce((a, b) => a + b, 0);
             const powerSum = devices[device]['power_w'].reduce((a, b) => a + b, 0);
             const u = powerSum * intensitySum * 365 / (1000 * 1000);
@@ -817,22 +772,29 @@
             return [u, m];
         }
 
+        // Calculate data center cooling emissions
+        function dataCenterCoolingEmissionsKgCO2e() {
+            const [serverU, _] = deviceEmissionsKgCO2e('servers');
+            const dcCoolingU = serverU * (compute['Campus data center PUE (x100)'] - 100) / 100;
+            return dcCoolingU;
+        }
+
         // Calculate cloud emissions
-        function cloudEmissionsKgco2e() {
-            const u = cloudInstances * cloudData['cloud']['cloud server/local server'] * 
-                     cloudData['cloud']['usage kg CO2e/y'] * cloudData['cloud']['PUE x100'] / 100;
-            const m = cloudInstances * cloudData['cloud']['cloud server/local server'] * 
-                     cloudData['cloud']['embodied kg CO2e/y'];
+        function cloudEmissionsKgCO2e() {
+            const u = cloudInstances * compute['Cloud instances per 100 local servers'] * 
+                     compute['Cloud instance usage kg CO2e/y'] * compute['Cloud PUE (x100)'] / 100;
+            const m = cloudInstances * compute['Cloud instances per 100 local servers'] * 
+                     compute['Cloud instance embodied kg CO2e/y'];
             return [u, m];
         }
 
         // Calculate LLM emissions
-        function llmEmissionsKgco2e() {
-            const e = llmPower['LLM power']['average query Wh'];
-            const i = llmPower['LLM power']['emissions intensity g CO2e / kWh'];
-            const queriesSum = llmQueries.reduce((a, b) => a + b, 0);
-            const u = queriesSum * 365 * e * i / (1000 * 1000);
-            const m = u * llmPower['LLM power']['training ovhd %'] / 100;
+        function llmEmissionsKgCO2e() {
+            const i = llms['Emissions intensity g CO2e / kWh'];
+            const nqueries = llms['Average daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
+            // Divide by 1000 to convert Wh to kWh and by 100 again to convert g CO2e to kg CO2e.
+            const u = nqueries * 365 * llms['Average query Wh'] * i / (1000 * 1000);
+            const m = u * llms['Training overhead %'] / 100;
             return [u, m];
         }
 
@@ -843,7 +805,7 @@
             
             // Device emissions
             Object.keys(deviceInfo).forEach(device => {
-                const [u, m] = deviceEmissionsKgco2e(device);
+                const [u, m] = deviceEmissionsKgCO2e(device);
                 total += u + m;
                 data.push({
                     category: device,
@@ -853,8 +815,7 @@
             });
             
             // DC cooling
-            const [serverU] = deviceEmissionsKgco2e('servers');
-            const dcCoolingU = serverU * (dataCenter['DC PUE']['Value x100'] - 100) / 100;
+            const dcCoolingU = dataCenterCoolingEmissionsKgCO2e();
             data.push({
                 category: 'DC cooling',
                 embodied: null,
@@ -863,7 +824,7 @@
             total += dcCoolingU;
             
             // Cloud
-            const [cloudU, cloudM] = cloudEmissionsKgco2e();
+            const [cloudU, cloudM] = cloudEmissionsKgCO2e();
             data.push({
                 category: 'Cloud',
                 embodied: cloudM,
@@ -872,7 +833,7 @@
             total += cloudU + cloudM;
             
             // LLM
-            const [llmU, llmM] = llmEmissionsKgco2e();
+            const [llmU, llmM] = llmEmissionsKgCO2e();
             data.push({
                 category: 'LLM',
                 embodied: llmM,
