@@ -1086,9 +1086,8 @@
         }
 
         // Entry point.
-        document.addEventListener('DOMContentLoaded', function() {
+        window.onload = function() {
             initializeTables();
-
             // Simulation mode (deterministic by default)
             stochastic = document.getElementById('stochastic-checkbox').checked;
             document.getElementById('stochastic-checkbox').addEventListener('change', function(e) {
@@ -1096,7 +1095,7 @@
             });
 
             updateDevices();
-        });
+        };
     </script>
 </body>
 </html>
