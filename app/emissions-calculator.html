@@ -349,12 +349,14 @@
             <div class="l-SiteWidth">
                 <div class="intro-text">
                     <p>
-                        This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
+                        This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich. By default,
+                        it assumes a user population of 38,000 people (28,000 students, 10,000 staff).
                     </p>
+                    <p>
+                        The model should be generally applicable to other similar campuses. Edit any of the parameters below to explore different scenarios.</p>
                     <p>
                         For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
                     </p>
-                    <p id="population-text"></p>
                 </div>
                 <!-- Three column layout for Device Population, Embodied Emissions, and Power Consumption -->
                 <div class="three-column">
@@ -442,13 +444,6 @@
         let llmQueries = null;
         let deviceChart = null;
         let llmChart = null;
-
-        const people = {
-            'uzh population': {
-                'students': 28000,
-                'staff': 10000,
-            }
-        };
 
         const deviceInfo = {
             'Laptops': {
@@ -588,12 +583,14 @@
         };
 
         const llms = {
+            'User population': 38000,
             'Mean daily user queries': 15,
             'Mean query Wh': 3.5,
             'Emissions intensity g CO2e / kWh': 226,
             'Training overhead %': 40,
             'Annual usage growth %': 40,
             'Annual efficiency growth %': 30,
+            'Annual training growth %': 20,
         };
 
         const dutyCycle6h = {
@@ -766,12 +763,6 @@
             createKeyValueTable('llm-table', llms, updateDevices);
         }
 
-        function populationText() {
-            const population = people['uzh population']['students'] + people['uzh population']['staff'];
-            document.getElementById('population-text').innerHTML = `
-                Assumes a total population of ${population} people (${people['uzh population']['students']} students, ${people['uzh population']['staff']} staff).`;
-        }
-
         // Generate device instances
         function generateDevices() {
             devices = {};
@@ -839,7 +830,7 @@
         // Calculate LLM emissions
         function llmEmissionsKgCO2e() {
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
-            const nqueries = llms['Mean daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
+            const nqueries = llms['Mean daily user queries'] * llms['User population'];
             // Divide by 1000 to convert Wh to kWh and by 100 again to convert g CO2e to kg CO2e.
             const u = nqueries * 365 * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
             const m = u * llms['Training overhead %'] / 100;
@@ -848,19 +839,25 @@
 
         // Calculate LLM emissions projection over 5 years
         function llmEmissionsProjection() {
-            const baseUsage = llms['Mean daily user queries'] * (people['uzh population']['students'] + people['uzh population']['staff']);
+            const baseUsage = llms['Mean daily user queries'] * llms['User population'];
             const baseEnergyPerQuery = llms['Mean query Wh'];
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
             const trainingOverhead = llms['Training overhead %'] / 100;
             const usageGrowth = llms['Annual usage growth %'] / 100;
             const efficiencyGrowth = llms['Annual efficiency growth %'] / 100;
+            const trainingGrowth = llms['Annual training growth %'] / 100;
 
             let usage = baseUsage;
+            let embodiedEmissions = 0;
             let energyPerQuery = baseEnergyPerQuery;
             const projection = [];
             for (let year = 0; year < 5; year++) {
                 const usageEmissions = usage * 365 * energyPerQuery * emissionsIntensity / (1000 * 1000);
-                const embodiedEmissions = usageEmissions * trainingOverhead;
+                if (year === 0) {
+                    embodiedEmissions = usageEmissions * trainingOverhead;
+                } else {
+                    embodiedEmissions = embodiedEmissions * (1 + trainingGrowth);
+                }
                 const totalEmissions = usageEmissions + embodiedEmissions;
 
                 projection.push({
@@ -1091,7 +1088,6 @@
         // Entry point.
         document.addEventListener('DOMContentLoaded', function() {
             initializeTables();
-            populationText();
 
             // Simulation mode (deterministic by default)
             stochastic = document.getElementById('stochastic-checkbox').checked;
