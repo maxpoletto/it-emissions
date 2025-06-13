@@ -1,8 +1,15 @@
 DOC=it-emissions
-all: $(DOC).pdf
+
+.PHONY: all app clean
+
+all: $(DOC).pdf app
+
+app:
+	make -C app all
 
 clean:
-	rm -f *.aux *.bbl *.bcf *.blg *.dvi *.fdb_latexmk *.fls *.log *.out *.ps *.run.xml *.synctex.gz *.toc
+	make -C app clean
+	make -C doc clean
 
 $(DOC).pdf: $(DOC).tex ref.bib
 	@pdflatex $(DOC).tex
