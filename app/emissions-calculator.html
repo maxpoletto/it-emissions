@@ -382,7 +382,7 @@
                     </section>
                 </div>
 
-                <!-- Two Column Layout for Data Center and Cloud -->
+                <!-- Two Column Layout for Compute and LLMs -->
                 <div class="two-column">
                     <section class="calculator-section">
                         <h2 class="section-title">Compute Parameters</h2>
@@ -398,7 +398,7 @@
                 <!-- Controls -->
                 <div class="controls">
                     <label>
-                        <input type="checkbox" id="stocastic-checkbox">
+                        <input type="checkbox" id="stochastic-checkbox">
                         <span>Stochastic</span>
                     </label>
                     <button class="rerun-btn" onclick="updateDevices()">Rerun Calculation</button>
@@ -592,7 +592,7 @@
             'Mean query Wh': 3.5,
             'Emissions intensity g CO2e / kWh': 226,
             'Training overhead %': 40,
-            'Annual usage growth %': 20,
+            'Annual usage growth %': 40,
             'Annual efficiency growth %': 30,
         };
 
@@ -974,6 +974,7 @@
                 },
                 options: {
                     responsive: true,
+                    animation: false,
                     maintainAspectRatio: false,
                     plugins: {
                         title: {
@@ -1040,6 +1041,7 @@
                 },
                 options: {
                     responsive: true,
+                    animation: false,
                     maintainAspectRatio: false,
                     plugins: {
                         title: {
@@ -1092,8 +1094,8 @@
             populationText();
 
             // Simulation mode (deterministic by default)
-            stochastic = document.getElementById('stocastic-checkbox').checked;
-            document.getElementById('stocastic-checkbox').addEventListener('change', function(e) {
+            stochastic = document.getElementById('stochastic-checkbox').checked;
+            document.getElementById('stochastic-checkbox').addEventListener('change', function(e) {
                 stochastic = e.target.checked;
             });
 
