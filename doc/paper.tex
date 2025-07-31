@@ -9,7 +9,10 @@
 %\usepackage{helvet} % Helvetica font for sans-serif
 %\usepackage{courier} % Courier font for monospace
 \usepackage{hyperref}
-\usepackage[backend=biber,style=authoryear,autocite=inline]{biblatex}
+\hypersetup{
+    hidelinks
+}
+\usepackage[style=numeric]{biblatex}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{titling}
@@ -22,24 +25,299 @@
 
 \addbibresource{ref.bib}
 \title{Modeling the impact of IT- and AI-related emissions in a university setting.}
-\author{Massimiliano Poletto, Nils Handler}
+\author{Massimiliano Poletto\thanks{Independent consultant, max.poletto@gmail.com}, Nils Handler\thanks{University of Zürich, nils.handler@uzh.ch. Contact author.}}
 
 \begin{document}
 
 \maketitle
 
 \section{Abstract}
-Information technology (IT) plays major role in society and it has a non-negligible carbon footprint: for example, at the University of Zürich, it accounted for over $6\%$ of total emissions in 2024. At the same time, artificial intelligence (AI) applications, and especially large language models (LLMs), are being adopted at historically high rates. Their growth and relatively high energy requirements are expected to increase the share of global electricity consumption for data centers from $\approx 1\%$ in 2024 to $\approx 3\%$ by 2030. Therefore, an assessment of IT and AI emissions is a necessary component of any net-zero roadmap. As part of the University of Zürich's own net-zero efforts, we have attempted to quantify and break down the impact of IT and AI on the university's carbon footprint. In this paper we present a simple interactive emissions model that approximates operational and lifecycle emissions of personal devices, university-owned computing and network infrastructure, cloud computing, and LLMs. Our analysis shows that IT infrastructure's embodied emissions are a dominant component of overall IT emissions, that operational impacts are comparatively modest, and that LLM adoption, even under aggressive growth scenarios, is unlikely to comprise more than $3-5\%$ of overall emissions.
+Information technology (IT) plays major role in society and has a non-negligible carbon footprint: for example, at the University of Zürich, it accounted for over $6\%$ of total emissions in 2024. At the same time, artificial intelligence (AI) applications, and especially large language models (LLMs), are being adopted at historically high rates. Their growth and relatively high energy requirements are expected to increase the share of global electricity consumption for data centers from $\sim 1\%$ in 2024 to $\sim 3\%$ by 2030. Therefore, an assessment of IT and AI emissions is a necessary component of any net-zero roadmap. As part of the University of Zürich's own net-zero efforts, we have attempted to quantify and break down the impact of IT and AI on the university's carbon footprint. In this paper we present a simple interactive emissions model that approximates operational and lifecycle emissions of personal devices, university-owned computing and network infrastructure, cloud computing, and LLMs. Our analysis shows that IT infrastructure's embodied emissions are a dominant component of overall IT emissions, that operational impacts are comparatively modest, and that LLM adoption, even under aggressive growth scenarios, is unlikely to comprise more than $5\%$ of overall IT-related emissions.
 
 \section{Introduction}
 
-approximately $6.3\%$ of total emissions in 2024\cite{uzh:sustainability:report},
+approximately $6.3\%$ of total emissions in 2024 \cite{uzh:sustainability:report},
 
-artificial intelligence (AI) applications are being adopted at historically high rates exceeding those of the adoption of the personal computer and the internet\cite{bick:ai:adoption}.
+artificial intelligence (AI) applications are being adopted at historically high rates exceeding those of the adoption of the personal computer and the internet \cite{bick:ai:adoption}.
+
+We consider only direct impacts of AI: the increased electricity consumption and resulting emissions. We omit indirect impacts of AI adoption, such as potential emissions reductions due to improved building management: at the moment they are too nebulous to predict.
+
+
+We attempt to model full lifecycle impact, including manufacture, operation, and disposal. We include not only university-owned devices (servers, classroom PCs, etc.), but also student and staff personal devices, since they represent the bulk of on-campus devices.
+
+
+Likewise, we attempt to model full life cycle impact for cloud infrastructure and for LLMs.
+
+
 
 \section{Modeling methodology}
 
+We model campus IT emissions bottom-up, estimating the number of different devices and their characteristics, including embodied emissions, maximum power use, duty cycle, and operational lifetime. The model can operate in a deterministic linear mode or in a stochastic mode that perturbs device parameters.
+
+Likewise we model cloud data centers bottom-up, using publicly available emissions data and assuming a one-for-one replacement of on-campus servers with cloud instances of a certain size.
+
+For LLMs, we estimate operational energy use (Wh per query) using recent public data. Non-operational emissions, including embodied emissions of the server fleet and the cost of training the models, are harder to estimate and attribute. Based on data available for ChatGPT, we assume that non-operational emissions are a $40\%$ overhead on top of operational emissions.
+
+\subsection{Campus emissions}
+
+We instantiate as many devices as specified in the UZH spreadsheet, plus enough laptops and phones
+to cover the rest of the university population.
+
+For each device instance, we pick embodied emissions, power draw, and duty cycles either
+deterministically or by sampling from the appropriate distribution.
+
+Combining power draw and duty cycle estimates with ground-truth data about the Swiss electricity mix,
+we estimate annual operational emissions and add them to the embodied emissions scaled by the device
+type's expected lifetime.
+
+For on-campus data centers, for which presumably there are electricity bills or other measures of
+overall energy use, we would like to use that data to evaluate our model.
+
+A possible future refinement will be to model the duty cycle as a function of time of day
+and incorporate finer-grained electricity mix data.
+
+\subsection{Cloud emissions}
+
+We model cloud emissions based on the assumptions and data described in
+Section~\ref{sec:cloud_data_centers}. We suggest working with UZH's cloud vendor to obtain
+more accurate data.
+
+\subsection{LLM emissions}
+
+We model LLM emissions by sampling from the per-capita daily query distribution and computing
+the carbon intensity of each query based on the average European electricity mix. While there
+are many uncertainties about the level of LLM adoption, there appears to be reasonable consensus
+in the literature about the energy consumption of each query.
+
+\subsection{Embodied emissions}
+
+For several device types, especially end-user devices such as phones and laptops, embodied emissions
+comprise a majority of lifetime emissions. However, the exact amount of these emissions varies
+widely between different sources. Our approach has been to find several studies and industry references,
+and then estimate means and standard deviations from those that seemed most comprehensive and reliable
+(for example, Dell's Product Carbon Footprint reports about its servers).
+
+\subsubsection{Laptops}
+
+\begin{center}
+\begin{tabular}{|r|l|}
+\hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+121 & \cite{ecoinvent}  \\ \hline
+104 & \cite{teehan2013} (low) \\ \hline
+338 & \cite{teehan2013} (high) \\ \hline
+244 & \cite{rarecoil} \\ \hline
+202 & \cite{unctadder2024} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:laptops}
+\end{center}
+
+The Ecoinvent numbers appear to be outliers on the low end.
+The most comprehensive data comes from \cite{rarecoil}, which lists manufacturer
+information for over 90 popular devices. Mean supply chain emissions are
+244 kg CO$_2$e with a standard deviation of 128 kg.
+\assumption{We model laptop supply chain emissions using a truncated normal distribution with those characteristics.}
+
+\subsubsection{Desktops}
+
+\begin{center}
+\begin{tabular}{|r|l|}
+\hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+238 & \cite{ecoinvent} \\ \hline
+303 & \cite{teehan2013} \\ \hline
+403 & \cite{unctadder2024} \\ \hline
+289 & \cite{dellpcf} \\ \hline
+277 & \cite{boavizta} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:desktops}
+\end{center}
+
+Most estimates are in the range of 250 - 400 kg CO$_2$e. The most detailed data comes from
+Dell's Product Carbon Footprints (\cite{dellpcf}), which they publish for each of their products.
+A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $\sigma = 80$ kg.
+\assumption{We model desktop supply chain emissions using these statistics.}
+
+\subsubsection{Servers}
+
+\begin{center}
+\begin{tabular}{|r|l|}
+\hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+383 & \cite{teehan2013} \\ \hline
+1252 & \cite{davy2021} (Dell) \\ \hline
+1912 & \cite{davy2021} (EC2) \\ \hline
+899 & \cite{boavizta} (medium server)\\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:servers}
+\end{center}
+
+\cite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
+The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 330$ kg, the latter
+1912 kg with $\sigma = 885$ kg.
+\assumption{We model server supply chain emissions using the statistics corresponding to Dell servers.}
+
+\subsubsection{Smartphones}
+
+\begin{center}
+\begin{tabular}{|r|l|}
+\hline
+\textbf{Production \& Disposal} & \\
+\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+68 & \cite{googlepixel8} (Pixel 8)\\ \hline
+54 & \cite{appleiphone13} (iPhone 13)\\ \hline
+50 & \cite{unctadder2024} \\ \hline
+50 & \cite{lovehagen2023} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions:phones}
+\end{center}
+
+\assumption{We model phone supply chain emissions using mean 50 kg CO$_2$e and $\sigma = 10$ kg.}
+
+\subsubsection{Other devices}
+
+We found less data for other types of devices. For now, we model them with averages based
+on a handful of sources.
+
+\begin{description}
+    \item[Computer monitors] 344 kg CO$_2$e (\cite{teehan2013}, \cite{dellpcf})
+    \item[Conference room displays] 753 kg CO$_2$e (scaling monitor by $(40''/27'')^2$)
+    \item[Printer/copier stations] 1167 kg CO$_2$e (\cite{ecoinvent})
+    \item[Network equipment] We did not find reliable lifecycle assessments for routers and switches,
+      and have no information about UZH network architecture. The vast majority ($80-95\%$) of
+      lifecycle emissions of network gear stem from usage (\cite{cisco2024}, \cite{jacob2023}).
+      For now, we model network equipment as a 5\% overhead on servers (1 router or switch for 20 servers).
+      (A typical data center rack contains 42 1U servers and one switch or router.)
+\end{description}
+
+\subsection{Operational emissions}
+
+For on-premise equipment, we would like to model the Swiss electricity mix (see below) and, ideally,
+daily variations in usage and electricity carbon intensity.
+Generic manufacturer estimates of lifetime usage-related emissions are therefore unsuitable.
+There are surprisingly few sources of data on device power consumption (as opposed to CO$_2$ emissions).
+Based on a smattering of data sheets, primarily from Apple, Cisco, and Dell, we model
+power draw of different devices while under load using the following initial parameters:
+
+\begin{center}
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Device} & \textbf{Mean (W)} & \textbf{$\sigma$ (W)} \\ \hline
+Laptop & 30 & 5 \\ \hline
+Desktop & 100 & 20 \\ \hline
+Server & 400 & 100 \\ \hline
+Phone & 5 & 2 \\ \hline
+Monitor & 50 & 10 \\ \hline
+Conference display & 250 & 50 \\ \hline
+Printer/copier & 1000 & 200 \\ \hline
+\end{tabular}
+\end{center}
+
+We assume a distribution of duty cycles and power draw when idle for each device.
+In the future, we may simulate power draw at different times of day to integrate with
+hourly electricity mix data, but errors in those assumptions may swamp the relatively small
+hourly variations in Swiss electricity carbon intensity.
+
+\subsection{Cloud data centers}
+\label{sec:cloud_data_centers}
+
+The secretiveness of major cloud providers makes it difficult to estimate the embodied and operational emissions of cloud
+infrastructure. The best resource we have been able to find is the Datavizta API (\cite{boavizta}).
+
+Lacking information about UZH's workloads, we model a hypothetical UZH cloud footprint as follows:
+\begin{itemize}
+    \item One-for-one replacement of one campus server with one Azure D8S\_v3 instance (2x Intel
+      Xeon, 8 cores, 32 GB RAM, 2TB SSD) (\cite{msftvms}).
+    \item Deployment to Microsoft Azure's ``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland North}'' region .
+    \item Estimation of annual emissions via Datavizta, assuming constant 50\% load: 31 kg CO$_2$e for usage,
+      97 kg CO$_2$e for manufacturing.
+\end{itemize}
+
+\subsection{Large language models}
+
+Energy consumption of LLMs is being studied extensively (\cite{budennyy2022eco2ai},
+\cite{castano2023exploring},
+\cite{devries2023growing},
+\cite{gowda2024watt},
+\cite{harding2024watts},
+\cite{heguerte2023estimate},
+\cite{luccioni2022estimating},
+\cite{luccioni2023counting},
+\cite{patterson2021carbon},
+\cite{rodriguez2024evaluating},
+\cite{tripp2024measuring}).
+
+The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request,
+or approximately 10x the energy of a traditional search engine query. This number appears to be decreasing
+rapidly as model hardware and software improve, even though overall energy use is increasing due to
+increased utilization. Nevertheless, for the model we assume that queries consume 3 Wh each.
+We assume that on average every user will issue 15 queries per day.
+
+LLMs are distributed and the location that serves any particular request is unknown, so we use the
+average European electricity mix to compute carbon intensity.
+
+The embodied emissions and training emissions of LLMs are difficult to estimate and attribute precisely.
+However, \cite{devries2023growing} provides the following information about ChatGPT:
+\begin{itemize}
+    \item Operational power consumption of 500 MWh / day.
+    \item Approximately 1300 MWh consumed in training.
+    \item Approximately 4000 servers.
+\end{itemize}
+
+Assuming a relatively clean grid at 200 g CO$_2$e / kWh (a low estimate), and that each server has embodied emissions of 4 t CO$_2$e (a high estimate),
+we obtain:
+\begin{itemize}
+    \item 100 t CO$_2$e / day operational emissions.
+    \item 260 t CO$_2$e training emissions.
+    \item 16 kt CO$_2$e total embodied emissions.
+\end{itemize}
+
+After one year of operation, operational emissions are approximately 36 kt CO$_2$e, whereas training and embodied emissions are about 16 kt CO$_2$e,
+so operational emissions account for $\approx 70\%$ of the total. With less conservative assumptions (dirtier grid, lower embodied emissions),
+the proportion of operational emissions increases further.
+
+As a result, when modeling overall LLM emissions, we multiply estimated operational emissions by 1.4 to account for training and embodied emissions.
+We acknowledge that this is, at best, a rough estimate based on just one LLM.
+
+\subsection{Electricity carbon intensity}
+
+The Swiss Federal Office for the Environment published an extensive report (\cite{krebs2018umweltbilanz})
+on the environmental impact of electricity generation in Switzerland in 2018.
+
+However, for the purposes of the model, we use data from \cite{electricitymaps}. Specifically,
+we use the carbon emissions for electricity {\em consumption} (not generation) in Switzerland for 2023
+at hourly granularity, then aggregate the data into two-hour blocks, and compute the mean of each two
+hour block over the course of the year. This gives us twelve data points that describe average
+carbon intensity variation over the course of the day.
+
+
+\subsection{Limitations and validation}
+
+The biggest limitation is the modest availability of some ground truth data about UZH IT infrastructure. Specifically, we have only estimates of campus data center energy use, and limited information abut UZH research workloads (whether AI or not). We assume that many research AI workloads will be relatively similar in intensity to existing scientific computation workloads. We also have limited information (e.g., peak power consumption) about UZH use of external high-performance compute resources such as Alps/CSCS.
+
+Additionally, cloud vendors and AI companies are secretive about their infrastructure. We have relied on public datasets and research literature to estimate cloud and AI emissions.
+
+Despite these limitations, our bottom-up model aligns closely with two UZH data points. First, the model correctly estimates approximately $400$ kW of compute for central campus data centers. Second, for university-owned campus IT infrastructure, the model estimates $1.4$ kt CO$_2$e emissions per year, close to the $1.45$ kt reported in the 2024 university sustainability report \cite{uzh:sustainability:report}.
+
 \section{Results}
+
+Our analysis shows that manufacturing (“embodied”) emissions dominate UZH's IT carbon footprint, while operational impacts, including AI adoption, are relatively modest.
+
+\begin{itemize}
+
+\item Under the assumption that the vast majority (90\%) of UZH students and staff have a laptop and smartphone, manufacturing personal devices accounts for over half of UZH's IT carbon footprint. For the estimated 32,000 laptops and smartphones, embodied emissions total $\sim 2400$ t CO$_2$e annually. Usage-related emissions amount to about a tenth of that.
+
+\item Widespread adoption of LLMs and other frontier models should have moderate impact on total emissions. If everyone at UZH made heavy use of AI (15 queries daily), this would add approximately 220 t CO2e annually, of which 160 t directly attributable to queries. While this would almost double an individual's real-time energy use, the impact on overall emissions is relatively small.
+
+\item Embodied emissions are an important consideration for university-owned devices as well. If we exclude personal devices and LLMs, then total IT emissions shrink to $\sim 1500$ t CO$_2$e, of which $\frac{2}{3}$ comprises the embodied emissions of classroom computers, wall displays, printers, etc.
+
+\item Data center cooling and efficiency represents a potential savings opportunity. The largest operational emissions are from data center servers and cooling (320 t). UZH data centers currently require as much energy for cooling as for computation, compared to the $6-15\%$ cooling overhead of cloud industry leaders. Moving workloads to efficient cloud providers could reduce data center emissions from $\sim 560$ t to $\sim 135$ t CO$_2$e annually, though this estimate requires further validation.
+
+\end{itemize}
+
 
 \section{Related work}
 
