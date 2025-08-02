@@ -150,7 +150,10 @@ The model's outputs are affected by several factors, and where we were unable to
 \begin{description}
   \item[Cloud data center PUE] As of 2025, industry average power usage effectiveness is 1.56, with Google averaging 1.09 across its fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.12 to 1.30~\cite{microsoft:datacenter:efficiency}. We choose a PUE of 1.2 as representative of a state-of-the-art hyperscaler data center.
   \item[On-premise data center PUE] Based on limited historical power data, we assume an on-premise PUE of 2.0, attributable to inefficient cooling.
-  \item[]  
+  \item[Duty cycle] We make some unsubstantiated but plausible assumptions about the number of days that different devices are used (\eg, end-user devices are not used every day) and their duty cycle throughut the day.
+  \item[Electricity emissions intensity for on-premise data centers] For Switzerland we compute average hourly emissions intensity over 2024 based on data from Electricity Maps~\cite{electricitymaps} ($\sim 50$ g / kWh on average).
+  \item[Electricity emissions intensity for cloud data centers and LLMs] We use the European Union's average emissions intensity of electricity generation in 2023, 207 g CO$_2$e / kWh~\cite{eea:emissions:2025}.
+  \item[] 
 \end{description}
 
 
