@@ -32,8 +32,8 @@
 
 \maketitle
 
-\section{Abstract}
-Information technology (IT) plays a major role in society and has non-negligible environmental impact, accounting for over 5\% of global electricity consumption and about 2\% of global carbon emissions. Moreover, artificial intelligence (AI) applications, and especially large language models (LLMs), are being adopted at historically high rates. Their growth and relatively high energy requirements are expected to increase the share of global electricity consumption for data centers from $\sim 1\%$ in 2024 to $\sim 3\%$ by 2030. Therefore, an assessment of IT and AI emissions is a necessary component of any net-zero roadmap. As part of the University of Zürich's own net-zero efforts, we have attempted to quantify and analyze the impact of IT and AI on the university's carbon footprint. We present a simple interactive model of IT emissions on a univeristy campus. The model approximates operational and lifecycle emissions of personal devices, university-owned computing and network infrastructure, cloud computing, and LLMs. Our analysis shows that the embodied emissions of IT infrastructure and personal devices are a major component of overall IT emissions, that operational impacts are comparatively modest, and that LLM adoption, even under aggressive growth scenarios, is unlikely to comprise more than $5\%$ of overall IT-related emissions.
+\section*{Abstract}
+Information technology (IT) plays a major role in society and has non-negligible environmental impact, accounting for over 5\% of global electricity consumption and about 2\% of global carbon emissions. Moreover, artificial intelligence (AI) applications, especially large language models (LLMs), are being adopted at historically high rates. Their growth is expected to increase the share of global electricity consumption for data centers from $\sim 1\%$ in 2024 to $\sim 3\%$ by 2030. Therefore, an assessment of IT and AI emissions is a necessary component of any net-zero roadmap. As part of the University of Zürich's own net-zero efforts, we have attempted to quantify and analyze the impact of IT and AI on the university's carbon footprint. We present a simple interactive model of IT emissions on a university campus. The model approximates operational and lifecycle emissions of personal devices, university-owned computing and network infrastructure, cloud computing, and LLMs. The model is intended to provide university decision makers with emissions estimates under different scenarios, with sufficient accuracy to support effective decision-making. Our analysis shows that the embodied emissions of IT infrastructure and personal devices are a major component of overall IT emissions, that operational impacts are comparatively modest, and that LLM adoption, even under aggressive growth scenarios, is unlikely to comprise more than $5\%$ of overall IT-related emissions.
 
 \section{Introduction}
 
@@ -61,7 +61,7 @@ The rest of this paper is organized as follows. Section~\ref{sec:model:methodolo
 \section{Modeling methodology}
 \label{sec:model:methodology}
 
-Our aim is to model energy use from unveristy IT and AI broadly, without restricting ourselves to university-owned devices, specific IT departments, etc. At the same time, we want to be able to distinguish the contributions of different factors, such as student-owned devices or LLMs, and to compare the model's output against existing university data points (energy bills, etc.).
+Our aim is to model energy use from university IT and AI broadly, without restricting ourselves to university-owned devices, specific IT departments, etc. At the same time, we want to be able to distinguish the contributions of different factors, such as student-owned devices or LLMs, and to compare the model's output against existing university data points (energy bills, etc.).
 
 \subsection{System boundaries}
 
@@ -106,7 +106,6 @@ This table summarizes what is in scope in the current model. The main gap is emi
   \end{tabular}
   \label{tab:scopes}
   \end{center}
-  
 
 \subsection{Calculation approach}
 
@@ -114,27 +113,47 @@ This table summarizes what is in scope in the current model. The main gap is emi
 
 We model campus device emissions bottom-up. We first identify categories of devices (phones, laptops, workstations, monitors, routers, etc.). For each device type, we research a range of common models, then use manufacturer data sheets or other available documentation to identify operational power draw (in watts) as well as embodied emissions related to manufacture and disposal (in kg CO$_2$e) per device. Based on this data, we model the power draw and embodied emissions of an ``exemplar'' device of each type.
 
-For each device type we also estimate (1) a count (\eg, a laptop for almost every student and staff), (2) an estimated annual duty cycle (\eg, laptops used 8 hours per day, 5 days per week, 40 weeks per year, etc.), and (3) a useful lifetime (in years).
+For each device type we also estimate (1) a count (\eg, a laptop for every student and staff), (2) an estimated annual duty cycle (\eg, laptops used 8 hours per day, 200 days per year), and (3) a useful lifetime (in years).
 
 Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (kg CO$_2$e).
 
-We then estimate the local grid's emissions intensity (g CO$_2$e / kWh) to convert the energy use to emissions and obtain a combined total annual emissions number.
+We then estimate the local grid's emissions intensity (g CO$_2$e / kWh) to convert the energy use to emissions and obtain a combined total annual emissions number. We obtain emissions intensity data from Electricity Maps~\cite{electricitymaps}.
 
-In addition to this simple linear mode, the model can also operate stochastically, instantiating devices from a distribution. However, we have no good data on the actual shape of such a distribution, 
+In addition to this simple linear mode, the model can also operate stochastically, instantiating devices from a distribution. However, we have no good data on the precise form of such a distribution, so we limit our analysis to the linear mode.
 
-\subsubsection{Cloud and supercomputing facilities}
+\subsubsection*{Cloud and supercomputing facilities}
 
-Given 
+We attempt to model a hypothetical shift of some workloads from servers in an on-premise data center to a commercial cloud. The parameters under consideration include:
 
+\begin{itemize}
+  \item On-premise power usage effectiveness (PUE), the ratio of total data center power (including cooling) to power used for computation.
+  \item Cloud data center PUE and grid emissions intensity (since the cloud data center may be located in a different region than the on-premise data center).
+  \item An average conversion ratio of on-premise servers to cloud servers.
+\end{itemize}
 
+We measure the impact of cloud servers in terms of annual operational emissions and amortized emissions due to manufacturing and disposal, in units of kg CO$_2$e / year.
 
-estimating the number of different devices and their characteristics, including embodied emissions, maximum power use, duty cycle, and operational lifetime. The model can operate in a deterministic linear mode or in a stochastic mode that perturbs device parameters.
+We do not attempt to model application-level cloud services.
 
-Likewise we model cloud data centers bottom-up, using publicly available emissions data and assuming a one-for-one replacement of on-campus servers with cloud instances of a certain size.
+For supercomputing facilities (in particular, CSCS) we rely on annual statistics of total power consumption for peak compute load and make assumptions about duty cycle. We do not have reliable data about the embodied emissions of the facility, but suspect that the fraction of these emissions that is attributable to UZH use is negligible relative to all other UZH emissions.
 
-For LLMs, we estimate operational energy use (Wh per query) using recent public data. Non-operational emissions, including embodied emissions of the server fleet and the cost of training the models, are harder to estimate and attribute. Based on data available for ChatGPT, we assume that non-operational emissions are a $40\%$ overhead on top of operational emissions.
+\subsubsection*{Large language models}
+
+For LLMs, we estimate operational energy use (Wh per query) using current estimates in the literature of state-of-the-art models~\cite{devries2023growing,epoch2025howmuchenergydoeschatgptuse}.
+
+We consider the training overhead and the embodied emissions of the servers and GPUs that the model runs as a fixed cost that is amortized across all queries to a model. As a result, in practice, this overhead is constantly shrinking. We incorporate it into the model as a configurable percentage overhead of the operational energy use.
 
 \subsection{Parameters and assumptions}
+
+The model's outputs are affected by several factors, and where we were unable to find good data we made assumptions that we considered reasonable. All of these parameters and assumptions are parameterizable by users of the model. We list these sources of uncertainty below.
+
+\begin{description}
+  \item[Cloud data center PUE] As of 2025, industry average power usage effectiveness is 1.56, with Google averaging 1.09 across its fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.12 to 1.30~\cite{microsoft:datacenter:efficiency}. We choose a PUE of 1.2 as representative of a state-of-the-art hyperscaler data center.
+  \item[On-premise data center PUE] Based on limited historical power data, we assume an on-premise PUE of 2.0, attributable to inefficient cooling.
+  \item[]  
+\end{description}
+
+
 
 \section{Model details}
 \label{sec:model:details}
