@@ -362,23 +362,27 @@
                 <div class="three-column">
                     <section class="calculator-section">
                         <div class="table-header">
-                            <h2 class="section-title">Device Population</h2>
+                            <h2 class="section-title">Device Population
+                                <button class="expand-toggle" onclick="toggleTableExpansion('device-table')" id="device-toggle">&gt;&gt;</button>
+                            </h2>
                         </div>
                         <table class="parameter-table" id="device-table"></table>
                     </section>
 
                     <section class="calculator-section">
                         <div class="table-header">
-                            <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
-                            <button class="expand-toggle" onclick="toggleTableExpansion('embodied-table')" id="embodied-toggle">&gt;&gt;</button>
+                            <h2 class="section-title">Embodied Emissions (kg CO2e)
+                                <button class="expand-toggle" onclick="toggleTableExpansion('embodied-table')" id="embodied-toggle">&gt;&gt;</button>
+                            </h2>
                         </div>
                         <table class="parameter-table" id="embodied-table"></table>
                     </section>
 
                     <section class="calculator-section">
                         <div class="table-header">
-                            <h2 class="section-title">Power Consumption (W)</h2>
-                            <button class="expand-toggle" onclick="toggleTableExpansion('power-table')" id="power-toggle">&gt;&gt;</button>
+                            <h2 class="section-title">Power Consumption (W)
+                                <button class="expand-toggle" onclick="toggleTableExpansion('power-table')" id="power-toggle">&gt;&gt;</button>
+                            </h2>
                         </div>
                         <table class="parameter-table" id="power-table"></table>
                     </section>
@@ -461,30 +465,37 @@
             'Laptops': {
                 'Lifetime': 4,
                 'Count': 30000,
+                'Days per year': 250,
             },
             'Desktops': {
                 'Lifetime': 6,
                 'Count': 10700,
+                'Days per year': 250,
             },
             'Servers': {
                 'Lifetime': 5,
                 'Count': 1028,
+                'Days per year': 365,
             },
             'Smartphones': {
                 'Lifetime': 3,
                 'Count': 32000,
+                'Days per year': 250,
             },
             'Wall displays': {
                 'Lifetime': 6,
                 'Count': 360,
+                'Days per year': 250,
             },
             'Monitors': {
                 'Lifetime': 6,
                 'Count': 10325,
+                'Days per year': 250,
             },
             'Printers': {
                 'Lifetime': 6,
                 'Count': 1000,
+                'Days per year': 250,
             },
         };
 
@@ -597,6 +608,7 @@
         const llms = {
             'User population': 38000,
             'Mean daily user queries': 15,
+            'Days per year': 250,
             'Mean query Wh': 3.5,
             'Emissions intensity g CO2e / kWh': 226,
             'Training overhead %': 40,
@@ -838,7 +850,7 @@
         }
 
         function initializeTables() {
-            createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime'], ['Count', 'Lifetime'], updateDevices);
+            createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime'], updateDevices);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateDevices);
             createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateDevices);
             createDutyCycleTable('duty-cycle-table', dutyCycle6h, updateDevices);
@@ -889,7 +901,7 @@
         function deviceEmissionsKgCO2e(device) {
             const intensitySum = emissionsIntensity[device].reduce((a, b) => a + b, 0);
             const powerSum = devices[device]['power_w'].reduce((a, b) => a + b, 0);
-            const u = powerSum * intensitySum * 365 / (1000 * 1000);
+            const u = powerSum * intensitySum * deviceInfo[device]['Days per year'] / (1000 * 1000);
             const m = devices[device]['annual_embodied_emissions'].reduce((a, b) => a + b, 0);
             return [u, m];
         }
@@ -915,7 +927,7 @@
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
             const nqueries = llms['Mean daily user queries'] * llms['User population'];
             // Divide by 1000 to convert Wh to kWh and by 100 again to convert g CO2e to kg CO2e.
-            const u = nqueries * 365 * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
+            const u = nqueries * llms['Days per year'] * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
             const m = u * llms['Training overhead %'] / 100;
             return [u, m];
         }
@@ -935,7 +947,7 @@
             let energyPerQuery = baseEnergyPerQuery;
             const projection = [];
             for (let year = 0; year < 5; year++) {
-                const usageEmissions = usage * 365 * energyPerQuery * emissionsIntensity / (1000 * 1000);
+                const usageEmissions = usage * llms['Days per year'] * energyPerQuery * emissionsIntensity / (1000 * 1000);
                 if (year === 0) {
                     embodiedEmissions = usageEmissions * trainingOverhead;
                 } else {
