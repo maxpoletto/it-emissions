@@ -384,6 +384,18 @@
                     </section>
                 </div>
 
+                <!-- Duty Cycles -->
+                <div class="single-column">
+                    <section class="calculator-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Device Duty Cycles (fraction of time active)
+                            <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
+                            </h2>
+                        </div>
+                        <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
+                    </section>
+                </div>
+
                 <!-- Two Column Layout for Compute and LLMs -->
                 <div class="two-column">
                     <section class="calculator-section">
@@ -575,7 +587,7 @@
 
         const compute = {
             'Campus data center PUE (x100)': 200,
-            'Cloud PUE (x100)': 110,
+            'Cloud PUE (x100)': 120,
             'Cloud % servers in cloud': 0,
             'Cloud instances per 100 local servers': 100,
             'Cloud instance embodied kg CO2e/y': 97,
@@ -698,6 +710,61 @@
             });
         }
 
+        // Create duty cycle table with 4 time periods per device
+        function createDutyCycleTable(tableId, data, callback) {
+            const table = document.getElementById(tableId);
+            table.innerHTML = '';
+
+            const timePeriods = ['Night (0:00-5:59)', 'Morning (6:00-11:59)', 'Afternoon (12:00-17:59)', 'Evening (18:00-23:59)'];
+            
+            // Create header row
+            const headerRow = document.createElement('tr');
+            headerRow.appendChild(document.createElement('th')); // Empty cell for device names
+            
+            timePeriods.forEach(period => {
+                const th = document.createElement('th');
+                th.textContent = period;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            // Create rows for each device type
+            Object.keys(data).forEach(deviceType => {
+                const row = document.createElement('tr');
+                
+                // Device name cell
+                const deviceCell = document.createElement('td');
+                deviceCell.textContent = deviceType;
+                row.appendChild(deviceCell);
+
+                // Create input for each time period
+                data[deviceType].forEach((value, index) => {
+                    const cell = document.createElement('td');
+                    
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = '0.01';
+                    input.min = '0';
+                    input.max = '1';
+                    input.value = value;
+                    input.addEventListener('change', (e) => {
+                        const newValue = parseFloat(e.target.value);
+                        if (newValue >= 0 && newValue <= 1) {
+                            data[deviceType][index] = newValue;
+                            if (callback) callback();
+                        } else {
+                            e.target.value = value; // Reset to previous value if invalid
+                        }
+                    });
+                    
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                });
+                
+                table.appendChild(row);
+            });
+        }
+
         // Create key-value input tables
         function createKeyValueTable(tableId, data, callback) {
             const table = document.getElementById(tableId);
@@ -755,10 +822,26 @@
             }
         }
 
+        function toggleDutyCycleTable() {
+            const table = document.getElementById('duty-cycle-table');
+            const toggle = document.getElementById('duty-cycle-toggle');
+
+            if (table.style.display === 'none') {
+                // Show table
+                table.style.display = '';
+                toggle.textContent = '<<';
+            } else {
+                // Hide table
+                table.style.display = 'none';
+                toggle.textContent = '>>';
+            }
+        }
+
         function initializeTables() {
             createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime'], ['Count', 'Lifetime'], updateDevices);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateDevices);
             createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateDevices);
+            createDutyCycleTable('duty-cycle-table', dutyCycle6h, updateDevices);
             createKeyValueTable('compute-table', compute, updateDevices);
             createKeyValueTable('llm-table', llms, updateDevices);
         }
