@@ -6,6 +6,7 @@
 \renewcommand{\ttdefault}{fvm} % Use as monospace
 \renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
 \newcommand{\assumption}[1]{{#1}}
+\newcommand{\eg}{{\em e.g.}}
 %\usepackage{helvet} % Helvetica font for sans-serif
 %\usepackage{courier} % Courier font for monospace
 \usepackage{hyperref}
@@ -36,7 +37,7 @@ Information technology (IT) plays a major role in society and has non-negligible
 
 \section{Introduction}
 
-Information technology accounts for over 5\% of global electricity consumption and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the University of Zürich, which with over 38,000 students and staff is the largest Swiss university, IT in 2024 accounted for about 1.5 Mt CO$_2$e of greenhouse gas (GHG) emissions, approximately 6.3\% of total university emissions in 2024~\cite{uzh:sustainability:report}. The cited report takes into account university-owned workstations, servers, and audiovisual equipment, but does include other IT-related activities such as networking, cloud computing, or the growing use of artificial intelligence, and in particular the adoption of generative AI and large language models (LLMs).
+Information technology accounts for over 5\% of global electricity consumption and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the University of Zürich (UZH), which with over 38,000 students and staff is the largest Swiss university, IT in 2024 accounted for about 1.5 Mt CO$_2$e (megatons of carbon dioxide equivalent) of greenhouse gas (GHG) emissions, approximately 6.3\% of total university emissions in 2024~\cite{uzh:sustainability:report}. The cited report takes into account university-owned workstations, servers, and audiovisual equipment, but does include other IT-related activities such as networking, cloud computing, or the growing use of artificial intelligence, and in particular the adoption of generative AI and large language models (LLMs).
 
 AI applications are being adopted at historically high rates, more quickly than the personal computer or the internet were adopted in the past~\cite{bick:ai:adoption}. Enterprise AI adoption has accelerated, with generative AI tools seeing widespread deployment across industries within months of their release~\cite{mckinsey2024ai}. In July 2025, ChatGPT received 2.5 billion queries per day, up from 1 billion in December 2024, and within an order of magnitude of Google's approximately 15 billion queries per day~\cite{techcrunch:chatgpt}. AI growth is currently projected to increase the share of global electricity consumption for data centers from $\sim 1\%$ in 2024 to $\sim 3\%$ by 2030~\cite{iea:ai:energy}.
 
@@ -53,20 +54,81 @@ We seek to answer three broad questions:
 
 Our model sets relatively broad system boundaries. It takes into account university-owned equipment but also university services hosted by commercial cloud providers and university use of commercial generative AI products. We have also parameterized it to account for student devices not owned by the university, since they are key to student work and constitute the bulk of the university's end-user devices. We attempt to model devices' full lifecycle impact, including manufacture and disposal. 
 
-Experts rightly point to the many potential benefits of AI in the areas of climate change mitigation and adapation~\cite{climate:change:ai}. On a university campus, these might include more efficient building heating and cooling, improved transportation logistics, etc. However, those benefits are still to come and difficult to predict. In this paper, we consider only the direct impacts of AI in terms of increased electricity consumption and the resulting emissions.
+Experts rightly point to the many potential benefits of AI in the areas of climate change mitigation and adapation~\cite{climate:change:ai}. On a university campus, these might include more efficient building heating and cooling, improved transportation logistics, etc. However, those benefits are still to come and difficult to predict. In this paper, we consider only the {\em direct} impacts of AI in terms of increased electricity consumption and the resulting emissions.
 
 The rest of this paper is organized as follows. Section~\ref{sec:model:methodology} presents the general modeling framework, including system boundaries and assumptions. Section~\ref{sec:model:details} justifies some of the specific parameter values used in the model. Section~\ref{sec:results} describes results and explores different scenarios and assumptions. Section~\ref{sec:recommendations} offers recommendations to university IT administrators. Section~\ref{sec:related:work} describes related work in this area.
 
 \section{Modeling methodology}
 \label{sec:model:methodology}
 
-
+Our aim is to model energy use from unveristy IT and AI broadly, without restricting ourselves to university-owned devices, specific IT departments, etc. At the same time, we want to be able to distinguish the contributions of different factors, such as student-owned devices or LLMs, and to compare the model's output against existing university data points (energy bills, etc.).
 
 \subsection{System boundaries}
 
+We define the boundaries of our model as follows.
+
+\subsubsection*{Population}
+
+We include IT-related activity from all members of the UZH community: faculty, staff, and students.
+
+\subsubsection*{Devices}
+
+Student-owned devices, such as laptops and smartphones, are in scope, since they are the primary means by which students access university IT services and do their coursework. Given the duration of studies, we include personal devices' embodied emissions in the model.
+
+University-owned devices are in scope. We have accurate numbers for staff workstations, classroom computers, network access points, and audiovisual devices managed by the central IT department. We can only estimate other devices, such as computers managed by individual research groups or networking equipment. As before, we include these devices' embodied emissions in the model.
+
+\subsubsection*{Cloud and supercomputing facilities}
+
+UZH at present does not make significant use of commercial cloud compute, but the model allows simulating the shift of some fraction of the server load to cloud VMs.
+
+Due to a lack of data we do not attempt to model emissions from application-level cloud services such as Microsoft 365 or Google Workspace. This omission leads to undercounting total IT energy use but to overestimating the potential relative impact of AI.
+
+UZH faculties do make use of shared off-campus supercomputing facilities, primarily the Swiss National Supercomputing Center, CSCS~\cite{cscs}. We estimate the impact of these workloads based on available gross peak load numbers. Due to lack of data, we do not include the embodied emissions of these facilities.
+
+\subsubsection*{Large language models}
+
+We estimate inference-time emissions of current large language models based on the literature. It is harder to come by good estimates of training-time emissions and embodied emissions of the hardware, but we attempt to do so nonetheless in order to not risk undercounting the impact of LLMs.
+
+\subsubsection*{Summary}
+
+This table summarizes what is in scope in the current model. The main gap is emissions of cloud services such as Microsoft 365 or Goole Workspace.
+
+\begin{center}
+  \begin{tabular}{|l|c|c|}
+  \hline
+  \textbf{Device or service} & \textbf{Operation} & \textbf{Lifecycle} \\ \hline
+  Student laptops \& phones & yes & yes \\
+  University workstations, access points, etc. & yes & yes \\
+  Cloud servers & yes & yes \\
+  Cloud services & no & no \\
+  Supercomputing facilities & yes & no \\
+  LLMs & yes & yes \\ \hline
+  \end{tabular}
+  \label{tab:scopes}
+  \end{center}
+  
+
 \subsection{Calculation approach}
 
-We model campus IT emissions bottom-up, estimating the number of different devices and their characteristics, including embodied emissions, maximum power use, duty cycle, and operational lifetime. The model can operate in a deterministic linear mode or in a stochastic mode that perturbs device parameters.
+\subsubsection*{Devices}
+
+We model campus device emissions bottom-up. We first identify categories of devices (phones, laptops, workstations, monitors, routers, etc.). For each device type, we research a range of common models, then use manufacturer data sheets or other available documentation to identify operational power draw (in watts) as well as embodied emissions related to manufacture and disposal (in kg CO$_2$e) per device. Based on this data, we model the power draw and embodied emissions of an ``exemplar'' device of each type.
+
+For each device type we also estimate (1) a count (\eg, a laptop for almost every student and staff), (2) an estimated annual duty cycle (\eg, laptops used 8 hours per day, 5 days per week, 40 weeks per year, etc.), and (3) a useful lifetime (in years).
+
+Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (kg CO$_2$e).
+
+We then estimate the local grid's emissions intensity (g CO$_2$e / kWh) to convert the energy use to emissions and obtain a combined total annual emissions number.
+
+In addition to this simple linear mode, the model can also operate stochastically, instantiating devices from a distribution. However, we have no good data on the actual shape of such a distribution, 
+
+\subsubsection{Cloud and supercomputing facilities}
+
+Given 
+
+
+
+estimating the number of different devices and their characteristics, including embodied emissions, maximum power use, duty cycle, and operational lifetime. The model can operate in a deterministic linear mode or in a stochastic mode that perturbs device parameters.
 
 Likewise we model cloud data centers bottom-up, using publicly available emissions data and assuming a one-for-one replacement of on-campus servers with cloud instances of a certain size.
 
