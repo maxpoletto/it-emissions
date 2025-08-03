@@ -464,27 +464,7 @@
         const deviceInfo = {
             'Laptops': {
                 'Lifetime': 4,
-                'Count': 30000,
-                'Days per year': 250,
-            },
-            'Desktops': {
-                'Lifetime': 6,
-                'Count': 10700,
-                'Days per year': 250,
-            },
-            'Servers': {
-                'Lifetime': 5,
-                'Count': 1028,
-                'Days per year': 365,
-            },
-            'Smartphones': {
-                'Lifetime': 3,
                 'Count': 32000,
-                'Days per year': 250,
-            },
-            'Wall displays': {
-                'Lifetime': 6,
-                'Count': 360,
                 'Days per year': 250,
             },
             'Monitors': {
@@ -492,9 +472,29 @@
                 'Count': 10325,
                 'Days per year': 250,
             },
+            'Desktops': {
+                'Lifetime': 6,
+                'Count': 0,
+                'Days per year': 250,
+            },
+            'Servers': {
+                'Lifetime': 5,
+                'Count': 1121,
+                'Days per year': 365,
+            },
+            'Mobile phones': {
+                'Lifetime': 3,
+                'Count': 35000,
+                'Days per year': 250,
+            },
+            'A/V equipment': {
+                'Lifetime': 6,
+                'Count': 431,
+                'Days per year': 250,
+            },
             'Printers': {
                 'Lifetime': 6,
-                'Count': 1000,
+                'Count': 333,
                 'Days per year': 250,
             },
         };
@@ -505,6 +505,12 @@
                 'Stdev': 128,
                 'Min': 104,
                 'Max': 372,
+            },
+            'Monitors': {
+                'Mean': 344,
+                'Stdev': 50,
+                'Min': 294,
+                'Max': 394,
             },
             'Desktops': {
                 'Mean': 289,
@@ -518,19 +524,13 @@
                 'Min': 383,
                 'Max': 1582,
             },
-            'Smartphones': {
+            'Mobile phones': {
                 'Mean': 50,
                 'Stdev': 10,
                 'Min': 30,
                 'Max': 70,
             },
-            'Monitors': {
-                'Mean': 344,
-                'Stdev': 50,
-                'Min': 294,
-                'Max': 394,
-            },
-            'Wall displays': {
+            'A/V equipment': {
                 'Mean': 753,
                 'Stdev': 109,
                 'Min': 644,
@@ -552,6 +552,13 @@
                 'Max': 40,
                 'Standby': 1,
             },
+            'Monitors': {
+                'Mean': 50,
+                'Stdev': 10,
+                'Min': 30,
+                'Max': 90,
+                'Standby': 1,
+            },
             'Desktops': {
                 'Mean': 100,
                 'Stdev': 20,
@@ -566,21 +573,14 @@
                 'Max': 600,
                 'Standby': 1,
             },
-            'Smartphones': {
+            'Mobile phones': {
                 'Mean': 5,
                 'Stdev': 2,
                 'Min': 3,
                 'Max': 7,
                 'Standby': 0,
             },
-            'Monitors': {
-                'Mean': 50,
-                'Stdev': 10,
-                'Min': 30,
-                'Max': 90,
-                'Standby': 1,
-            },
-            'Wall displays': {
+            'A/V equipment': {
                 'Mean': 250,
                 'Stdev': 50,
                 'Min': 150,
@@ -623,9 +623,9 @@
             'Laptops': [0.1, 0.5, 1.0, 0.3],
             'Desktops': [0.1, 0.5, 1.0, 0.3],
             'Servers': [0.8, 0.8, 0.8, 0.8],
-            'Smartphones': [0.0, 0.0, 0.0, 0.5],
+            'Mobile phones': [0.0, 0.0, 0.0, 0.5],
             'Monitors': [0.1, 0.5, 1.0, 0.3],
-            'Wall displays': [0.0, 0.3, 0.6, 0.1],
+            'A/V equipment': [0.0, 0.3, 0.6, 0.1],
             'Printers': [0.0, 0.0, 0.01, 0.0],
         };
 
