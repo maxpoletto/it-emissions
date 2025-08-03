@@ -607,6 +607,7 @@ Network emissions
         let powerW = {};
 
         const computeDefault = {
+            'Campus networking overhead (x100)': 10,
             'Campus data center PUE (x100)': 200,
             'Cloud PUE (x100)': 120,
             'Cloud % servers in cloud': 0,
@@ -995,6 +996,20 @@ Network emissions
                     embodied: m,
                     usage: u
                 });
+            });
+
+            // Campus networking overhead
+            let nu = 0, nm = 0;
+            ['Laptops', 'Desktops', 'Servers'].forEach(device => {
+                const [u, m] = deviceEmissionsKgCO2e(device);
+                nu += u * compute['Campus networking overhead (x100)'] / 100;
+                nm += m * compute['Campus networking overhead (x100)'] / 100;
+            });
+            total += nu + nm;
+            data.push({
+                category: 'Campus networking',
+                embodied: nm,
+                usage: nu
             });
 
             // DC cooling
