@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-\usepackage[margin=0.7in]{geometry}
+\usepackage[margin=0.9in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{libertine}
 \renewcommand{\sfdefault}{fvs} % Use as sans-serif
@@ -7,6 +7,10 @@
 \renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
 \newcommand{\assumption}[1]{{#1}}
 \newcommand{\eg}{{\em e.g.}}
+\newcommand{\coe}{CO$_2$e}
+\newcommand{\gcoe}{g \coe}
+\newcommand{\kgcoe}{k\gcoe}
+\newcommand{\gcoekwh}{\gcoe\ / kWh}
 %\usepackage{helvet} % Helvetica font for sans-serif
 %\usepackage{courier} % Courier font for monospace
 \usepackage{hyperref}
@@ -37,7 +41,7 @@ Information technology (IT) plays a major role in society and has non-negligible
 
 \section{Introduction}
 
-Information technology accounts for over 5\% of global electricity consumption and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the University of Zürich (UZH), which with over 38,000 students and staff is the largest Swiss university, IT in 2024 accounted for about 1.5 Mt CO$_2$e (megatons of carbon dioxide equivalent) of greenhouse gas (GHG) emissions, approximately 6.3\% of total university emissions in 2024~\cite{uzh:sustainability:report}. The cited report takes into account university-owned workstations, servers, and audiovisual equipment, but does include other IT-related activities such as networking, cloud computing, or the growing use of artificial intelligence, and in particular the adoption of generative AI and large language models (LLMs).
+Information technology accounts for over 5\% of global electricity consumption and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the University of Zürich (UZH), which with over 38,000 students and staff is the largest Swiss university, IT in 2024 accounted for about 1.5 Mt \coe\ (megatons of carbon dioxide equivalent) of greenhouse gas (GHG) emissions, approximately 6.3\% of total university emissions in 2024~\cite{uzh:sustainability:report}. The cited report takes into account university-owned workstations, servers, and audiovisual equipment, but does include other IT-related activities such as networking, cloud computing, or the growing use of artificial intelligence, and in particular the adoption of generative AI and large language models (LLMs).
 
 AI applications are being adopted at historically high rates, more quickly than the personal computer or the internet were adopted in the past~\cite{bick:ai:adoption}. Enterprise AI adoption has accelerated, with generative AI tools seeing widespread deployment across industries within months of their release~\cite{mckinsey2024ai}. In July 2025, ChatGPT received 2.5 billion queries per day, up from 1 billion in December 2024, and within an order of magnitude of Google's approximately 15 billion queries per day~\cite{techcrunch:chatgpt}. AI growth is currently projected to increase the share of global electricity consumption for data centers from $\sim 1\%$ in 2024 to $\sim 3\%$ by 2030~\cite{iea:ai:energy}.
 
@@ -71,23 +75,23 @@ We define the boundaries of our model as follows.
 
 We include IT-related activity from all members of the UZH community: faculty, staff, and students.
 
-\subsubsection*{Devices}
+\subsubsection*{On-campus devices}
 
 Student-owned devices, such as laptops and smartphones, are in scope, since they are the primary means by which students access university IT services and do their coursework. Given the duration of studies, we include personal devices' embodied emissions in the model.
 
-University-owned devices are in scope. We have accurate numbers for staff workstations, classroom computers, network access points, and audiovisual devices managed by the central IT department. We can only estimate other devices, such as computers managed by individual research groups or networking equipment. As before, we include these devices' embodied emissions in the model.
+University-owned devices are in scope. We have accurate numbers for staff workstations, classroom computers, network access points, and audiovisual devices managed by the central IT department. We can only estimate other devices, such as networking equipment or computers managed by individual research groups. As before, we include these devices' embodied emissions in the model.
 
 \subsubsection*{Cloud and supercomputing facilities}
 
 UZH at present does not make significant use of commercial cloud compute, but the model allows simulating the shift of some fraction of the server load to cloud VMs.
 
-Due to a lack of data we do not attempt to model emissions from application-level cloud services such as Microsoft 365 or Google Workspace. This omission leads to undercounting total IT energy use but to overestimating the potential relative impact of AI.
+Due to lack of data, we do not attempt to model emissions from application-level cloud services such as Microsoft 365 or Google Workspace. This omission leads to undercounting total IT energy use but to overestimating the potential relative impact of AI.
 
-UZH faculties do make use of shared off-campus supercomputing facilities, primarily the Swiss National Supercomputing Center, CSCS~\cite{cscs}. We estimate the impact of these workloads based on available gross peak load numbers. Due to lack of data, we do not include the embodied emissions of these facilities.
+UZH faculties do make use of shared off-campus supercomputing facilities, primarily the Swiss National Supercomputing Center, CSCS~\cite{cscs}. We estimate the operational impact of these workloads, but, again due to lack of data, we do not include embodied emissions. Again, this undercounts total university IT energy use but overestimates the potential relative impact of AI.
 
 \subsubsection*{Large language models}
 
-We estimate inference-time emissions of current large language models based on the literature. It is harder to come by good estimates of training-time emissions and embodied emissions of the hardware, but we attempt to do so nonetheless in order to not risk undercounting the impact of LLMs.
+We estimate inference-time emissions of current large language models based on the literature. We also include training-time emissions and embodied emissions of language models (thouse these are harder to estimate and we err on the side of overestimating them).
 
 \subsubsection*{Summary}
 
@@ -107,19 +111,19 @@ This table summarizes what is in scope in the current model. The main gap is emi
   \label{tab:scopes}
   \end{center}
 
-\subsection{Calculation approach}
+\subsection{Accounting approach}
 
-\subsubsection*{Devices}
+\subsubsection*{On-campus devices}
 
-We model campus device emissions bottom-up. We first identify categories of devices (phones, laptops, workstations, monitors, routers, etc.). For each device type, we research a range of common models, then use manufacturer data sheets or other available documentation to identify operational power draw (in watts) as well as embodied emissions related to manufacture and disposal (in kg CO$_2$e) per device. Based on this data, we model the power draw and embodied emissions of an ``exemplar'' device of each type.
+We model campus device emissions bottom-up. We first identify categories of devices (phones, laptops, workstations, monitors, routers, etc.). For each device type, we research a range of common models, then use manufacturer data sheets or other available documentation to identify operational power draw (in watts) as well as embodied emissions related to manufacture and disposal (in \kgcoe) per device. Based on this data, we model the power draw and embodied emissions of an ``exemplar'' device of each type.
 
-For each device type we also estimate (1) a count (\eg, a laptop for every student and staff), (2) an estimated annual duty cycle (\eg, laptops used 8 hours per day, 200 days per year), and (3) a useful lifetime (in years).
+For each device type we also estimate (1) a count (\eg, a laptop for every student and staff), (2) an estimated duty cycle (\eg, laptops used 8 hours per day, 200 days per year), and (3) a useful lifetime (in years).
 
-Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (kg CO$_2$e).
+Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (\kgcoe).
 
-We then estimate the local grid's emissions intensity (g CO$_2$e / kWh) to convert the energy use to emissions and obtain a combined total annual emissions number. We obtain emissions intensity data from Electricity Maps~\cite{electricitymaps}.
+We then estimate the local grid's emissions intensity (\gcoekwh) to convert the energy use to emissions and obtain a combined total annual emissions number. We obtain emissions intensity data from Electricity Maps~\cite{electricitymaps}.
 
-In addition to this simple linear mode, the model can also operate stochastically, instantiating devices from a distribution. However, we have no good data on the precise form of such a distribution, so we limit our analysis to the linear mode.
+In addition to this simple linear mode, the model can also operate stochastically, instantiating devices from a distribution. However, we have insufficient data on the precise form of such a distribution, so we limit our analysis to the linear mode.
 
 \subsubsection*{Cloud and supercomputing facilities}
 
@@ -131,9 +135,9 @@ We attempt to model a hypothetical shift of some workloads from servers in an on
   \item An average conversion ratio of on-premise servers to cloud servers.
 \end{itemize}
 
-We measure the impact of cloud servers in terms of annual operational emissions and amortized emissions due to manufacturing and disposal, in units of kg CO$_2$e / year.
+We measure the impact of cloud servers in terms of annual operational emissions and amortized emissions due to manufacturing and disposal, in units of \kgcoe\ / year.
 
-We do not attempt to model application-level cloud services.
+As mentioned earlier, we do not attempt to model application-level cloud services.
 
 For supercomputing facilities (in particular, CSCS) we rely on annual statistics of total power consumption for peak compute load and make assumptions about duty cycle. We do not have reliable data about the embodied emissions of the facility, but suspect that the fraction of these emissions that is attributable to UZH use is negligible relative to all other UZH emissions.
 
@@ -149,19 +153,49 @@ The model's outputs are affected by several factors, and where we were unable to
 
 \begin{description}
   \item[Cloud data center PUE] As of 2025, industry average power usage effectiveness is 1.56, with Google averaging 1.09 across its fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.12 to 1.30~\cite{microsoft:datacenter:efficiency}. We choose a PUE of 1.2 as representative of a state-of-the-art hyperscaler data center.
-  \item[On-premise data center PUE] Based on limited historical power data, we assume an on-premise PUE of 2.0, attributable to inefficient cooling.
-  \item[Duty cycle] We make some unsubstantiated but plausible assumptions about the number of days that different devices are used (\eg, end-user devices are not used every day) and their duty cycle throughut the day.
-  \item[Electricity emissions intensity for on-premise data centers] For Switzerland we compute average hourly emissions intensity over 2024 based on data from Electricity Maps~\cite{electricitymaps} ($\sim 50$ g / kWh on average).
-  \item[Electricity emissions intensity for cloud data centers and LLMs] We use the European Union's average emissions intensity of electricity generation in 2023, 207 g CO$_2$e / kWh~\cite{eea:emissions:2025}.
-  \item[] 
+  \item[On-premise data center PUE] Based on limited UZH historical power data, we assume an on-premise PUE of 2.0, attributable to inefficient cooling.
+  \item[Device duty cycle] We make unsupported but plausible assumptions about the number of days that different devices are used (\eg, end-user devices are not used every day) and their duty cycle throughut the day.
+  \item[Electricity emissions intensity for on-premise data centers] For Switzerland, we can compute average hourly emissions intensity over 2024 based on data from Electricity Maps~\cite{electricitymaps}. Emissions vary from a high of 64 \gcoekwh\ in the middle of the night to a low of 45 \gcoekwh\ in the middle of the day. This variation is sufficiently large that we refine the model's device duty cycle to four six-hour periods over the course of the day. It allows us to specify, for example, that user-devices are mostly used during the day whereas servers run around the clock.
+  \item[Electricity emissions intensity for cloud data centers and LLMs] These facilities are unlikely to be located in Switzerland, and Switzerland's grid is cleaner than average. We use the European Union's average emissions intensity of electricity generation in 2023, 207 \gcoekwh~\cite{eea:emissions:2025}.
+  \item[LLM usage] We must make assumptions about the fraction of the university population that use LLMs and the frequency of use (queries / day).
 \end{description}
-
-
 
 \section{Model details}
 \label{sec:model:details}
 
-\subsection{Campus emissions}
+The previous section describes our overall modeling approach, which we believe is broadly applicable to university and other large campus settings. This section presents the reasoning behind specific default values we employ in the UZH evaluation.
+
+\subsection{On-campus devices}
+
+\subsubsection*{Number of devices}
+
+We have an authoritative census of devices (workstations, servers, audiovisual equipment) managed by central IT, as follows.
+
+\begin{center}
+  \begin{tabular}{|l|r|r|}
+  \hline
+  \textbf{Device type} & \textbf{Count} & \textbf{Life (y)}\\ \hline
+  Laptops & 10,440 & 4 \\
+  Monitors & 10,400 & 6 \\
+  Servers & 1,121 & 5 \\
+  Printers & 333 & 6 \\
+  Mobile phones & 2,439 & 3 \\
+  A/V devices & 431 & 6 \\ \hline
+  \end{tabular}
+  \label{tab:oncampusdevices}
+\end{center}
+
+On top of this, we assume that 
+
+\subsubsection*{Operational emissions}
+
+\subsubsection*{Embodied emissions}
+
+We obtain 
+
+\subsection{Cloud and supercomputing facilities}
+
+\subsection{LLMs}
 
 We instantiate as many devices as specified in the UZH spreadsheet, plus enough laptops and phones
 to cover the rest of the university population.
@@ -206,7 +240,7 @@ and then estimate means and standard deviations from those that seemed most comp
 \begin{tabular}{|r|l|}
 \hline
 \textbf{Production \& Disposal} & \\
-\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
 121 & \textcite{ecoinvent}  \\ \hline
 104 & \textcite{teehan2013} (low) \\ \hline
 338 & \textcite{teehan2013} (high) \\ \hline
@@ -219,7 +253,7 @@ and then estimate means and standard deviations from those that seemed most comp
 The Ecoinvent numbers appear to be outliers on the low end.
 The most comprehensive data comes from \textcite{rarecoil}, which lists manufacturer
 information for over 90 popular devices. Mean supply chain emissions are
-244 kg CO$_2$e with a standard deviation of 128 kg.
+244 \kgcoe\ with a standard deviation of 128 kg.
 \assumption{We model laptop supply chain emissions using a truncated normal distribution with those characteristics.}
 
 \subsubsection{Desktops}
@@ -228,7 +262,7 @@ information for over 90 popular devices. Mean supply chain emissions are
 \begin{tabular}{|r|l|}
 \hline
 \textbf{Production \& Disposal} & \\
-\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
 238 & \textcite{ecoinvent} \\ \hline
 303 & \textcite{teehan2013} \\ \hline
 403 & \textcite{unctadder2024} \\ \hline
@@ -238,9 +272,9 @@ information for over 90 popular devices. Mean supply chain emissions are
 \label{tab:embodied_emissions:desktops}
 \end{center}
 
-Most estimates are in the range of 250 - 400 kg CO$_2$e. The most detailed data comes from
+Most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from
 Dell's Product Carbon Footprints (\cite{dellpcf}), which they publish for each of their products.
-A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $\sigma = 80$ kg.
+A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg.
 \assumption{We model desktop supply chain emissions using these statistics.}
 
 \subsubsection{Servers}
@@ -249,7 +283,7 @@ A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $
 \begin{tabular}{|r|l|}
 \hline
 \textbf{Production \& Disposal} & \\
-\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
 383 & \textcite{teehan2013} \\ \hline
 1252 & \textcite{davy2021} (Dell) \\ \hline
 1912 & \textcite{davy2021} (EC2) \\ \hline
@@ -259,7 +293,7 @@ A sample of 15 desktops has mean supply chain emissions of 289 kg CO$_2$e with $
 \end{center}
 
 \textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
-The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 330$ kg, the latter
+The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter
 1912 kg with $\sigma = 885$ kg.
 \assumption{We model server supply chain emissions using the statistics corresponding to Dell servers.}
 
@@ -269,7 +303,7 @@ The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 33
 \begin{tabular}{|r|l|}
 \hline
 \textbf{Production \& Disposal} & \\
-\textbf{(kg CO$_2$e)} & \textbf{Source} \\ \hline
+\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
 68 & \textcite{googlepixel8} (Pixel 8)\\ \hline
 54 & \textcite{appleiphone13} (iPhone 13)\\ \hline
 50 & \textcite{unctadder2024} \\ \hline
@@ -278,7 +312,7 @@ The former have mean supply chain emissions of 1252 kg CO$_2$e with $\sigma = 33
 \label{tab:embodied_emissions:phones}
 \end{center}
 
-\assumption{We model phone supply chain emissions using mean 50 kg CO$_2$e and $\sigma = 10$ kg.}
+\assumption{We model phone supply chain emissions using mean 50 \kgcoe\ and $\sigma = 10$ kg.}
 
 \subsubsection{Other devices}
 
@@ -286,9 +320,9 @@ We found less data for other types of devices. For now, we model them with avera
 on a handful of sources.
 
 \begin{description}
-    \item[Computer monitors] 344 kg CO$_2$e (\textcite{teehan2013}, \textcite{dellpcf})
-    \item[Conference room displays] 753 kg CO$_2$e (scaling monitor by $(40''/27'')^2$)
-    \item[Printer/copier stations] 1167 kg CO$_2$e (\textcite{ecoinvent})
+    \item[Computer monitors] 344 \kgcoe\ (\textcite{teehan2013}, \textcite{dellpcf})
+    \item[Conference room displays] 753 \kgcoe\ (scaling monitor by $(40''/27'')^2$)
+    \item[Printer/copier stations] 1167 \kgcoe\ (\textcite{ecoinvent})
     \item[Network equipment] We did not find reliable lifecycle assessments for routers and switches,
       and have no information about UZH network architecture. The vast majority ($80-95\%$) of
       lifecycle emissions of network gear stem from usage (\textcite{cisco2024}, \textcite{jacob2023}).
@@ -335,8 +369,8 @@ Lacking information about UZH's workloads, we model a hypothetical UZH cloud foo
     \item One-for-one replacement of one campus server with one Azure D8S\_v3 instance (2x Intel
       Xeon, 8 cores, 32 GB RAM, 2TB SSD) (\cite{msftvms}).
     \item Deployment to Microsoft Azure's ``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland North}'' region .
-    \item Estimation of annual emissions via Datavizta, assuming constant 50\% load: 31 kg CO$_2$e for usage,
-      97 kg CO$_2$e for manufacturing.
+    \item Estimation of annual emissions via Datavizta, assuming constant 50\% load: 31 \kgcoe\ for usage,
+      97 \kgcoe\ for manufacturing.
 \end{itemize}
 
 \subsection{Large language models}
@@ -370,15 +404,15 @@ However, \textcite{devries2023growing} provides the following information about 
     \item Approximately 4000 servers.
 \end{itemize}
 
-Assuming a relatively clean grid at 200 g CO$_2$e / kWh (a low estimate), and that each server has embodied emissions of 4 t CO$_2$e (a high estimate),
+Assuming a relatively clean grid at 200 \gcoekwh (a low estimate), and that each server has embodied emissions of 4 t \coe\ (a high estimate),
 we obtain:
 \begin{itemize}
-    \item 100 t CO$_2$e / day operational emissions.
-    \item 260 t CO$_2$e training emissions.
-    \item 16 kt CO$_2$e total embodied emissions.
+    \item 100 t \coe\ / day operational emissions.
+    \item 260 t \coe\ training emissions.
+    \item 16 kt \coe\ total embodied emissions.
 \end{itemize}
 
-After one year of operation, operational emissions are approximately 36 kt CO$_2$e, whereas training and embodied emissions are about 16 kt CO$_2$e,
+After one year of operation, operational emissions are approximately 36 kt \coe, whereas training and embodied emissions are about 16 kt \coe,
 so operational emissions account for $\approx 70\%$ of the total. With less conservative assumptions (dirtier grid, lower embodied emissions),
 the proportion of operational emissions increases further.
 
@@ -396,6 +430,11 @@ at hourly granularity, then aggregate the data into two-hour blocks, and compute
 hour block over the course of the year. This gives us twelve data points that describe average
 carbon intensity variation over the course of the day.
 
+\subsection{Model validation}
+
+Using Ecoinvent embodied emissions values where available, and only the numbers and types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, our model estimates emissions of 1,460 t \coe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe/device for embodied emissions, \kgcoe/device/day for operational emissions) provided by Ecoinvent.
+
+While this is admittedly just one data point, it provides some confidence that our assumptions are realistic and that the model can be used to extrapolate emissions and trends beyond the scope of the sustainability report.
 
 \subsection{Limitations and validation}
 
@@ -403,7 +442,7 @@ The biggest limitation is the modest availability of some ground truth data abou
 
 Additionally, cloud vendors and AI companies are secretive about their infrastructure. We have relied on public datasets and research literature to estimate cloud and AI emissions.
 
-Despite these limitations, our bottom-up model aligns closely with two UZH data points. First, the model correctly estimates approximately $400$ kW of compute for central campus data centers. Second, for university-owned campus IT infrastructure, the model estimates $1.4$ kt CO$_2$e emissions per year, close to the $1.45$ kt reported in the 2024 university sustainability report \cite{uzh:sustainability:report}.
+Despite these limitations, our bottom-up model aligns closely with two UZH data points. First, the model correctly estimates approximately $400$ kW of compute for central campus data centers. Second, for university-owned campus IT infrastructure, the model estimates $1.4$ kt \coe\ emissions per year, close to the $1.45$ kt reported in the 2024 university sustainability report \cite{uzh:sustainability:report}.
 
 \section{Results}
 \label{sec:results}
@@ -412,13 +451,13 @@ Our analysis shows that manufacturing (“embodied”) emissions dominate UZH's 
 
 \begin{itemize}
 
-\item Under the assumption that the vast majority (90\%) of UZH students and staff have a laptop and smartphone, manufacturing personal devices accounts for over half of UZH's IT carbon footprint. For the estimated 32,000 laptops and smartphones, embodied emissions total $\sim 2400$ t CO$_2$e annually. Usage-related emissions amount to about a tenth of that.
+\item Under the assumption that the vast majority (90\%) of UZH students and staff have a laptop and smartphone, manufacturing personal devices accounts for over half of UZH's IT carbon footprint. For the estimated 32,000 laptops and smartphones, embodied emissions total $\sim 2400$ t \coe\ annually. Usage-related emissions amount to about a tenth of that.
 
 \item Widespread adoption of LLMs and other frontier models should have moderate impact on total emissions. If everyone at UZH made heavy use of AI (15 queries daily), this would add approximately 220 t CO2e annually, of which 160 t directly attributable to queries. While this would almost double an individual's real-time energy use, the impact on overall emissions is relatively small.
 
-\item Embodied emissions are an important consideration for university-owned devices as well. If we exclude personal devices and LLMs, then total IT emissions shrink to $\sim 1500$ t CO$_2$e, of which $\frac{2}{3}$ comprises the embodied emissions of classroom computers, wall displays, printers, etc.
+\item Embodied emissions are an important consideration for university-owned devices as well. If we exclude personal devices and LLMs, then total IT emissions shrink to $\sim 1500$ t \coe, of which $\frac{2}{3}$ comprises the embodied emissions of classroom computers, wall displays, printers, etc.
 
-\item Data center cooling and efficiency represents a potential savings opportunity. The largest operational emissions are from data center servers and cooling (320 t). UZH data centers currently require as much energy for cooling as for computation, compared to the $6-15\%$ cooling overhead of cloud industry leaders. Moving workloads to efficient cloud providers could reduce data center emissions from $\sim 560$ t to $\sim 135$ t CO$_2$e annually, though this estimate requires further validation.
+\item Data center cooling and efficiency represents a potential savings opportunity. The largest operational emissions are from data center servers and cooling (320 t). UZH data centers currently require as much energy for cooling as for computation, compared to the $6-15\%$ cooling overhead of cloud industry leaders. Moving workloads to efficient cloud providers could reduce data center emissions from $\sim 560$ t to $\sim 135$ t \coe\ annually, though this estimate requires further validation.
 
 \end{itemize}
 
