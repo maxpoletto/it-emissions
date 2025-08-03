@@ -425,12 +425,8 @@ Network emissions
 
                 <!-- Controls -->
                 <div class="controls">
-                    <label>
-                        <input type="checkbox" id="stochastic-checkbox">
-                        <span>Stochastic</span>
-                    </label>
                     <button class="run-btn" onclick="updateDevices()">Rerun Calculation</button>
-                    <button class="run-btn" onclick="resetParameters(true)">Reset Parameters</button>
+                    <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
                 </div>
 
                 <!-- Results Section -->
@@ -1192,17 +1188,16 @@ Network emissions
             refreshLLMChart();
         }
 
-        function resetParameters(update = false) {
+        function resetParameters() {
             deviceInfo = JSON.parse(JSON.stringify(deviceInfoDefault));
             embodiedEmissionsKgCo2e = JSON.parse(JSON.stringify(embodiedEmissionsKgCo2eDefault));
             powerW = JSON.parse(JSON.stringify(powerWDefault));
             compute = JSON.parse(JSON.stringify(computeDefault));
             llms = JSON.parse(JSON.stringify(llmsDefault));
             dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
-            if (update) {
-                initializeTables();
-                updateDevices();
-            }
+
+            initializeTables();
+            updateDevices();
         }
 
         // URL state management for bookmarking scenarios
@@ -1246,6 +1241,8 @@ Network emissions
                     const decodedState = atob(configParam); // Base64 decode
                     const stateObj = JSON.parse(decodedState);
                     deserializeState(stateObj);
+                    initializeTables();
+                    updateDevices();
                     console.log('Loaded configuration from URL');
                 } catch (error) {
                     console.warn('Failed to parse URL configuration:', error);
@@ -1261,18 +1258,8 @@ Network emissions
             updateURL();
         }
 
-        // Entry point.
         window.onload = function() {
             parseURL();
-            initializeTables();
-
-            // Simulation mode (deterministic by default)
-            stochastic = document.getElementById('stochastic-checkbox').checked;
-            document.getElementById('stochastic-checkbox').addEventListener('change', function(e) {
-                stochastic = e.target.checked;
-            });
-
-            updateDevices();
         };
     </script>
 </body>
