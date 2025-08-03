@@ -5,7 +5,6 @@
 \renewcommand{\sfdefault}{fvs} % Use as sans-serif
 \renewcommand{\ttdefault}{fvm} % Use as monospace
 \renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
-\newcommand{\assumption}[1]{{#1}}
 \newcommand{\eg}{{\em e.g.}}
 \newcommand{\coe}{CO$_2$e}
 \newcommand{\gcoe}{g \coe}
@@ -185,13 +184,87 @@ We have an authoritative census of devices (workstations, servers, audiovisual e
   \label{tab:oncampusdevices}
 \end{center}
 
-On top of this, we assume that 
+In addition to these numbers, which cover staff and facilities, we assume that 80\% of the student population of 28,000 people have a laptop (or equivalent device, such as a tablet), and that everyone at the university has mobile phone, resulting in a rough estimate of 32,000 laptops and 35,000 mobile phones.
+
+Traditional desktop computers appear to be infrequent on campus. By default we set their number to zero in our model, but we still provide parameters for them.
 
 \subsubsection*{Operational emissions}
 
+The Swiss electricity mix is substantially cleaner than the European or North American average, so generic manufacturer estimates of lifetime usage-related emissions are unsuitable. Unfortunately, in manufacturer literature we found surprisingly few sources of data on device power consumption, as opposed to estimated lifetime CO$_2$ emissions. Based on some manufacturer data sheets, primarily from Apple, Cisco, and Dell, we model power draw of different devices while under load using the following initial parameters:
+
+\begin{center}
+\begin{tabular}{|l|r|r|}
+\hline
+\textbf{Device} & \textbf{Mean (W)} & \textbf{$\sigma$ (W)} \\ \hline
+Laptop & 30 & 5 \\ \hline
+Monitor & 50 & 10 \\ \hline
+Desktop & 100 & 20 \\ \hline
+Server & 400 & 100 \\ \hline
+Mobile phone & 5 & 2 \\ \hline
+A/V equipment & 250 & 50 \\ \hline
+Printer & 1000 & 200 \\ \hline
+\end{tabular}
+\end{center}
+
+Our assumptions about device duty cycle can be summarized as follows: (1) end-user devices are used during the day on weekdays, (2) servers run around-the-clock but at 80\% of peak power load, (3) mobile phones draw no power (they are unplugged) except for a few hours in the evening to charge, (4) printers are idle except for a few minutes per day.
+
+Standby power for all devices is negligible ($\sim 1$ W), except for printers which often draw 50--100 W.
+
+We lack good data about the campus network, save for the existence of approximately 4,000 wifi access points. Based on this, we choose to model network emissions as a configurable percentage of device (local, desktop, server) emissions, by default 10\%.
+
 \subsubsection*{Embodied emissions}
 
-We obtain 
+For several device types, especially end-user devices such as phones and laptops, embodied emissions
+comprise a majority of lifetime emissions. Different sources report widely different values for these emissions. Our approach has been to find several studies and industry references, and then estimate a mean reference value as well as likely minimum and maximum values.
+
+The following table summarizes results from the literature.
+
+\begin{center}
+\begin{tabular}{|l|r|l|}
+\hline
+& \textbf{Embod. emiss.} & \\
+\textbf{Device type} & \textbf{(\kgcoe)} & \textbf{Source} \\ \hline
+Laptop & 121 & \textcite{ecoinvent}  \\ \hline
+Laptop & 104 & \textcite{teehan2013} (low) \\ \hline
+Laptop & 338 & \textcite{teehan2013} (high) \\ \hline
+Laptop & 244 & \textcite{rarecoil} \\ \hline
+Laptop & 202 & \textcite{unctadder2024} \\ \hline
+Desktop & 238 & \textcite{ecoinvent} \\ \hline
+Desktop & 303 & \textcite{teehan2013} \\ \hline
+Desktop & 403 & \textcite{unctadder2024} \\ \hline
+Desktop & 289 & \textcite{dellpcf} \\ \hline
+Desktop & 277 & \textcite{boavizta} \\ \hline
+Server & 383 & \textcite{teehan2013} \\ \hline
+Server & 1252 & \textcite{davy2021} (Dell) \\ \hline
+Server & 1912 & \textcite{davy2021} (EC2) \\ \hline
+Server & 899 & \textcite{boavizta} (medium server)\\ \hline
+Phone & 68 & \textcite{googlepixel8} (Pixel 8)\\ \hline
+Phone & 54 & \textcite{appleiphone13} (iPhone 13)\\ \hline
+Phone & 50 & \textcite{unctadder2024} \\ \hline
+Phone & 50 & \textcite{lovehagen2023} \\ \hline
+\end{tabular}
+\label{tab:embodied_emissions}
+\end{center}
+
+For laptops, the numbers from Ecoinvent, a reputable proprietary Swiss life cycle inventory database used in the UZH sustainability report, appear to be on the low end. The most comprehensive publicly available data comes from \textcite{rarecoil}, which lists manufacturer information for over 90 popular devices. Mean supply chain emissions in this data set are 244 \kgcoe\ with a standard deviation of 128 kg. To be conservative, we split the difference between this number and the Ecoinvent values and model laptops embodied emissions at 180 \kgcoe\ / device.
+
+For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from Dell's Product Carbon Footprints (\cite{dellpcf}), which the company publishes for each of their products. A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model desktop embodied emissions at 288 \kgcoe\ / device.
+
+In the case of server, \textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances. The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter 1912 kg with $\sigma = 885$ kg. \textcite{boavizta} reports mean supply chain emissions of 899 \kgcoe\ for a medium-sized server. We model server supply chain emissions at 1252 \kgcoe\ / device.
+
+The range of values for mobile phones is much smaller. We model phone embodied emissions at 50 \kgcoe\ / device.
+
+We found less data for other types of devices. For now, we model them as follows:
+
+\begin{itemize}
+    \item Computer monitors: 344 \kgcoe\ (\cite{teehan2013}, \cite{dellpcf}).
+    \item Conference room displays: 753 \kgcoe\ (scaling monitor by $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment (lecture room projectors, etc.). Note that the numbers are sufficiently low that errors in this estimate do not significantly affect the overall result.
+    \item Printer/copier stations: 1167 \kgcoe\ (\cite{ecoinvent}).
+    \item Network equipment: We did not find reliable lifecycle assessments for routers and switches,
+      and have little information about UZH network architecture. The vast majority ($80-95\%$) of
+      lifecycle emissions of network gear stem from usage (\cite{cisco2024}, \cite{jacob2023}).
+      For now, we model the embodied emissions of network equipment like we do its operational emissions, namely as a 10\% overhead on the number of devices (laptops, desktops, servers).
+\end{itemize}
 
 \subsection{Cloud and supercomputing facilities}
 
@@ -225,138 +298,6 @@ We model LLM emissions by sampling from the per-capita daily query distribution 
 the carbon intensity of each query based on the average European electricity mix. While there
 are many uncertainties about the level of LLM adoption, there appears to be reasonable consensus
 in the literature about the energy consumption of each query.
-
-\subsection{Embodied emissions}
-
-For several device types, especially end-user devices such as phones and laptops, embodied emissions
-comprise a majority of lifetime emissions. However, the exact amount of these emissions varies
-widely between different sources. Our approach has been to find several studies and industry references,
-and then estimate means and standard deviations from those that seemed most comprehensive and reliable
-(for example, Dell's Product Carbon Footprint reports about its servers).
-
-\subsubsection{Laptops}
-
-\begin{center}
-\begin{tabular}{|r|l|}
-\hline
-\textbf{Production \& Disposal} & \\
-\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
-121 & \textcite{ecoinvent}  \\ \hline
-104 & \textcite{teehan2013} (low) \\ \hline
-338 & \textcite{teehan2013} (high) \\ \hline
-244 & \textcite{rarecoil} \\ \hline
-202 & \textcite{unctadder2024} \\ \hline
-\end{tabular}
-\label{tab:embodied_emissions:laptops}
-\end{center}
-
-The Ecoinvent numbers appear to be outliers on the low end.
-The most comprehensive data comes from \textcite{rarecoil}, which lists manufacturer
-information for over 90 popular devices. Mean supply chain emissions are
-244 \kgcoe\ with a standard deviation of 128 kg.
-\assumption{We model laptop supply chain emissions using a truncated normal distribution with those characteristics.}
-
-\subsubsection{Desktops}
-
-\begin{center}
-\begin{tabular}{|r|l|}
-\hline
-\textbf{Production \& Disposal} & \\
-\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
-238 & \textcite{ecoinvent} \\ \hline
-303 & \textcite{teehan2013} \\ \hline
-403 & \textcite{unctadder2024} \\ \hline
-289 & \textcite{dellpcf} \\ \hline
-277 & \textcite{boavizta} \\ \hline
-\end{tabular}
-\label{tab:embodied_emissions:desktops}
-\end{center}
-
-Most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from
-Dell's Product Carbon Footprints (\cite{dellpcf}), which they publish for each of their products.
-A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg.
-\assumption{We model desktop supply chain emissions using these statistics.}
-
-\subsubsection{Servers}
-
-\begin{center}
-\begin{tabular}{|r|l|}
-\hline
-\textbf{Production \& Disposal} & \\
-\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
-383 & \textcite{teehan2013} \\ \hline
-1252 & \textcite{davy2021} (Dell) \\ \hline
-1912 & \textcite{davy2021} (EC2) \\ \hline
-899 & \textcite{boavizta} (medium server)\\ \hline
-\end{tabular}
-\label{tab:embodied_emissions:servers}
-\end{center}
-
-\textcite{davy2021} reports data for many Dell servers and estimates for different types of EC2 instances.
-The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter
-1912 kg with $\sigma = 885$ kg.
-\assumption{We model server supply chain emissions using the statistics corresponding to Dell servers.}
-
-\subsubsection{Smartphones}
-
-\begin{center}
-\begin{tabular}{|r|l|}
-\hline
-\textbf{Production \& Disposal} & \\
-\textbf{(\kgcoe)} & \textbf{Source} \\ \hline
-68 & \textcite{googlepixel8} (Pixel 8)\\ \hline
-54 & \textcite{appleiphone13} (iPhone 13)\\ \hline
-50 & \textcite{unctadder2024} \\ \hline
-50 & \textcite{lovehagen2023} \\ \hline
-\end{tabular}
-\label{tab:embodied_emissions:phones}
-\end{center}
-
-\assumption{We model phone supply chain emissions using mean 50 \kgcoe\ and $\sigma = 10$ kg.}
-
-\subsubsection{Other devices}
-
-We found less data for other types of devices. For now, we model them with averages based
-on a handful of sources.
-
-\begin{description}
-    \item[Computer monitors] 344 \kgcoe\ (\textcite{teehan2013}, \textcite{dellpcf})
-    \item[Conference room displays] 753 \kgcoe\ (scaling monitor by $(40''/27'')^2$)
-    \item[Printer/copier stations] 1167 \kgcoe\ (\textcite{ecoinvent})
-    \item[Network equipment] We did not find reliable lifecycle assessments for routers and switches,
-      and have no information about UZH network architecture. The vast majority ($80-95\%$) of
-      lifecycle emissions of network gear stem from usage (\textcite{cisco2024}, \textcite{jacob2023}).
-      For now, we model network equipment as a 5\% overhead on servers (1 router or switch for 20 servers).
-      (A typical data center rack contains 42 1U servers and one switch or router.)
-\end{description}
-
-\subsection{Operational emissions}
-
-For on-premise equipment, we would like to model the Swiss electricity mix (see below) and, ideally,
-daily variations in usage and electricity carbon intensity.
-Generic manufacturer estimates of lifetime usage-related emissions are therefore unsuitable.
-There are surprisingly few sources of data on device power consumption (as opposed to CO$_2$ emissions).
-Based on a smattering of data sheets, primarily from Apple, Cisco, and Dell, we model
-power draw of different devices while under load using the following initial parameters:
-
-\begin{center}
-\begin{tabular}{|l|r|r|}
-\hline
-\textbf{Device} & \textbf{Mean (W)} & \textbf{$\sigma$ (W)} \\ \hline
-Laptop & 30 & 5 \\ \hline
-Desktop & 100 & 20 \\ \hline
-Server & 400 & 100 \\ \hline
-Phone & 5 & 2 \\ \hline
-Monitor & 50 & 10 \\ \hline
-Conference display & 250 & 50 \\ \hline
-Printer/copier & 1000 & 200 \\ \hline
-\end{tabular}
-\end{center}
-
-We assume a distribution of duty cycles and power draw when idle for each device.
-In the future, we may simulate power draw at different times of day to integrate with
-hourly electricity mix data, but errors in those assumptions may swamp the relatively small
-hourly variations in Swiss electricity carbon intensity.
 
 \subsection{Cloud data centers}
 \label{sec:cloud_data_centers}
