@@ -732,11 +732,11 @@
             table.innerHTML = '';
 
             const timePeriods = ['Night (0:00-5:59)', 'Morning (6:00-11:59)', 'Afternoon (12:00-17:59)', 'Evening (18:00-23:59)'];
-            
+
             // Create header row
             const headerRow = document.createElement('tr');
             headerRow.appendChild(document.createElement('th')); // Empty cell for device names
-            
+
             timePeriods.forEach(period => {
                 const th = document.createElement('th');
                 th.textContent = period;
@@ -747,7 +747,7 @@
             // Create rows for each device type
             Object.keys(data).forEach(deviceType => {
                 const row = document.createElement('tr');
-                
+
                 // Device name cell
                 const deviceCell = document.createElement('td');
                 deviceCell.textContent = deviceType;
@@ -756,7 +756,7 @@
                 // Create input for each time period
                 data[deviceType].forEach((value, index) => {
                     const cell = document.createElement('td');
-                    
+
                     const input = document.createElement('input');
                     input.type = 'number';
                     input.step = '0.01';
@@ -772,11 +772,11 @@
                             e.target.value = value; // Reset to previous value if invalid
                         }
                     });
-                    
+
                     cell.appendChild(input);
                     row.appendChild(cell);
                 });
-                
+
                 table.appendChild(row);
             });
         }
@@ -1179,14 +1179,65 @@
             refreshLLMChart();
         }
 
+        // URL state management for bookmarking scenarios
+        function serializeState() {
+            return {
+                deviceInfo: deviceInfo,
+                embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2e,
+                powerW: powerW,
+                dutyCycle6h: dutyCycle6h,
+                compute: compute,
+                llms: llms
+            };
+        }
+
+        function deserializeState(stateObj) {
+            console.log("deserializing", stateObj.deviceInfo);
+            if (stateObj.deviceInfo) Object.assign(deviceInfo, stateObj.deviceInfo);
+            if (stateObj.embodiedEmissionsKgCo2e) Object.assign(embodiedEmissionsKgCo2e, stateObj.embodiedEmissionsKgCo2e);
+            if (stateObj.powerW) Object.assign(powerW, stateObj.powerW);
+            if (stateObj.dutyCycle6h) Object.assign(dutyCycle6h, stateObj.dutyCycle6h);
+            if (stateObj.compute) Object.assign(compute, stateObj.compute);
+            if (stateObj.llms) Object.assign(llms, stateObj.llms);
+        }
+
+        function updateURL() {
+            const state = serializeState();
+            const stateJson = JSON.stringify(state);
+            const base64State = btoa(stateJson); // Base64 encode to avoid quoting issues
+            const newUrl = window.location.pathname + '?config=' + base64State;
+
+            // Update URL without triggering page reload
+            window.history.replaceState(null, '', newUrl);
+        }
+
+        function parseURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const configParam = urlParams.get('config');
+
+            if (configParam) {
+                try {
+                    const decodedState = atob(configParam); // Base64 decode
+                    const stateObj = JSON.parse(decodedState);
+                    deserializeState(stateObj);
+                    console.log('Loaded configuration from URL');
+                } catch (error) {
+                    console.warn('Failed to parse URL configuration:', error);
+                }
+            }
+        }
+
         function updateDevices() {
             generateDevices();
             refreshOutput();
+            updateURL();
         }
 
         // Entry point.
         window.onload = function() {
+            parseURL();
             initializeTables();
+
             // Simulation mode (deterministic by default)
             stochastic = document.getElementById('stochastic-checkbox').checked;
             document.getElementById('stochastic-checkbox').addEventListener('change', function(e) {
