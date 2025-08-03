@@ -1,9 +1,9 @@
-<--- TODO
+<!--- TODO
 
 Campus:
 Network emissions
 
---/>
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -233,7 +233,7 @@ Network emissions
         }
 
         /* Use site's button styles */
-        .rerun-btn {
+        .run-btn {
             background-color: rgba(var(--c-blue), 1);
             color: rgba(var(--c-white), 1);
             border: none;
@@ -246,12 +246,12 @@ Network emissions
             transition: background-color 0.2s ease-in-out;
         }
 
-        .rerun-btn:hover {
+        .run-btn:hover {
             background-color: rgba(var(--c-blue), 0.8);
         }
 
         @media(max-width: 700px) {
-            .rerun-btn {
+            .run-btn {
                 font-size: 0.75rem;
             }
         }
@@ -429,7 +429,8 @@ Network emissions
                         <input type="checkbox" id="stochastic-checkbox">
                         <span>Stochastic</span>
                     </label>
-                    <button class="rerun-btn" onclick="updateDevices()">Rerun Calculation</button>
+                    <button class="run-btn" onclick="updateDevices()">Rerun Calculation</button>
+                    <button class="run-btn" onclick="resetParameters(true)">Reset Parameters</button>
                 </div>
 
                 <!-- Results Section -->
@@ -471,7 +472,7 @@ Network emissions
         let deviceChart = null;
         let llmChart = null;
 
-        const deviceInfo = {
+        const deviceInfoDefault = {
             'Laptops': {
                 'Lifetime': 4,
                 'Count': 32000,
@@ -508,8 +509,9 @@ Network emissions
                 'Days per year': 250,
             },
         };
+        let deviceInfo = {};
 
-        const embodiedEmissionsKgCo2e = {
+        const embodiedEmissionsKgCo2eDefault = {
             'Laptops': {
                 'Mean': 180, // Split the difference between Rarecoil and Ecoinvent.
                 'Stdev': 128,
@@ -553,8 +555,9 @@ Network emissions
                 'Max': 1367,
             },
         };
+        let embodiedEmissionsKgCo2e = {};
 
-        const powerW = {
+        const powerWDefault = {
             'Laptops': {
                 'Mean': 30,
                 'Stdev': 5,
@@ -605,8 +608,9 @@ Network emissions
                 'Standby': 90,
             },
         };
+        let powerW = {};
 
-        const compute = {
+        const computeDefault = {
             'Campus data center PUE (x100)': 200,
             'Cloud PUE (x100)': 120,
             'Cloud % servers in cloud': 0,
@@ -614,8 +618,9 @@ Network emissions
             'Cloud instance embodied kg CO2e/y': 97,
             'Cloud instance usage kg CO2e/y': 31,
         };
+        let compute = {};
 
-        const llms = {
+        const llmsDefault = {
             'User population': 38000,
             'Mean daily user queries': 15,
             'Days per year': 250,
@@ -626,8 +631,9 @@ Network emissions
             'Annual efficiency growth %': 30,
             'Annual training growth %': 20,
         };
+        let llms = {};
 
-        const dutyCycle6h = {
+        const dutyCycle6hDefault = {
             // Fraction of time active during 0:00-5:59, 6:00-11:59, 12:00-17:59, 18:00-23:59.
             // Just a guess, but probably not unreasonable.
             'Laptops': [0.1, 0.5, 1.0, 0.3],
@@ -638,6 +644,7 @@ Network emissions
             'A/V equipment': [0.0, 0.3, 0.6, 0.1],
             'Printers': [0.0, 0.0, 0.01, 0.0],
         };
+        let dutyCycle6h = {};
 
         // Per-country emissions intensity (g CO2e / kWh). Only CH for now.
         class Emissions {
@@ -1185,6 +1192,19 @@ Network emissions
             refreshLLMChart();
         }
 
+        function resetParameters(update = false) {
+            deviceInfo = JSON.parse(JSON.stringify(deviceInfoDefault));
+            embodiedEmissionsKgCo2e = JSON.parse(JSON.stringify(embodiedEmissionsKgCo2eDefault));
+            powerW = JSON.parse(JSON.stringify(powerWDefault));
+            compute = JSON.parse(JSON.stringify(computeDefault));
+            llms = JSON.parse(JSON.stringify(llmsDefault));
+            dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
+            if (update) {
+                initializeTables();
+                updateDevices();
+            }
+        }
+
         // URL state management for bookmarking scenarios
         function serializeState() {
             return {
@@ -1230,6 +1250,8 @@ Network emissions
                 } catch (error) {
                     console.warn('Failed to parse URL configuration:', error);
                 }
+            } else {
+                resetParameters();
             }
         }
 
