@@ -76,10 +76,14 @@
         .parameter-table th:first-child,
         .parameter-table td:first-child {
             text-align: left;
+            width: 40%;
+            min-width: 120px;
+            white-space: nowrap;
         }
         .parameter-table th:not(:first-child),
         .parameter-table td:not(:first-child) {
             text-align: right;
+            width: auto;
         }
         .parameter-table th {
             background-color: rgba(var(--c-grey-light), 1);
