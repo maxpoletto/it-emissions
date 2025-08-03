@@ -253,20 +253,13 @@ Lacking information about UZH's workloads, we model a hypothetical UZH cloud foo
 
 Given all these parameters, we can then compute cloud server operational emissions, embodied emissions, and cooling overhead as we do for on-premise servers.
 
+For supercomputing at CSCS, unfortunately, our only available data is power utilisation at peak load, 131 kW in 2024. We assume a 50\% average load and use the Swiss emissions intensity numbers to compute annual operational emissions.
+
 \subsection{Large language models}
 
-We must make assumptions about the fraction of the university population that use LLMs and the frequency of use (queries / day).
+The energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,devries2023growing,gowda2024watt,harding2024watts,heguerte2023estimate,luccioni2022estimating,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring}.
 
-We model LLM emissions by sampling from the per-capita daily query distribution and computing
-the carbon intensity of each query based on the average European electricity mix. While there
-are many uncertainties about the level of LLM adoption, there appears to be reasonable consensus
-in the literature about the energy consumption of each query.
-
-Energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,devries2023growing,gowda2024watt,harding2024watts,heguerte2023estimate,luccioni2022estimating,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring}.
-
-The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request, or approximately 10x the energy of a traditional search engine query. This number appears to be decreasing rapidly as model hardware and software improve, even though overall energy use is increasing due to increased utilization. Nevertheless, for the model we assume that queries consume 3 Wh each. We assume that on average every user will issue 15 queries per day.
-
-LLMs are distributed and the location that serves any particular request is unknown, so we use the average European electricity mix to compute carbon intensity.
+The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request, or approximately 10x the energy of a traditional search engine query. This number appears to be decreasing rapidly as model hardware and software improve, even though overall energy use is increasing due to increased utilization. Nevertheless, for the model we assume that queries consume 3 Wh each.
 
 The embodied emissions and training emissions of LLMs are difficult to estimate and attribute precisely. However, \textcite{devries2023growing} provides the following information about ChatGPT:
 \begin{itemize}
@@ -275,18 +268,20 @@ The embodied emissions and training emissions of LLMs are difficult to estimate 
   \item Approximately 4000 servers.
 \end{itemize}
 
-Assuming a relatively clean grid at 200 \gcoekwh (a low estimate), and that each server has embodied emissions of 4 t \coe\ (a high estimate), we obtain:
+The facilities hosting LLMs are distributed and the location that serves any particular request is unknown, so to map energy use to emissions we use the average emissions intensity of electricity generation in the EU in 2023, 207 \gcoekwh~\cite{eea:emissions:2025}.
+
+Assuming this emissions intensity, and that each server has embodied emissions of 4 t \coe\ (a high estimate), we obtain:
 \begin{itemize}
   \item 100 t \coe\ / day operational emissions.
   \item 260 t \coe\ training emissions.
   \item 16 kt \coe\ total embodied emissions.
 \end{itemize}
 
-After one year of operation, operational emissions are approximately 36 kt \coe, whereas training and embodied emissions are about 16 kt \coe, so operational emissions account for $\approx 70\%$ of the total. With less conservative assumptions (dirtier grid, lower embodied emissions), the proportion of operational emissions increases further.
+After one year of operation, operational emissions are approximately 36 kt \coe, whereas training and embodied emissions are about 16 kt \coe, so operational emissions account for $\sim 70\%$ of the total. With less conservative assumptions (dirtier grid, lower embodied emissions), the proportion of operational emissions increases further.
 
-Electricity emissions intensity for cloud data centers and LLMs] These facilities are unlikely to be located in Switzerland, and Switzerland's grid is cleaner than average. We use the European Union's average emissions intensity of electricity generation in 2023, 207 \gcoekwh~\cite{eea:emissions:2025}.
+As a result, when modeling overall LLM emissions, we multiply estimated operational emissions by 1.4 to account for training and embodied emissions. (We acknowledge that this is a rough estimate based on just one LLM.)
 
-As a result, when modeling overall LLM emissions, we multiply estimated operational emissions by 1.4 to account for training and embodied emissions. We acknowledge that this is, at best, a rough estimate based on just one LLM.
+We must make assumptions about the fraction of the university population that use LLMs and the frequency of use (queries / day). We assume that on average every user will issue 15 queries per day.
 
 \subsection{Electricity carbon intensity}
 
@@ -294,22 +289,50 @@ The Swiss Federal Office for the Environment published an extensive report (\cit
 
 However, for the purposes of the model, we use data from \textcite{electricitymaps}. Specifically, we use the carbon emissions for electricity {\em consumption} (not generation) in Switzerland for 2023 at hourly granularity, then aggregate the data into two-hour blocks, and compute the mean of each two hour block over the course of the year. This gives us twelve data points that describe average carbon intensity variation over the course of the day.
 
-\subsection{Limitations and validation}
+\subsection{Model limitations}
 
-The biggest limitation is the modest availability of some ground truth data about UZH IT infrastructure. Specifically, we have only estimates of campus data center energy use, and limited information abut UZH research workloads (whether AI or not). We assume that many research AI workloads will be relatively similar in intensity to existing scientific computation workloads. We also have limited information (e.g., peak power consumption) about UZH use of external high-performance compute resources such as Alps/CSCS.
+Our biggest limitation is the relative lack of ground truth data about UZH IT infrastructure. We have obtained only estimates of campus data center energy use, and little information abut UZH research workloads (whether AI-related or not). We assume that many research AI workloads will be relatively similar in intensity to existing scientific computation workloads. We also lack information about UZH use of external high-performance compute resources at CSCS.
 
-Additionally, cloud vendors and AI companies are secretive about their infrastructure. We have relied on public datasets and research literature to estimate cloud and AI emissions.
+Additionally, our work relies on assumptions and anecdotal evidents about device ownership and use among the university population, use of generative AI tools, etc.
 
-Despite these limitations, our bottom-up model aligns closely with two UZH data points. First, the model correctly estimates approximately $400$ kW of compute for central campus data centers. Second, for university-owned campus IT infrastructure, the model estimates $1.4$ kt \coe\ emissions per year, close to the $1.45$ kt reported in the 2024 university sustainability report \cite{uzh:sustainability:report}.
+Moreover, cloud vendors and AI companies are secretive about their infrastructure, and we have had to rely on public datasets and research literature to estimate cloud and AI emissions.
+
+However, all these points of uncertainty are exposed as user-configurable parameters in the model, allowing easy sensitivity analysis and exploration of alternate scenarios.
 
 \section{Results}
 \label{sec:results}
 
-\subsection{Model validation}
+\subsection{Initial model validation}
 
-Using Ecoinvent embodied emissions values where available, and only the numbers and types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, our model estimates emissions of 1,460 t \coe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe/device for embodied emissions, \kgcoe/device/day for operational emissions) provided by Ecoinvent.
+Using Ecoinvent embodied emissions values where available, and only the numbers and types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, our model estimates emissions of 1,460 t \coe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe\ / device for embodied emissions, \kgcoe\ / device / day for operational emissions) provided by Ecoinvent.
 
-While this is admittedly just one data point, it provides some confidence that our assumptions are realistic and that the model can be used to extrapolate emissions and trends beyond the scope of the sustainability report.
+While this is admittedly just one data point, and the extreme proximity of the two values is likely a coincidence, it provides some confidence that our assumptions are reasonable and that the model can be used to make directional decisions and extrapolate trends beyond the scope of the sustainability report.
+
+\subsection{Key results}
+
+\subsubsection*{Impact of embodied emissions}
+
+\subsubsection*{Impact of cloud computing}
+
+\subsubsection*{Impact of LLMs}
+
+\subsection{Sensitivity analysis}
+
+\section{Recommendations}
+\label{sec:recommendations}
+
+Our recommendations for university policy makers can be summarized in three main points.
+
+First, do not panic about LLMs. Their emissions comprise a small fraction of total IT emissions, they will get more efficient, and attempting to curb their use is likely to be a losing battle.
+
+Invest in infrastructure for the long term. Run awareness campaigns and adapt IT policies so that personal devices and university IT systems are used for as long as possible. Amortize manufacturing emissions over the longest period possible.
+
+Improve the cooling efficiency of university data centers, or engage cloud vendors and academic compute centers (such as CSCS) to validate the potential benefits of a migration to cloud.
+
+\section{Related work}
+\label{sec:related:work}
+
+\section{Conclusion}
 
 Our analysis shows that manufacturing (“embodied”) emissions dominate UZH's IT carbon footprint, while operational impacts, including AI adoption, are relatively modest.
 
@@ -324,18 +347,6 @@ Our analysis shows that manufacturing (“embodied”) emissions dominate UZH's 
   \item Data center cooling and efficiency represents a potential savings opportunity. The largest operational emissions are from data center servers and cooling (320 t). UZH data centers currently require as much energy for cooling as for computation, compared to the $6-15\%$ cooling overhead of cloud industry leaders. Moving workloads to efficient cloud providers could reduce data center emissions from $\sim 560$ t to $\sim 135$ t \coe\ annually, though this estimate requires further validation.
 
 \end{itemize}
-
-\section{Recommendations}
-\label{sec:recommendations}
-
-Do not panic about LLMs. Their emissions comprise a small fraction of total IT emissions, they will get more efficient, and attempting to curb their use is likely to be a losing battle.
-Invest in infrastructure for the long term. Run awareness campaigns and adapt IT policies so that personal devices and university IT systems are used for as long as possible. Amortize manufacturing emissions over the longest period possible.
-Improve the cooling efficiency of university data centers, or engage cloud vendors and academic compute centers (such as CSCS) to validate the potential benefits of a migration to cloud.
-
-\section{Related work}
-\label{sec:related:work}
-
-\section{Conclusion}
 
 \printbibliography
 
