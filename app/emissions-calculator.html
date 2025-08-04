@@ -1,8 +1,5 @@
 <!--- TODO
-
-Supercomputing
 ML
-
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -615,6 +612,7 @@ ML
             'Cloud instance embodied kg': 700,
             'Cloud instance power W': 300,
             'Cloud instance lifetime y': 4,
+            'Supercomputing mean power kW': 66,
         };
         let compute = {};
 
@@ -945,6 +943,11 @@ ML
             return [u, m];
         }
 
+        // Calculate supercomputing emissions
+        function supercomputingEmissionsKgCO2e() {
+            return averageEmissionsKgCO2ePerDay(compute['Supercomputing mean power kW'] * 1000) * 365;
+        }
+
         // Calculate LLM emissions
         function llmEmissionsKgCO2e() {
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
@@ -1038,6 +1041,15 @@ ML
                 usage: cloudU
             });
             total += cloudU + cloudM;
+
+            // Supercomputing
+            const supercomputingU = supercomputingEmissionsKgCO2e();
+            data.push({
+                category: 'Supercomputing',
+                embodied: null,
+                usage: supercomputingU
+            });
+            total += supercomputingU;
 
             // LLM
             const [llmU, llmM] = llmEmissionsKgCO2e();
