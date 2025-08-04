@@ -1,6 +1,3 @@
-<!--- TODO
-ML
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -640,7 +637,7 @@ ML
         let powerW = {};
 
         const computeDefault = {
-            'Campus networking overhead x100': 10,
+            'Campus networking overhead %': 10,
             'Campus data center PUE x100': 200,
             'Cloud PUE x100': 115,
             'Cloud % servers in cloud': 0,
@@ -656,12 +653,13 @@ ML
             'User population': 38000,
             'Mean daily user queries': 15,
             'Days per year': 250,
-            'Mean query Wh': 3.5,
+            'Mean query Wh': 1.0,
+            'Training overhead %': 25,
             'Emissions intensity g CO2e / kWh': 207,
-            'Training overhead %': 40,
+            'Embodied emissions g CO2e / query': 0.1,
             'Annual usage growth %': 40,
             'Annual efficiency growth %': 30,
-            'Annual training growth %': 20,
+            'Annual training growth %': 50,
         };
         let llms = {};
 
@@ -691,7 +689,7 @@ ML
                 'Standby': 'Standby power (W)'
             },
             parameters: {
-                'Campus networking overhead x100': 'Campus networking energy use as percentage (x100) of energy used by laptop, desktops, and servers',
+                'Campus networking overhead %': 'Campus networking energy use as percentage (x100) of energy used by laptop, desktops, and servers',
                 'Campus data center PUE x100': 'Power usage effectiveness of campus data center (x100)',
                 'Cloud PUE x100': 'Power usage effectiveness of cloud (x100)',
                 'Cloud % servers in cloud': 'Percentage of campus servers that are migrated to cloud',
@@ -704,11 +702,12 @@ ML
                 'Mean daily user queries': 'Mean number of queries per user per day',
                 'Days per year': 'Days per year average user uses LLMs',
                 'Mean query Wh': 'Mean energy consumption of a query (Wh)',
-                'Emissions intensity g CO2e / kWh': 'Emissions intensity of electricity (g CO2e / kWh) for LLM facility',
                 'Training overhead %': 'Energy used for training as percentage of energy used for inference',
+                'Emissions intensity g CO2e / kWh': 'Emissions intensity of electricity (g CO2e / kWh) for LLM facility',
+                'Embodied emissions g CO2e / query': 'Embodied emissions per query (g CO2e)',
                 'Annual usage growth %': 'Annual growth rate of LLM usage',
                 'Annual efficiency growth %': 'Annual growth rate of LLM inference efficiency',
-                'Annual training growth %': 'Annual growth rate of LLM training overhead'
+                'Annual training growth %': 'Annual growth rate of LLM training overhead',
             }
         };
 
@@ -1034,9 +1033,9 @@ ML
         function llmEmissionsKgCO2e() {
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
             const nqueries = llms['Mean daily user queries'] * llms['User population'];
-            // Divide by 1000 to convert Wh to kWh and by 100 again to convert g CO2e to kg CO2e.
+            // Divide by 1000 to convert Wh to kWh and by 1000 again to convert g CO2e to kg CO2e.
             const u = nqueries * llms['Days per year'] * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
-            const m = u * llms['Training overhead %'] / 100;
+            const m = u * llms['Training overhead %'] / 100 + nqueries * llms['Embodied emissions g CO2e / query'] / 1000;
             return [u, m];
         }
 
@@ -1096,8 +1095,8 @@ ML
             let nu = 0, nm = 0;
             ['Laptops', 'Desktops', 'Servers'].forEach(device => {
                 const [u, m] = deviceEmissionsKgCO2e(device);
-                nu += u * compute['Campus networking overhead x100'] / 100;
-                nm += m * compute['Campus networking overhead x100'] / 100;
+                nu += u * compute['Campus networking overhead %'] / 100;
+                nm += m * compute['Campus networking overhead %'] / 100;
             });
             total += nu + nm;
             data.push({
