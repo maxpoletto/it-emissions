@@ -326,6 +326,42 @@ ML
             display: table-cell;
         }
 
+        /* Tooltip system */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted rgba(var(--c-grey), 0.5);
+        }
+
+        [data-tooltip]:not([data-tooltip=""]):hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(var(--c-black), 0.9);
+            color: rgba(var(--c-white), 1);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            line-height: 1.3;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        [data-tooltip]:not([data-tooltip=""]):hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            border: 4px solid transparent;
+            border-top-color: rgba(var(--c-black), 0.9);
+            z-index: 999;
+            pointer-events: none;
+        }
+
         .additional-headers {
             display: none;
         }
@@ -642,6 +678,40 @@ ML
         };
         let dutyCycle6h = {};
 
+        // Tooltip definitions
+        const tooltips = {
+            columnHeaders: {
+                'Count': 'Number of devices',
+                'Lifetime': 'Average lifetime (y)',
+                'Days per year': 'Days per year the device is used',
+                'Mean': 'Mean value',
+                'Stdev': 'Standard deviation',
+                'Min': 'Minimum value',
+                'Max': 'Maximum value',
+                'Standby': 'Standby power (W)'
+            },
+            parameters: {
+                'Campus networking overhead x100': 'Campus networking energy use as percentage (x100) of energy used by laptop, desktops, and servers',
+                'Campus data center PUE x100': 'Power usage effectiveness of campus data center (x100)',
+                'Cloud PUE x100': 'Power usage effectiveness of cloud (x100)',
+                'Cloud % servers in cloud': 'Percentage of campus servers that are migrated to cloud',
+                'Cloud instances per 100 local servers': 'Number of cloud instances required to replace 100 campus servers',
+                'Cloud instance embodied kg': 'Embodied emissions of a cloud instance (kg CO2e)',
+                'Cloud instance power W': 'Power consumption of a cloud instance (W)',
+                'Cloud instance lifetime y': 'Average lifetime of a cloud instance (y)',
+                'Supercomputing mean power kW': 'Mean power consumption of workloads at supercomputing facility (kW)',
+                'User population': 'Number of users',
+                'Mean daily user queries': 'Mean number of queries per user per day',
+                'Days per year': 'Days per year average user uses LLMs',
+                'Mean query Wh': 'Mean energy consumption of a query (Wh)',
+                'Emissions intensity g CO2e / kWh': 'Emissions intensity of electricity (g CO2e / kWh) for LLM facility',
+                'Training overhead %': 'Energy used for training as percentage of energy used for inference',
+                'Annual usage growth %': 'Annual growth rate of LLM usage',
+                'Annual efficiency growth %': 'Annual growth rate of LLM inference efficiency',
+                'Annual training growth %': 'Annual growth rate of LLM training overhead'
+            }
+        };
+
         // Per-country emissions intensity (g CO2e / kWh). Only CH for now.
         class Emissions {
             static gco2PerKwhByHours = {
@@ -700,6 +770,12 @@ ML
             all_params.forEach(param => {
                 const th = document.createElement('th');
                 th.textContent = param;
+
+                // Add tooltip if defined (even if empty, for visual indication)
+                if (tooltips.columnHeaders.hasOwnProperty(param)) {
+                    th.setAttribute('data-tooltip', tooltips.columnHeaders[param]);
+                }
+
                 headerRow.appendChild(th);
                 if (!default_display_params.includes(param)) {
                     th.className = 'additional-headers';
@@ -807,6 +883,12 @@ ML
                 // Parameter name cell
                 const keyCell = document.createElement('td');
                 keyCell.textContent = paramKey;
+
+                // Add tooltip if defined (even if empty, for visual indication)
+                if (tooltips.parameters.hasOwnProperty(paramKey)) {
+                    keyCell.setAttribute('data-tooltip', tooltips.parameters[paramKey]);
+                }
+
                 row.appendChild(keyCell);
 
                 // Value input cell
