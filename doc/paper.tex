@@ -82,7 +82,7 @@ Student-owned devices, such as laptops and smartphones, are in scope, since they
 
 University-owned devices are in scope. We have accurate numbers for staff workstations, classroom computers, network access points, and audiovisual devices managed by the central IT department. We can only estimate other devices, such as networking equipment or computers managed by individual research groups. As before, we include these devices' embodied emissions in the model.
 
-For servers, which are mostly located in on-premise data centers, we also attempt to take into account emissions from cooling.
+For servers, which are mostly located in on-premise data centers, we also attempt to take into account emissions from cooling. (We do not model the manufacturing emissions of the cooling equipment itself.)
 
 \subsubsection*{Cloud and supercomputing facilities}
 
@@ -257,9 +257,12 @@ For supercomputing at CSCS, unfortunately, our only available data is power util
 
 \subsection{Large language models}
 
-The energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,devries2023growing,gowda2024watt,harding2024watts,heguerte2023estimate,luccioni2022estimating,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring}.
+The energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,devries2023growing,epoch2024optimallyallocatingcomputebetweeninferenceandtraining,gowda2024watt,harding2024watts,heguerte2023estimate,luccioni2022estimating,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring,epoch2025howmuchenergydoeschatgptuse}.
 
-The best estimates are that use of large language model (LLM) like ChatGPT averages 3-4 Wh / request, or approximately 10x the energy of a traditional search engine query. This number appears to be decreasing rapidly as model hardware and software improve, even though overall energy use is increasing due to increased utilization. Nevertheless, for the model we assume that queries consume 3 Wh each.
+A widely cited 2023 study~\cite{devries2023growing} estimated the average energy consumption of a large language model like ChatGPT at approximately 3 Wh / request, about ten times the energy of a standard Google search query. In 2025, \textcite{epoch2025howmuchenergydoeschatgptuse} makes a convincing case that the energy use for the average GPT-4o query is just 0.3 Wh, ten times smaller than the 2023 estimate, while admitting that for unusually long inputs (10K--100K tokens) or for more ambitious applications such as OpenAI's Deep Research~\cite{oai:deepresearch} the energy requirement might rise into the several tens of watt-hours.
+
+Improvements in hardware technology and an increased focus on software optimization by AI companies as the adoption of AI grows means that, for a given level or quality of model, these costs are likely to continue to drop rapidly. Nonetheless, to be conservative, in the model we continue to assume that queries consume 3 Wh each on average.
+
 
 The embodied emissions and training emissions of LLMs are difficult to estimate and attribute precisely. However, \textcite{devries2023growing} provides the following information about ChatGPT:
 \begin{itemize}
