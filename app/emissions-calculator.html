@@ -1,6 +1,5 @@
 <!--- TODO
 
-Cloud
 Supercomputing
 ML
 
@@ -516,19 +515,19 @@ ML
                 'Max': 372,
             },
             'Monitors': {
-                'Mean': 344,
+                'Mean': 340, // Precise: 344
                 'Stdev': 50,
                 'Min': 294,
                 'Max': 394,
             },
             'Desktops': {
-                'Mean': 289,
+                'Mean': 290, // Precise: 289
                 'Stdev': 80,
                 'Min': 209,
                 'Max': 403,
             },
             'Servers': {
-                'Mean': 1252,
+                'Mean': 1100, // Dell mean 1252, Boazvizta ~900
                 'Stdev': 330,
                 'Min': 383,
                 'Max': 1582,
@@ -540,13 +539,13 @@ ML
                 'Max': 70,
             },
             'A/V equipment': {
-                'Mean': 753,
+                'Mean': 700, // Precise: 753
                 'Stdev': 109,
                 'Min': 644,
                 'Max': 862,
             },
             'Printers': {
-                'Mean': 1167,
+                'Mean': 1100, // Precise: 1167
                 'Stdev': 200,
                 'Min': 967,
                 'Max': 1367,
@@ -608,13 +607,14 @@ ML
         let powerW = {};
 
         const computeDefault = {
-            'Campus networking overhead (x100)': 10,
-            'Campus data center PUE (x100)': 200,
-            'Cloud PUE (x100)': 120,
+            'Campus networking overhead x100': 10,
+            'Campus data center PUE x100': 200,
+            'Cloud PUE x100': 115,
             'Cloud % servers in cloud': 0,
             'Cloud instances per 100 local servers': 100,
-            'Cloud instance embodied kg CO2e/y': 97,
-            'Cloud instance usage kg CO2e/y': 31,
+            'Cloud instance embodied kg': 700,
+            'Cloud instance power W': 300,
+            'Cloud instance lifetime y': 4,
         };
         let compute = {};
 
@@ -873,6 +873,23 @@ ML
             createKeyValueTable('llm-table', llms, updateDevices);
         }
 
+        function deviceEmissionsIntensity(device) {
+            const dutyCycle = dutyCycle6h[device];
+            const r = Math.floor(24 / dutyCycle.length);
+            const ei = [];
+            for (let i = 0; i < 24; i++) {
+                const cycleIndex = Math.floor(i / r);
+                const duty = dutyCycle[cycleIndex];
+                const emission = Emissions.atHour(i, 'ch');
+                ei.push(duty * emission);
+            }
+            return ei;
+        }
+
+        function averageEmissionsKgCO2ePerDay(powerW) {
+            return Emissions.mean('ch') / 1000 * (powerW / 1000) * 24; // (g CO2e / kWh) / 1000 * kW * 24 h = kg CO2e / day
+        }
+
         // Generate device instances
         function generateDevices() {
             devices = {};
@@ -898,25 +915,15 @@ ML
                 );
 
                 devices[device]['standby_w'] = Array(n).fill(powerW[device]['Standby']);
-
-                // Compute emissions intensity
-                const dutyCycle = dutyCycle6h[device];
-                const r = Math.floor(24 / dutyCycle.length);
-                emissionsIntensity[device] = [];
-                for (let i = 0; i < 24; i++) {
-                    const cycleIndex = Math.floor(i / r);
-                    const duty = dutyCycle[cycleIndex];
-                    const emission = Emissions.atHour(i, 'ch');
-                    emissionsIntensity[device].push(duty * emission);
-                }
+                emissionsIntensity[device] = deviceEmissionsIntensity(device);
             });
         }
 
         // Calculate device emissions
         function deviceEmissionsKgCO2e(device) {
-            const intensitySum = emissionsIntensity[device].reduce((a, b) => a + b, 0);
-            const powerSum = devices[device]['power_w'].reduce((a, b) => a + b, 0);
-            const u = powerSum * intensitySum * deviceInfo[device]['Days per year'] / (1000 * 1000);
+            const intensitySum = emissionsIntensity[device].reduce((a, b) => a + b, 0); // g CO2e (for 24 h for 1 kW * duty cycle)
+            const powerSum = devices[device]['power_w'].reduce((a, b) => a + b, 0); // W for all devices
+            const u = powerSum * intensitySum * deviceInfo[device]['Days per year'] / (1000 * 1000); // convert to kg CO2e / year
             const m = devices[device]['annual_embodied_emissions'].reduce((a, b) => a + b, 0);
             return [u, m];
         }
@@ -924,16 +931,17 @@ ML
         // Calculate data center cooling emissions
         function dataCenterCoolingEmissionsKgCO2e() {
             const [serverU, _] = deviceEmissionsKgCO2e('Servers');
-            const dcCoolingU = serverU * (compute['Campus data center PUE (x100)'] - 100) / 100;
+            const dcCoolingU = serverU * (compute['Campus data center PUE x100'] - 100) / 100;
             return dcCoolingU;
         }
 
         // Calculate cloud emissions
         function cloudEmissionsKgCO2e() {
-            const u = cloudInstances * compute['Cloud instances per 100 local servers'] / 100 *
-                     compute['Cloud instance usage kg CO2e/y'] * compute['Cloud PUE (x100)'] / 100;
-            const m = cloudInstances * compute['Cloud instances per 100 local servers'] / 100 *
-                     compute['Cloud instance embodied kg CO2e/y'];
+            const u = cloudInstances * compute['Cloud instances per 100 local servers'] / 100
+                * averageEmissionsKgCO2ePerDay(compute['Cloud instance power W']) * 365
+                * compute['Cloud PUE x100'] / 100;
+            const m = cloudInstances * compute['Cloud instances per 100 local servers'] / 100
+                * compute['Cloud instance embodied kg'] / compute['Cloud instance lifetime y'];
             return [u, m];
         }
 
@@ -1003,8 +1011,8 @@ ML
             let nu = 0, nm = 0;
             ['Laptops', 'Desktops', 'Servers'].forEach(device => {
                 const [u, m] = deviceEmissionsKgCO2e(device);
-                nu += u * compute['Campus networking overhead (x100)'] / 100;
-                nm += m * compute['Campus networking overhead (x100)'] / 100;
+                nu += u * compute['Campus networking overhead x100'] / 100;
+                nm += m * compute['Campus networking overhead x100'] / 100;
             });
             total += nu + nm;
             data.push({
