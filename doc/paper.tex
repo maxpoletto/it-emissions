@@ -384,11 +384,13 @@ Only if we combine the ``low embodied emissions'' scenario with the ``pessimal L
 
 Our recommendations for university policy makers can be summarized in three main points.
 
-First, do not panic about LLMs. Their emissions comprise a small fraction of total IT emissions, they will get more efficient, and attempting to curb their use is likely to be a losing battle.
+First, do not panic about the potential impact of generative AI. Despite the popular narratives of breathtaking data center growth, LLM emissions comprise only a small fraction of per-capita IT emissions, and are likely to continue to do so in the foreseeable future. While training costs are likely to continue to grow, they will also likely be amortized over longer useful lifetimes, since the models will be more capable and AI companies will need to recoup their financial investments. Additionally, inference is likely to continue to become more efficient as hardware and software both improve.
 
-Invest in infrastructure for the long term. Run awareness campaigns and adapt IT policies so that personal devices and university IT systems are used for as long as possible. Amortize manufacturing emissions over the longest period possible.
+Second, management of physical IT assets (workstations, monitors, etc.) is probably an underappreciated and underutilized lever for emissions reduction. Total emissions for these devices are dominated by manufacturing and disposal, so extending their life by a certain amount leads to an almost reciprocal reduction in emissions. For example, if we start the model with default parameters and then increase laptop lifetime from 4 to 6 years and mobile phone lifetime from 3 to 4 years, total campus emissions decrease from 3.9 M\tcoe\ to 3.2 M\tcoe, an 18\% reduction!
 
-Improve the cooling efficiency of university data centers, or engage cloud vendors and academic compute centers (such as CSCS) to validate the potential benefits of a migration to cloud.
+Note that an effective, large-scale extension of IT device lifetime is probably not just a matter of IT policy but of communication and education. The university could reach out to students and staff to sensitize them to these issues, provide more support for device maintenance and repair, etc.
+
+Third, migration to a commercial cloud may help reduce emissions by improving cooling efficiency relative to on-campus data centers. However, the reduction in cooling emissions in the best case is probably moderate ($\le 5$\% of total IT emissions), and it should be weighed against the emissions of cloud servers that would replace on-premise servers. An exact accounting requires detailed work with the cloud vendor: it is of course possible that the servers themselves would be more efficient, further increasing the margin of improvement. However, decision makers should also consider whether the costs of a cloud migration could be redirected to more cost-effective emission reduction actions (possibly unrelated to IT).
 
 \section{Related work}
 \label{sec:related:work}
@@ -396,6 +398,8 @@ Improve the cooling efficiency of university data centers, or engage cloud vendo
 
 
 \section{Conclusion}
+
+We have presented a simple but powerful model
 
 Our analysis shows that manufacturing (“embodied”) emissions dominate UZH's IT carbon footprint, while operational impacts, including AI adoption, are relatively modest.
 
