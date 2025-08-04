@@ -232,7 +232,7 @@ The following table summarizes results from the literature.
 
 For laptops, the numbers from Ecoinvent, a reputable proprietary Swiss life cycle inventory database used in the UZH sustainability report, appear to be on the low end. The most comprehensive publicly available data comes from \textcite{rarecoil}, which lists manufacturer information for over 90 popular devices. Mean supply chain emissions in this data set are 244 \kgcoe\ with a standard deviation of 128 kg. To be conservative, we split the difference between this number and the Ecoinvent values and model laptops embodied emissions at 180 \kgcoe\ / device.
 
-For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from Dell's Product Carbon Footprints (\cite{dellpcf}), which the company publishes for each of their products. A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model desktop embodied emissions at 290 \kgcoe\ / device.
+For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from Dell's Product Carbon Footprints~\cite{dellpcf}, which the company publishes for each of their products. A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model desktop embodied emissions at 290 \kgcoe\ / device.
 
 In the case of servers, \textcite{davy2021} reports manufacturer data for many Dell servers and estimates for different types of EC2 instances. The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter 1912 kg with $\sigma = 885$ kg. \textcite{boavizta:api} reports mean supply chain emissions of 899 \kgcoe\ for a medium-sized server. We model server supply chain emissions at 1100 \kgcoe\ / device.
 
@@ -241,10 +241,10 @@ The variability of estimates for mobile phones is much smaller. We model phone e
 We found less data for other types of devices. For now, we model them as follows:
 
 \begin{itemize}
-  \item Computer monitors: 340 \kgcoe\ (\cite{teehan2013}, \cite{dellpcf}).
+  \item Computer monitors: 340 \kgcoe~\cite{dellpcf,lovehagen2023,teehan2013}.
   \item Conference room displays: 700 \kgcoe\ (scaling monitor by $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment (lecture room projectors, etc.). Note that the numbers are sufficiently low that errors in this estimate do not significantly affect the overall result.
-  \item Printer/copier stations: 1100 \kgcoe\ (\cite{ecoinvent}).
-  \item Network equipment: We did not find reliable lifecycle assessments for routers and switches, and have little information about UZH network architecture. The vast majority ($80-95\%$) of lifecycle emissions of network gear stem from usage (\cite{cisco2024}, \cite{jacob2023}). For now, we model the embodied emissions of network equipment like we do its operational emissions, namely as a 10\% overhead on the number of devices (laptops, desktops, servers).
+  \item Printer/copier stations: 1100 \kgcoe~\cite{ecoinvent}.
+  \item Network equipment: We did not find reliable lifecycle assessments for routers and switches, and have little information about UZH network architecture. The vast majority ($80-95\%$) of lifecycle emissions of network gear stem from usage~\cite{cisco2024,jacob2023}. For now, we model the embodied emissions of network equipment like we do its operational emissions, namely as a 10\% overhead on the number of devices (laptops, desktops, servers).
 \end{itemize}
 
 \subsection{Cloud and supercomputing facilities}
@@ -313,26 +313,26 @@ We now discuss the main takeaways from our model when it is configured with the 
 
 \subsubsection*{Impact of embodied emissions}
 
-Maybe the most striking result is that, when we consider the entire population of campus devices, and not only those owned and managed by the university, overall emissions are absolutely dominated by the manufacturing and disposal of end-user devices. See Figure~\ref{fig:1}.
+Maybe the most striking result is that, when we consider the entire population of campus devices, and not only those owned and managed by the university, overall emissions are absolutely dominated by the manufacturing and disposal of end-user devices. See Figure~\ref{fig:baseline}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{fig-baseline.png}
+  \includegraphics[width=0.7\textwidth]{fig-baseline.png}
   \caption{Baseline results}
-  \label{fig:1}
+  \label{fig:baseline}
 \end{figure}
 
 Many studies~\cite{wb:itu:ict,umich:factsheet} agree that a large fraction of computer and mobile phone energy demand stems from the manufacturing phase. This is due in part to the fact that such end-user devices are not used continuously. Our estimate of embodied emissions comprising approximately 85\% of total laptop emissions is near the top of the range in the literature, and it is consistent with the fact that the carbon intensity of Swiss electricity is about one quarter the EU average~\cite{electricitymaps}.
 
 \subsubsection*{Impact of cloud computing}
 
-Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170 \tcoe\ of cooling overhead, and replaces 415 \tcoe\ of total server emissions with 380 \tcoe\ of cloud emissions.
+Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170 \tcoe\ of cooling overhead, and replaces 415 \tcoe\ of total server emissions with 380 \tcoe\ of cloud emissions. See Figure~\ref{fig:cloud}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\textwidth]{fig-cloud.png}
+  \includegraphics[width=0.7\textwidth]{fig-cloud.png}
   \caption{Migration to cloud}
-  \label{fig:1}
+  \label{fig:cloud}
 \end{figure}
 
 For relatively small and inefficiently cooled facilities such as those of UZH, migration to the cloud certainly improves power usage effectiveness. Whether the migration is a net win, however, depends on details that would require an in-depth engagement with the cloud provider. The results above assume a one-for-one swap of on-premise servers with cloud ones, as well as the same electricity emissions intensity for the two facilities. If the cloud footprint needed to be bigger, or if the data center were located in a region with dirtier electricity, those factors might outweight the improved cooling efficiency.
@@ -341,8 +341,43 @@ There is also a financial argument to consider: if migration to the cloud is mor
 
 \subsubsection*{Impact of LLMs}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{fig-llm-growth.png}
+  \caption{LLM growth projection}
+  \label{fig:llm:growth}
+\end{figure}
+
+AI adoption is growing rapidly, driving demand for data centers and potentially stressing electrical infrastructure in coming years~\cite{lbl:dc:2024,iea:ai:energy}. However, for an institution of roughly constant size such as UZH, and where IT infrastructure is already well developed and heavily used, emissions from generative AI most likely represent a small addition to overall emissions. In our model, using the default parameters, they comprise just 1\% of total emissions.
+
+Moreover, under even aggressive growth projections (50\% YoY usage growth, 50\% YoY training overhead growth, a moderate 20\% YoY improvement in inference efficiency), that overhead remains under 3\% at the end of 5 years. See Figure~\ref{fig:llm:growth}.
+
+These results are consistent with other analyses that attempt to put LLM use in the context of other computer activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt}.
+
 \subsection{Sensitivity analysis}
 \label{sec:sensitivity:analysis}
+
+The results above are robust under remarkably different assumptions.
+
+For example, if we (1) massively reduce the set of end-user devices in scope to just those owned and managed by the university (about 10,000 laptops and monitors, 2,400 mobile phones), (2) triple the LLM per-query energy use to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a GPT-4o-class LLM 40 times per day, then emissions from AI still remain around 10\% of total (Figure~\ref{fig:sens1}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{fig-sens1.png}
+  \caption{A scenario with only university-managed end-user devices}
+  \label{fig:sens1}
+\end{figure}
+
+Similarly, if we cut our estimate for the embodied emissions of every type of device to the lowest value found in the literature (as opposed to a more representative middle-of-the-road value), but keep all other parameters at their default values, embodied emissions {\em still} dominate and LLM emissions continue to be a small fraction of the total, as seen in Figure~\ref{fig:sens2}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\textwidth]{fig-sens2.png}
+  \caption{A scenario with minimal embodied emissions}
+  \label{fig:sens2}
+\end{figure}
+
+Only if we combine the ``low embodied emissions'' scenario with the ``pessimal LLM'' scenario does generative AI become a major factor, contributing 18\% of total emissions.
 
 \section{Recommendations}
 \label{sec:recommendations}
