@@ -732,7 +732,7 @@ ML
         // If stochastic is false, returns a list of n values all equal to mu.
         function truncatedNormal(mu, sigma, minValue, maxValue, n) {
             if (n === 0) return [];
-            if (!stochastic) return Array(n).fill(mu);
+            if (!stochastic) return Array(1).fill(n * mu);
 
             const results = [];
             let value;
