@@ -123,9 +123,9 @@ We model campus device emissions bottom-up. We first identify categories of devi
 
 For each device type we also estimate (1) a count (\eg, a laptop for every student and staff), (2) an estimated duty cycle (\eg, laptops used 8 hours per day, 200 days per year), and (3) a useful lifetime (in years).
 
-Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (\kgcoe). We then estimate the local grid's emissions intensity (\gcoekwh) to convert the energy use to emissions and obtain a combined total annual emissions number. (In addition to this simple linear mode, the model can also operate stochastically, instantiating devices from a distribution. However, we have insufficient data on the precise form of such a distribution, so we limit our analysis to the linear mode.)
+Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (\kgcoe). We then estimate the local grid's carbon emissions intensity (\gcoekwh) to convert the energy use to emissions and obtain a combined total annual emissions number\footnote{The model can also operate stochastically, instantiating devices from a distribution, but we lack good data on the  form of such a distribution, so we limit our analysis to this simple linear mode.}.
 
-Note that for Switzerland we can compute average hourly emissions intensity over 2024 based on data from Electricity Maps~\cite{electricitymaps}. Emissions vary from a high of 64 \gcoekwh\ in the middle of the night to a low of 45 \gcoekwh\ in the middle of the day. This variation is sufficiently large that we have refined the model's device duty cycle to represent four six-hour periods over the course of the day. It allows us to specify, for example, that user devices are mostly used during the day whereas servers run around the clock.
+The Swiss Federal Office for the Environment has an extensive report on the environmental impact of electricity generation in Switzerland~\cite{krebs2018umweltbilanz}, but we are fortunate to also have hourly emissions intensity data from \textcite{electricitymaps}. We use the hourly intensity data for {\em consumption} (not production) to compute emissions intensity for every hour of the day averaged over all days in 2024. Emissions vary from a high of 64 \gcoekwh\ in the middle of the night to a low of 45 \gcoekwh\ in the middle of the day. This variation is sufficiently large that we refine the model's device duty cycle to represent four six-hour periods over the course of the day. It allows us to specify, for example, that user devices are mostly used during the day whereas servers run around the clock.
 
 For servers (in on-premise data centers) we also account for cooling overhead. Based on limited UZH historical power data, we estimate that the on-premise power usage effectiveness (PUE), the ratio of total data center power (including cooling) to power used for computation, is approxmiately 2. This value, higher than the commercial average of 1.56~\cite{google:datacenter:efficiency}, is attributable to inefficient cooling.
 
@@ -259,44 +259,38 @@ For supercomputing at CSCS, unfortunately, our only available data is power util
 
 The energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,devries2023growing,epoch2024optimallyallocatingcomputebetweeninferenceandtraining,gowda2024watt,harding2024watts,heguerte2023estimate,luccioni2022estimating,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring,epoch2025howmuchenergydoeschatgptuse}.
 
-A widely cited 2023 study~\cite{devries2023growing} estimated the average energy consumption of a large language model like ChatGPT at approximately 3 Wh / request, about ten times the energy of a standard Google search query. In 2025, \textcite{epoch2025howmuchenergydoeschatgptuse} makes a convincing case that the energy use for the average GPT-4o query is just 0.3 Wh, ten times smaller than the 2023 estimate, while admitting that for unusually long inputs (10K--100K tokens) or for more ambitious applications such as OpenAI's Deep Research~\cite{oai:deepresearch} the energy requirement might rise into the several tens of watt-hours.
+A widely cited 2023 study~\cite{devries2023growing} estimated the average energy consumption of a large language model like ChatGPT at approximately 3 Wh / request, about ten times the energy of a standard Google search query. In 2025, \textcite{epoch2025howmuchenergydoeschatgptuse} makes a convincing case that the energy use for the average GPT-4o query is now just 0.3 Wh, ten times smaller than the 2023 estimate, while admitting that for unusually long inputs (10K--100K tokens) or more ambitious applications such as OpenAI's Deep Research~\cite{oai:deepresearch} the energy requirement might rise into the tens of watt-hours.
 
-Improvements in hardware technology and an increased focus on software optimization by AI companies as the adoption of AI grows means that, for a given level or quality of model, these costs are likely to continue to drop rapidly. Nonetheless, to be conservative, in the model we continue to assume that queries consume 3 Wh each on average.
+Improvements in hardware technology and an increased focus on software optimization by AI companies as adoption of AI grows mean that, for a given level or quality of model, inference costs are likely to continue to drop rapidly. To be conservative, in the model we assume that queries consume 1 Wh each on average.
 
+By contrast, due to the increasing size and complexity of state-of-the-art models, the power required to train such models has been doubling annually~\cite{epoch2024powerusagetrend}. The literature offers little insight into the relative electricity consumption of training and inference~\cite{verdecchia2023systematic}, but Google~\cite{patterson:footprint:2022} reports that in 2019--2021 inference accounted for about 60\% of AI energy consumption, implying a ratio of training energy to inference energy was 2:3.
 
-The embodied emissions and training emissions of LLMs are difficult to estimate and attribute precisely. However, \textcite{devries2023growing} provides the following information about ChatGPT:
+Another way to estimate training overhead is to consider that training Llama 3.1, a model comparable to GPT-4o, required approximately 25 MW of power for three months, or 54 GWh. Assuming ChatGPT's recently reported 2.5 billion queries per day~\cite{techcrunch:chatgpt} and a conservative (for this analysis) 0.3 Wh per query, ChatGPT consumes 750 MWh / day. If the model is used for 9 months before being replaced, inference energy amounts to 203 GWh, so the ratio of training to inference is 54:204 $\approx$ 1:4. (Assuming 1 Wh per query, inference energy is 675 GWh, and the ratio is 1:13, making training overhead negligible.) To be conservative, in the model we assume a ratio of 1:4.
+
+We must also examine embodied emissions. \textcite{epoch2025howmuchenergydoeschatgptuse} estimates 1 second of NVIDIA H100 GPU time per query. NVIDIA reports~\cite{nvidia:h100} a cradle-to-gate carbon footprint of 1,312 \kgcoe\ for one H100. GPUs are typically hosted in sets of 4 or 8 in servers such as the NVIDIA DGX~\cite{nvidia:dgx}. Assuming a high-end server footprint of 2,000 \kgcoe\ for such a device and dividing by 8 GPUs, we obtain 250 \kgcoe\ server overhead per GPU. If this platform is used for three years at 70\% efficiency, we straightforwardly obtain embodied emissions of 0.01 \gcoe\ per query.
+
+% 3 * 365 * 24 * 3600 / .7 = 135154285 queries
+% (1312+250)*1000 = 1562000 grams
+% 1562000/135154285 grams / query
+
+Finally, there is the question of electricity mix. The facilities hosting LLMs are distributed and the location that serves a particular request is unknown. To map energy use to emissions we use the average emissions intensity of electricity generation in the EU in 2023, 207 \gcoekwh~\cite{eea:emissions:2025}.
+
+In summary, we make the following default assumptions:
+
 \begin{itemize}
-  \item Operational power consumption of 500 MWh / day.
-  \item Approximately 1300 MWh consumed in training.
-  \item Approximately 4000 servers.
+  \item LLM energy consumption of 1 Wh per query.
+  \item Training overhead of 25\%. In other words, inference plus training amounts to 1.25 Wh per query.
+  \item Carbon emission intensity of 207 \gcoekwh.
+  \item Embodied emissions of 0.01 \gcoe\ / query.
 \end{itemize}
 
-The facilities hosting LLMs are distributed and the location that serves any particular request is unknown, so to map energy use to emissions we use the average emissions intensity of electricity generation in the EU in 2023, 207 \gcoekwh~\cite{eea:emissions:2025}.
-
-Assuming this emissions intensity, and that each server has embodied emissions of 4 t \coe\ (a high estimate), we obtain:
-\begin{itemize}
-  \item 100 t \coe\ / day operational emissions.
-  \item 260 t \coe\ training emissions.
-  \item 16 kt \coe\ total embodied emissions.
-\end{itemize}
-
-After one year of operation, operational emissions are approximately 36 kt \coe, whereas training and embodied emissions are about 16 kt \coe, so operational emissions account for $\sim 70\%$ of the total. With less conservative assumptions (dirtier grid, lower embodied emissions), the proportion of operational emissions increases further.
-
-As a result, when modeling overall LLM emissions, we multiply estimated operational emissions by 1.4 to account for training and embodied emissions. (We acknowledge that this is a rough estimate based on just one LLM.)
-
-We must make assumptions about the fraction of the university population that use LLMs and the frequency of use (queries / day). We assume that on average every user will issue 15 queries per day.
-
-\subsection{Electricity carbon intensity}
-
-The Swiss Federal Office for the Environment published an extensive report (\cite{krebs2018umweltbilanz}) on the environmental impact of electricity generation in Switzerland in 2018.
-
-However, for the purposes of the model, we use data from \textcite{electricitymaps}. Specifically, we use the carbon emissions for electricity {\em consumption} (not generation) in Switzerland for 2023 at hourly granularity, then aggregate the data into two-hour blocks, and compute the mean of each two hour block over the course of the year. This gives us twelve data points that describe average carbon intensity variation over the course of the day.
+Of course, we must also make assumptions about the fraction of the university population that use LLMs and the frequency of use (queries / day). By default we assume that the average every user will issue 15 queries per day.
 
 \subsection{Model limitations}
 
 Our biggest limitation is the relative lack of ground truth data about UZH IT infrastructure. We have obtained only estimates of campus data center energy use, and little information abut UZH research workloads (whether AI-related or not). We assume that many research AI workloads will be relatively similar in intensity to existing scientific computation workloads. We also lack information about UZH use of external high-performance compute resources at CSCS.
 
-Additionally, our work relies on assumptions and anecdotal evidents about device ownership and use among the university population, use of generative AI tools, etc.
+Additionally, our work relies on assumptions and anecdotal evidence about device ownership and use among the university population, use of generative AI tools, etc.
 
 Moreover, cloud vendors and AI companies are secretive about their infrastructure, and we have had to rely on public datasets and research literature to estimate cloud and AI emissions.
 
@@ -334,6 +328,8 @@ Improve the cooling efficiency of university data centers, or engage cloud vendo
 
 \section{Related work}
 \label{sec:related:work}
+
+
 
 \section{Conclusion}
 
