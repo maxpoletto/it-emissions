@@ -14,6 +14,7 @@
 \newcommand{\gcoekwh}{\gcoe\ / kWh}
 %\usepackage{helvet} % Helvetica font for sans-serif
 %\usepackage{courier} % Courier font for monospace
+\usepackage{graphicx}
 \usepackage{hyperref}
 \hypersetup{
     hidelinks
@@ -301,19 +302,33 @@ However, all these points of uncertainty are exposed as user-configurable parame
 
 \subsection{Initial model validation}
 
-Using Ecoinvent embodied emissions values where available, and only the numbers and types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, our model estimates emissions of 1,460 t \coe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe\ / device for embodied emissions, \kgcoe\ / device / day for operational emissions) provided by Ecoinvent.
+Using only the types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, and restricting embodied emissions to the Ecoinvent~\cite{ecoinvent} model used by that report, our model estimates emissions of 1,460 t \coe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe\ / device for embodied emissions, \kgcoe\ / device / day for operational emissions) provided by Ecoinvent.
 
-While this is admittedly just one data point, and the extreme proximity of the two values is likely a coincidence, it provides some confidence that our assumptions are reasonable and that the model can be used to make directional decisions and extrapolate trends beyond the scope of the sustainability report.
+While this is admittedly just one data point, and the extreme proximity of the two values is likely a coincidence, it provides some confidence that our assumptions are reasonable and that the model can be used to make directional decisions and extrapolate trends beyond the immediate scope of the sustainability report.
 
 \subsection{Key results}
 
+We now discuss the main takeaways from our model when it is configured with the parameter values described above. In Section~\ref{sec:sensitivity:analysis} we explore how these results change under different assumptions.
+
 \subsubsection*{Impact of embodied emissions}
+
+Maybe the most striking result is that, when we consider the entire population of campus devices, and not only those owned and managed by the university, overall emissions are absolutely dominated by the manufacturing and disposal of end-user devices. See Figure~\ref{fig:1}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{fig1.png}
+\caption{Baseline results}
+\label{fig:1}
+\end{figure}
+
+
 
 \subsubsection*{Impact of cloud computing}
 
 \subsubsection*{Impact of LLMs}
 
 \subsection{Sensitivity analysis}
+\label{sec:sensitivity:analysis}
 
 \section{Recommendations}
 \label{sec:recommendations}
