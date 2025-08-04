@@ -230,18 +230,18 @@ The following table summarizes results from the literature.
 
 For laptops, the numbers from Ecoinvent, a reputable proprietary Swiss life cycle inventory database used in the UZH sustainability report, appear to be on the low end. The most comprehensive publicly available data comes from \textcite{rarecoil}, which lists manufacturer information for over 90 popular devices. Mean supply chain emissions in this data set are 244 \kgcoe\ with a standard deviation of 128 kg. To be conservative, we split the difference between this number and the Ecoinvent values and model laptops embodied emissions at 180 \kgcoe\ / device.
 
-For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from Dell's Product Carbon Footprints (\cite{dellpcf}), which the company publishes for each of their products. A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model desktop embodied emissions at 288 \kgcoe\ / device.
+For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from Dell's Product Carbon Footprints (\cite{dellpcf}), which the company publishes for each of their products. A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model desktop embodied emissions at 290 \kgcoe\ / device.
 
-In the case of servers, \textcite{davy2021} reports manufacturer data for many Dell servers and estimates for different types of EC2 instances. The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter 1912 kg with $\sigma = 885$ kg. \textcite{boavizta:api} reports mean supply chain emissions of 899 \kgcoe\ for a medium-sized server. We model server supply chain emissions at 1252 \kgcoe\ / device.
+In the case of servers, \textcite{davy2021} reports manufacturer data for many Dell servers and estimates for different types of EC2 instances. The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter 1912 kg with $\sigma = 885$ kg. \textcite{boavizta:api} reports mean supply chain emissions of 899 \kgcoe\ for a medium-sized server. We model server supply chain emissions at 1100 \kgcoe\ / device.
 
 The variability of estimates for mobile phones is much smaller. We model phone embodied emissions at 50 \kgcoe\ / device.
 
 We found less data for other types of devices. For now, we model them as follows:
 
 \begin{itemize}
-  \item Computer monitors: 344 \kgcoe\ (\cite{teehan2013}, \cite{dellpcf}).
-  \item Conference room displays: 753 \kgcoe\ (scaling monitor by $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment (lecture room projectors, etc.). Note that the numbers are sufficiently low that errors in this estimate do not significantly affect the overall result.
-  \item Printer/copier stations: 1167 \kgcoe\ (\cite{ecoinvent}).
+  \item Computer monitors: 340 \kgcoe\ (\cite{teehan2013}, \cite{dellpcf}).
+  \item Conference room displays: 700 \kgcoe\ (scaling monitor by $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment (lecture room projectors, etc.). Note that the numbers are sufficiently low that errors in this estimate do not significantly affect the overall result.
+  \item Printer/copier stations: 1100 \kgcoe\ (\cite{ecoinvent}).
   \item Network equipment: We did not find reliable lifecycle assessments for routers and switches, and have little information about UZH network architecture. The vast majority ($80-95\%$) of lifecycle emissions of network gear stem from usage (\cite{cisco2024}, \cite{jacob2023}). For now, we model the embodied emissions of network equipment like we do its operational emissions, namely as a 10\% overhead on the number of devices (laptops, desktops, servers).
 \end{itemize}
 
@@ -249,7 +249,7 @@ We found less data for other types of devices. For now, we model them as follows
 
 The secretiveness of major cloud providers makes it difficult to estimate the embodied and operational emissions of cloud infrastructure. The best resource we have found is the Datavizta API by the Boavizta working group~\cite{boavizta:api}.
 
-Lacking information about UZH's workloads, we model a hypothetical UZH cloud footprint as the replacement of one campus server with a configurable number (by default, one) of Azure {\tt standard\_d48s\_v3} instances (Intel Xeon, 48 cores, 192 GB RAM, 2TB SSD)~\cite{msftvms}. Based on data from Boavizta, such a machine has embodied emissions of 667 \kgcoe\ and mean electricity power usage of 255 W. We assume deployment to Microsoft Azure's ``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland North}'' region, which makes sense for a Swiss university and means that the electricity mix is the same as for on-premise facilities. We estimate a power usage effectiveness of 1.15 for this facility. (As of 2025, average PUE for cloud computing is 1.56, with Google averaging 1.09 across its fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.14 to 1.19 in Europe~\cite{microsoft:datacenter:efficiency}.)
+Lacking information about UZH's workloads, we model a hypothetical UZH cloud footprint as the replacement of one campus server with a configurable number (by default, one) of Azure {\tt standard\_d48s\_v3} instances (Intel Xeon, 48 cores, 192 GB RAM, 2TB SSD)~\cite{msftvms}. Based on data from Boavizta, such a machine has embodied emissions of 667 \kgcoe\ and mean electricity power usage of 255 W. Given the uncertainty, we round up to 700 \kgcoe\ and 255 W. We assume deployment to Microsoft Azure's ``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland North}'' region, which makes sense for a Swiss university and means that the electricity mix is the same as for on-premise facilities. We estimate a power usage effectiveness of 1.15 for this facility. (As of 2025, average PUE for cloud computing is 1.56, with Google averaging 1.09 across its fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.14 to 1.19 in Europe~\cite{microsoft:datacenter:efficiency}.)
 
 Given all these parameters, we can then compute cloud server operational emissions, embodied emissions, and cooling overhead as we do for on-premise servers.
 
