@@ -389,8 +389,7 @@
             <div class="l-SiteWidth">
                 <div class="intro-text">
                     <p>
-                        This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich. By default,
-                        it assumes a user population of 38,000 people (28,000 students, 10,000 staff).
+                        This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
                     </p>
                     <p>
                         The model should be generally applicable to other similar campuses. Edit any of the parameters below to explore different scenarios.</p>
@@ -428,18 +427,6 @@
                     </section>
                 </div>
 
-                <!-- Duty Cycles -->
-                <div class="single-column">
-                    <section class="calculator-section">
-                        <div class="section-header">
-                            <h2 class="section-title">Device Duty Cycles (fraction of time active)
-                            <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
-                            </h2>
-                        </div>
-                        <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
-                    </section>
-                </div>
-
                 <!-- Two Column Layout for Compute and LLMs -->
                 <div class="two-column">
                     <section class="calculator-section">
@@ -450,6 +437,18 @@
                     <section class="calculator-section">
                         <h2 class="section-title">LLM Parameters</h2>
                         <table class="parameter-table" id="llm-table"></table>
+                    </section>
+                </div>
+
+                <!-- Duty Cycles -->
+                <div class="single-column">
+                    <section class="calculator-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Device Duty Cycles (fraction of time active)
+                            <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
+                            </h2>
+                        </div>
+                        <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
                     </section>
                 </div>
 
