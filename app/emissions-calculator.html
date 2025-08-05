@@ -472,6 +472,7 @@
                 <div class="controls">
                     <button class="run-btn" onclick="updateDevices()">Rerun Calculation</button>
                     <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
+                    <button class="run-btn" onclick="exportResults()">Export Results</button>
                 </div>
 
                 <!-- Results Section -->
@@ -507,6 +508,9 @@
     </main>
 
     <script>
+        const MODEL_VERSION = "1.0";
+        const MODEL_DESCRIPTION = "IT Emissions Model";
+
         // Globals
         let stochastic = false;
         let percentage = false;
@@ -967,6 +971,48 @@
             percentage = !percentage;
             refreshTable(results);
             updateURL();
+        }
+
+        function exportResults() {
+            const exportData = {
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    modelVersion: MODEL_VERSION,
+                    description: MODEL_DESCRIPTION
+                },
+                parameters: {
+                    deviceInfo: deviceInfo,
+                    embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2e,
+                    powerW: powerW,
+                    dutyCycle6h: dutyCycle6h,
+                    compute: compute,
+                    llms: llms
+                },
+                settings: {
+                    percentage: percentage,
+                    stochastic: stochastic
+                },
+                results: {
+                    data: results.slice(0, -1),
+                    summary: {
+                        totalEmbodied: Math.round(results[results.length - 1].embodied),
+                        totalUsage: Math.round(results[results.length - 1].usage),
+                        totalCombined: Math.round(results[results.length - 1].embodied + results[results.length - 1].usage)
+                    }
+                }
+            };
+
+            // Create and download JSON file
+            const jsonString = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `it-emissions-model-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function initializeTables() {
