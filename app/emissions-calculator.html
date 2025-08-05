@@ -149,8 +149,12 @@
             height: 1rem;
         }
 
+        #percentage-checkbox {
+            margin-right: 0.25rem;
+        }
+
         .results-section {
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
         .results-table {
@@ -172,6 +176,7 @@
         .results-table th:not(:first-child),
         .results-table td:not(:first-child) {
             text-align: right;
+            width: 30%; /* Two columns with values, 30% each */
         }
 
         .results-table th {
@@ -196,6 +201,9 @@
         }
         #total-table td {
             border-top: none;
+        }
+        #total-table td:last-child {
+            width: 60%;
         }
 
         .chart-container {
@@ -468,15 +476,14 @@
 
                 <!-- Results Section -->
                 <h2 class="section-title">Results</h2>
+                <div class="results-controls">
+                    <input type="checkbox" id="percentage-checkbox" onchange="togglePercentage()">
+                    <label for="percentage-checkbox">Show as percentages</label>
+                </div>
                 <div class="two-column">
                     <section class="results-section">
                         <table class="results-table" id="results-table">
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Embodied (kg CO2e)</th>
-                                    <th>Usage (kg CO2e)</th>
-                                </tr>
+                            <thead id="results-thead">
                             </thead>
                             <tbody id="results-tbody">
                             </tbody>
@@ -502,12 +509,14 @@
     <script>
         // Globals
         let stochastic = false;
+        let percentage = false;
         let devices = {};
         let emissionsIntensity = {};
         let cloudInstances = 0;
         let llmQueries = null;
         let deviceChart = null;
         let llmChart = null;
+        let results = null;
 
         const deviceInfoDefault = {
             'Laptops': {
@@ -954,6 +963,11 @@
             }
         }
 
+        function togglePercentage() {
+            percentage = !percentage;
+            refreshTable(results);
+        }
+
         function initializeTables() {
             createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime'], updateDevices);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateDevices);
@@ -1166,24 +1180,34 @@
         }
 
         function refreshTable(data) {
+            const thead = document.getElementById('results-thead');
+            thead.innerHTML = '';
+            thead.innerHTML = `
+                <tr>
+                    <th>Category</th>
+                    <th>Embodied<br>(${percentage ? '%' : 'kg CO2e'})</th>
+                    <th>Usage<br>(${percentage ? '%' : 'kg CO2e'})</th>
+                </tr>
+            `;
+
+            const totalsRow = data[data.length - 1];
+            const combined = Math.round(totalsRow.embodied + totalsRow.usage);
+
             const tbody = document.getElementById('results-tbody');
             tbody.innerHTML = '';
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${row.category}</td>
-                    <td>${row.embodied !== null ? Math.round(row.embodied) : ''}</td>
-                    <td>${Math.round(row.usage)}</td>
+                    <td>${row.embodied !== null ? (percentage ? Math.round(row.embodied / combined * 100) : Math.round(row.embodied)) : ''}</td>
+                    <td>${percentage ? Math.round(row.usage / combined * 100) : Math.round(row.usage)}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            const totalsRow = data[data.length - 1];
-            const combined = Math.round(totalsRow.embodied + totalsRow.usage);
-
             const totalTbody = document.getElementById('total-tbody');
             totalTbody.innerHTML = `
-                <tr><td>Combined total</td><td>${combined}</td></tr>
+                <tr><td>Combined total</td><td>${percentage ? Math.round(combined / combined * 100) : Math.round(combined)}</td></tr>
             `;
         }
 
@@ -1326,9 +1350,9 @@
         }
 
         function refreshOutput() {
-            let data = updateData();
-            refreshTable(data);
-            refreshDeviceChart(data.slice(0, -1)); // Exclude total row
+            results = updateData();
+            refreshTable(results);
+            refreshDeviceChart(results.slice(0, -1)); // Exclude total row
             refreshLLMChart();
         }
 
