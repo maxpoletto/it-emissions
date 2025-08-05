@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const MODEL_VERSION = "1.0";
-        const MODEL_DESCRIPTION = "IT Emissions Model";
+        const MODEL_DESCRIPTION = "UZH IT Emissions Model";
 
         // Globals
         let stochastic = false;
@@ -19,7 +19,9 @@
         let llmQueries = null;
         let deviceChart = null;
         let llmChart = null;
-        let results = null;
+
+        let resultsEmissions = null;
+        let resultsLLMGrowth = null;
 
         const deviceInfoDefault = {
             'Laptops': {
@@ -714,7 +716,7 @@
 
                 <!-- Controls -->
                 <div class="controls">
-                    <button class="run-btn" onclick="updateDevices()">Rerun Calculation</button>
+                    <button class="run-btn" onclick="updateModel()">Rerun Calculation</button>
                     <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
                     <button class="run-btn" onclick="exportResults()">Export Results</button>
                 </div>
@@ -835,6 +837,47 @@
             });
         }
 
+        // Create key-value input tables
+        function createKeyValueTable(tableId, data, callback) {
+            const table = document.getElementById(tableId);
+            table.innerHTML = '';
+
+            // Create header
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th>Parameter</th><th>Value</th>';
+            table.appendChild(headerRow);
+
+            // Create rows for each parameter
+            Object.keys(data).forEach(paramKey => {
+                const row = document.createElement('tr');
+
+                // Parameter name cell
+                const keyCell = document.createElement('td');
+                keyCell.textContent = paramKey;
+
+                // Add tooltip if defined (even if empty, for visual indication)
+                if (tooltips.parameters.hasOwnProperty(paramKey)) {
+                    keyCell.setAttribute('data-tooltip', tooltips.parameters[paramKey]);
+                }
+
+                row.appendChild(keyCell);
+
+                // Value input cell
+                const valueCell = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.value = data[paramKey];
+                input.addEventListener('change', (e) => {
+                    data[paramKey] = parseFloat(e.target.value) || 0;
+                    if (callback) callback();
+                });
+                valueCell.appendChild(input);
+                row.appendChild(valueCell);
+
+                table.appendChild(row);
+            });
+        }
+
         // Create duty cycle table with 4 time periods per device
         function createDutyCycleTable(tableId, data, callback) {
             const table = document.getElementById(tableId);
@@ -890,47 +933,6 @@
             });
         }
 
-        // Create key-value input tables
-        function createKeyValueTable(tableId, data, callback) {
-            const table = document.getElementById(tableId);
-            table.innerHTML = '';
-
-            // Create header
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th>Parameter</th><th>Value</th>';
-            table.appendChild(headerRow);
-
-            // Create rows for each parameter
-            Object.keys(data).forEach(paramKey => {
-                const row = document.createElement('tr');
-
-                // Parameter name cell
-                const keyCell = document.createElement('td');
-                keyCell.textContent = paramKey;
-
-                // Add tooltip if defined (even if empty, for visual indication)
-                if (tooltips.parameters.hasOwnProperty(paramKey)) {
-                    keyCell.setAttribute('data-tooltip', tooltips.parameters[paramKey]);
-                }
-
-                row.appendChild(keyCell);
-
-                // Value input cell
-                const valueCell = document.createElement('td');
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.value = data[paramKey];
-                input.addEventListener('change', (e) => {
-                    data[paramKey] = parseFloat(e.target.value) || 0;
-                    if (callback) callback();
-                });
-                valueCell.appendChild(input);
-                row.appendChild(valueCell);
-
-                table.appendChild(row);
-            });
-        }
-
         function toggleTableExpansion(tableId) {
             const table = document.getElementById(tableId);
             const toggle = document.getElementById(tableId.replace('-table', '-toggle'));
@@ -970,7 +972,7 @@
 
         function togglePercentage() {
             percentage = !percentage;
-            refreshTable(results);
+            renderEmissionsTable()
             updateURL();
         }
 
@@ -994,11 +996,11 @@
                     stochastic: stochastic
                 },
                 results: {
-                    data: results.slice(0, -1),
+                    data: resultsEmissions.slice(0, -1),
                     summary: {
-                        totalEmbodied: Math.round(results[results.length - 1].embodied),
-                        totalUsage: Math.round(results[results.length - 1].usage),
-                        totalCombined: Math.round(results[results.length - 1].embodied + results[results.length - 1].usage)
+                        totalEmbodied: Math.round(resultsEmissions[resultsEmissions.length - 1].embodied),
+                        totalUsage: Math.round(resultsEmissions[resultsEmissions.length - 1].usage),
+                        totalCombined: Math.round(resultsEmissions[resultsEmissions.length - 1].embodied + resultsEmissions[resultsEmissions.length - 1].usage)
                     }
                 }
             };
@@ -1016,13 +1018,13 @@
             URL.revokeObjectURL(url);
         }
 
-        function initializeTables() {
-            createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime'], updateDevices);
-            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateDevices);
-            createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateDevices);
-            createDutyCycleTable('duty-cycle-table', dutyCycle6h, updateDevices);
-            createKeyValueTable('compute-table', compute, updateDevices);
-            createKeyValueTable('llm-table', llms, updateDevices);
+        function createInputTables() {
+            createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime'], updateModel);
+            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateModel);
+            createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateModel);
+            createDutyCycleTable('duty-cycle-table', dutyCycle6h, updateModel);
+            createKeyValueTable('compute-table', compute, updateModel);
+            createKeyValueTable('llm-table', llms, updateModel);
         }
 
         function deviceEmissionsIntensity(device) {
@@ -1149,7 +1151,9 @@
             return projection;
         }
 
-        function updateData() {
+        function runModel() {
+            generateDevices();
+
             let totalU = 0, totalM = 0;
             const data = [];
 
@@ -1224,10 +1228,12 @@
                 embodied: totalM,
                 usage: totalU
             });
-            return data;
+            resultsEmissions = data;
+            resultsLLMGrowth = llmEmissionsProjection();
         }
 
-        function refreshTable(data) {
+        function renderEmissionsTable() {
+            const data = resultsEmissions;
             const thead = document.getElementById('results-thead');
             thead.innerHTML = '';
             thead.innerHTML = `
@@ -1259,8 +1265,8 @@
             `;
         }
 
-        // Update device chart
-        function refreshDeviceChart(data) {
+        function renderEmissionsChart() {
+            const data = resultsEmissions.slice(0, -1);
             const ctx = document.getElementById('emissions-chart').getContext('2d');
 
             if (deviceChart) {
@@ -1326,14 +1332,14 @@
             });
         }
 
-        function refreshLLMChart() {
+        function renderLLMChart() {
             const ctx = document.getElementById('llm-projection-chart').getContext('2d');
 
             if (llmChart) {
                 llmChart.destroy();
             }
 
-            const projectionData = llmEmissionsProjection();
+            const projectionData = resultsLLMGrowth;
             const labels = projectionData.map(d => d.year.toString());
             const embodiedData = projectionData.map(d => Math.round(d.embodied));
             const usageData = projectionData.map(d => Math.round(d.usage));
@@ -1393,12 +1399,11 @@
             });
         }
 
-        function refreshOutput() {
-            results = updateData();
+        function renderOutput() {
             document.getElementById('percentage-checkbox').checked = percentage;
-            refreshTable(results);
-            refreshDeviceChart(results.slice(0, -1)); // Exclude total row
-            refreshLLMChart();
+            renderEmissionsTable();
+            renderEmissionsChart();
+            renderLLMChart();
         }
 
         function resetParameters() {
@@ -1410,11 +1415,10 @@
             dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
             percentage = false;
 
-            initializeTables();
-            updateDevices();
+            createInputTables();
+            updateModel();
         }
 
-        // URL state management for bookmarking scenarios
         function serializeState() {
             return {
                 deviceInfo: deviceInfo,
@@ -1457,8 +1461,8 @@
                     const decodedState = atob(configParam); // Base64 decode
                     const stateObj = JSON.parse(decodedState);
                     deserializeState(stateObj);
-                    initializeTables();
-                    updateDevices();
+                    createInputTables();
+                    updateModel();
                     console.log('Loaded configuration from URL');
                 } catch (error) {
                     console.warn('Failed to parse URL configuration:', error);
@@ -1468,9 +1472,9 @@
             }
         }
 
-        function updateDevices() {
-            generateDevices();
-            refreshOutput();
+        function updateModel() {
+            runModel();
+            renderOutput();
             updateURL();
         }
 
