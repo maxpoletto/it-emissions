@@ -6,6 +6,250 @@
     <title>IT Emissions Calculator</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const MODEL_VERSION = "1.0";
+        const MODEL_DESCRIPTION = "IT Emissions Model";
+
+        // Globals
+        let stochastic = false;
+        let percentage = false;
+        let devices = {};
+        let emissionsIntensity = {};
+        let cloudInstances = 0;
+        let llmQueries = null;
+        let deviceChart = null;
+        let llmChart = null;
+        let results = null;
+
+        const deviceInfoDefault = {
+            'Laptops': {
+                'Lifetime': 4,
+                'Count': 32000,
+                'Days per year': 250,
+            },
+            'Monitors': {
+                'Lifetime': 6,
+                'Count': 10325,
+                'Days per year': 250,
+            },
+            'Desktops': {
+                'Lifetime': 6,
+                'Count': 0,
+                'Days per year': 250,
+            },
+            'Servers': {
+                'Lifetime': 5,
+                'Count': 1121,
+                'Days per year': 365,
+            },
+            'Mobile phones': {
+                'Lifetime': 3,
+                'Count': 35000,
+                'Days per year': 250,
+            },
+            'A/V equipment': {
+                'Lifetime': 6,
+                'Count': 431,
+                'Days per year': 250,
+            },
+            'Printers': {
+                'Lifetime': 6,
+                'Count': 333,
+                'Days per year': 250,
+            },
+        };
+        let deviceInfo = {};
+
+        const embodiedEmissionsKgCo2eDefault = {
+            'Laptops': {
+                'Mean': 180, // Split the difference between Rarecoil and Ecoinvent.
+                'Stdev': 128,
+                'Min': 104,
+                'Max': 372,
+            },
+            'Monitors': {
+                'Mean': 340, // Precise: 344
+                'Stdev': 50,
+                'Min': 150,
+                'Max': 394,
+            },
+            'Desktops': {
+                'Mean': 290, // Precise: 289
+                'Stdev': 80,
+                'Min': 209,
+                'Max': 403,
+            },
+            'Servers': {
+                'Mean': 1100, // Dell mean 1252, Boazvizta ~900
+                'Stdev': 330,
+                'Min': 383,
+                'Max': 1582,
+            },
+            'Mobile phones': {
+                'Mean': 50,
+                'Stdev': 10,
+                'Min': 30,
+                'Max': 70,
+            },
+            'A/V equipment': {
+                'Mean': 700, // Precise: 753
+                'Stdev': 109,
+                'Min': 644,
+                'Max': 862,
+            },
+            'Printers': {
+                'Mean': 1100, // Precise: 1167
+                'Stdev': 200,
+                'Min': 967,
+                'Max': 1367,
+            },
+        };
+        let embodiedEmissionsKgCo2e = {};
+
+        const powerWDefault = {
+            'Laptops': {
+                'Mean': 50,
+                'Stdev': 20,
+                'Min': 20,
+                'Max': 100,
+                'Standby': 1,
+            },
+            'Monitors': {
+                'Mean': 50,
+                'Stdev': 10,
+                'Min': 30,
+                'Max': 90,
+                'Standby': 1,
+            },
+            'Desktops': {
+                'Mean': 100,
+                'Stdev': 20,
+                'Min': 60,
+                'Max': 200,
+                'Standby': 1,
+            },
+            'Servers': {
+                'Mean': 400,
+                'Stdev': 100,
+                'Min': 200,
+                'Max': 600,
+                'Standby': 1,
+            },
+            'Mobile phones': {
+                'Mean': 15,
+                'Stdev': 2,
+                'Min': 5,
+                'Max': 20,
+                'Standby': 0,
+            },
+            'A/V equipment': {
+                'Mean': 250,
+                'Stdev': 50,
+                'Min': 150,
+                'Max': 350,
+                'Standby': 1,
+            },
+            'Printers': {
+                'Mean': 1000,
+                'Stdev': 200,
+                'Min': 600,
+                'Max': 1400,
+                'Standby': 90,
+            },
+        };
+        let powerW = {};
+
+        const computeDefault = {
+            'Campus networking overhead %': 10,
+            'Campus data center PUE x100': 200,
+            'Cloud PUE x100': 115,
+            'Cloud % servers in cloud': 0,
+            'Cloud instances per 100 local servers': 100,
+            'Cloud instance embodied kg': 700,
+            'Cloud instance power W': 300,
+            'Cloud instance lifetime y': 4,
+            'Supercomputing mean power kW': 66,
+        };
+        let compute = {};
+
+        const llmsDefault = {
+            'User population': 38000,
+            'Mean daily user queries': 15,
+            'Days per year': 250,
+            'Mean query Wh': 1.0,
+            'Training overhead %': 25,
+            'Emissions intensity g CO2e / kWh': 207,
+            'Embodied emissions g CO2e / query': 0.1,
+            'Annual usage growth %': 50,
+            'Annual efficiency growth %': 30,
+            'Annual training growth %': 50,
+        };
+        let llms = {};
+
+        const dutyCycle6hDefault = {
+            // Fraction of time active during 0:00-5:59, 6:00-11:59, 12:00-17:59, 18:00-23:59.
+            // Just a guess, but probably not unreasonable.
+            'Laptops': [0.1, 0.5, 1.0, 0.3],
+            'Desktops': [0.1, 0.5, 1.0, 0.3],
+            'Servers': [0.8, 0.8, 0.8, 0.8],
+            'Mobile phones': [0.0, 0.0, 0.0, 0.5],
+            'Monitors': [0.1, 0.5, 1.0, 0.3],
+            'A/V equipment': [0.0, 0.3, 0.6, 0.1],
+            'Printers': [0.0, 0.0, 0.01, 0.0],
+        };
+        let dutyCycle6h = {};
+
+        // Tooltip definitions
+        const tooltips = {
+            columnHeaders: {
+                'Count': 'Number of devices',
+                'Lifetime': 'Average lifetime (y)',
+                'Days per year': 'Days per year the device is used',
+                'Mean': 'Mean value',
+                'Stdev': 'Standard deviation',
+                'Min': 'Minimum value',
+                'Max': 'Maximum value',
+                'Standby': 'Standby power (W)'
+            },
+            parameters: {
+                'Campus networking overhead %': 'Campus networking energy use as percentage (x100) of energy used by laptop, desktops, and servers',
+                'Campus data center PUE x100': 'Power usage effectiveness of campus data center (x100)',
+                'Cloud PUE x100': 'Power usage effectiveness of cloud (x100)',
+                'Cloud % servers in cloud': 'Percentage of campus servers that are migrated to cloud',
+                'Cloud instances per 100 local servers': 'Number of cloud instances required to replace 100 campus servers',
+                'Cloud instance embodied kg': 'Embodied emissions of a cloud instance (kg CO2e)',
+                'Cloud instance power W': 'Power consumption of a cloud instance (W)',
+                'Cloud instance lifetime y': 'Average lifetime of a cloud instance (y)',
+                'Supercomputing mean power kW': 'Mean power consumption of workloads at supercomputing facility (kW)',
+                'User population': 'Number of users',
+                'Mean daily user queries': 'Mean number of queries per user per day',
+                'Days per year': 'Days per year average user uses LLMs',
+                'Mean query Wh': 'Mean energy consumption of a query (Wh)',
+                'Training overhead %': 'Energy used for training as percentage of energy used for inference',
+                'Emissions intensity g CO2e / kWh': 'Emissions intensity of electricity (g CO2e / kWh) for LLM facility',
+                'Embodied emissions g CO2e / query': 'Embodied emissions per query (g CO2e)',
+                'Annual usage growth %': 'Annual growth rate of LLM usage',
+                'Annual efficiency growth %': 'Annual growth rate of LLM inference efficiency',
+                'Annual training growth %': 'Annual growth rate of LLM training overhead',
+            }
+        };
+
+        // Per-country emissions intensity (g CO2e / kWh). Only CH for now.
+        class Emissions {
+            static gco2PerKwhByHours = {
+                'ch': [63, 58, 58, 52, 49, 47, 45, 45, 49, 54, 62, 63]
+            };
+
+            static atHour(hour, country) {
+                return this.gco2PerKwhByHours[country][Math.floor(hour / 2)];
+            }
+
+            static mean(country) {
+                const values = this.gco2PerKwhByHours[country];
+                return values.reduce((a, b) => a + b, 0) / values.length;
+            }
+        }
+    </script>
     <style>
         .emissions-calculator {
             max-width: none !important;
@@ -508,249 +752,6 @@
     </main>
 
     <script>
-        const MODEL_VERSION = "1.0";
-        const MODEL_DESCRIPTION = "IT Emissions Model";
-
-        // Globals
-        let stochastic = false;
-        let percentage = false;
-        let devices = {};
-        let emissionsIntensity = {};
-        let cloudInstances = 0;
-        let llmQueries = null;
-        let deviceChart = null;
-        let llmChart = null;
-        let results = null;
-
-        const deviceInfoDefault = {
-            'Laptops': {
-                'Lifetime': 4,
-                'Count': 32000,
-                'Days per year': 250,
-            },
-            'Monitors': {
-                'Lifetime': 6,
-                'Count': 10325,
-                'Days per year': 250,
-            },
-            'Desktops': {
-                'Lifetime': 6,
-                'Count': 0,
-                'Days per year': 250,
-            },
-            'Servers': {
-                'Lifetime': 5,
-                'Count': 1121,
-                'Days per year': 365,
-            },
-            'Mobile phones': {
-                'Lifetime': 3,
-                'Count': 35000,
-                'Days per year': 250,
-            },
-            'A/V equipment': {
-                'Lifetime': 6,
-                'Count': 431,
-                'Days per year': 250,
-            },
-            'Printers': {
-                'Lifetime': 6,
-                'Count': 333,
-                'Days per year': 250,
-            },
-        };
-        let deviceInfo = {};
-
-        const embodiedEmissionsKgCo2eDefault = {
-            'Laptops': {
-                'Mean': 180, // Split the difference between Rarecoil and Ecoinvent.
-                'Stdev': 128,
-                'Min': 104,
-                'Max': 372,
-            },
-            'Monitors': {
-                'Mean': 340, // Precise: 344
-                'Stdev': 50,
-                'Min': 150,
-                'Max': 394,
-            },
-            'Desktops': {
-                'Mean': 290, // Precise: 289
-                'Stdev': 80,
-                'Min': 209,
-                'Max': 403,
-            },
-            'Servers': {
-                'Mean': 1100, // Dell mean 1252, Boazvizta ~900
-                'Stdev': 330,
-                'Min': 383,
-                'Max': 1582,
-            },
-            'Mobile phones': {
-                'Mean': 50,
-                'Stdev': 10,
-                'Min': 30,
-                'Max': 70,
-            },
-            'A/V equipment': {
-                'Mean': 700, // Precise: 753
-                'Stdev': 109,
-                'Min': 644,
-                'Max': 862,
-            },
-            'Printers': {
-                'Mean': 1100, // Precise: 1167
-                'Stdev': 200,
-                'Min': 967,
-                'Max': 1367,
-            },
-        };
-        let embodiedEmissionsKgCo2e = {};
-
-        const powerWDefault = {
-            'Laptops': {
-                'Mean': 50,
-                'Stdev': 20,
-                'Min': 20,
-                'Max': 100,
-                'Standby': 1,
-            },
-            'Monitors': {
-                'Mean': 50,
-                'Stdev': 10,
-                'Min': 30,
-                'Max': 90,
-                'Standby': 1,
-            },
-            'Desktops': {
-                'Mean': 100,
-                'Stdev': 20,
-                'Min': 60,
-                'Max': 200,
-                'Standby': 1,
-            },
-            'Servers': {
-                'Mean': 400,
-                'Stdev': 100,
-                'Min': 200,
-                'Max': 600,
-                'Standby': 1,
-            },
-            'Mobile phones': {
-                'Mean': 15,
-                'Stdev': 2,
-                'Min': 5,
-                'Max': 20,
-                'Standby': 0,
-            },
-            'A/V equipment': {
-                'Mean': 250,
-                'Stdev': 50,
-                'Min': 150,
-                'Max': 350,
-                'Standby': 1,
-            },
-            'Printers': {
-                'Mean': 1000,
-                'Stdev': 200,
-                'Min': 600,
-                'Max': 1400,
-                'Standby': 90,
-            },
-        };
-        let powerW = {};
-
-        const computeDefault = {
-            'Campus networking overhead %': 10,
-            'Campus data center PUE x100': 200,
-            'Cloud PUE x100': 115,
-            'Cloud % servers in cloud': 0,
-            'Cloud instances per 100 local servers': 100,
-            'Cloud instance embodied kg': 700,
-            'Cloud instance power W': 300,
-            'Cloud instance lifetime y': 4,
-            'Supercomputing mean power kW': 66,
-        };
-        let compute = {};
-
-        const llmsDefault = {
-            'User population': 38000,
-            'Mean daily user queries': 15,
-            'Days per year': 250,
-            'Mean query Wh': 1.0,
-            'Training overhead %': 25,
-            'Emissions intensity g CO2e / kWh': 207,
-            'Embodied emissions g CO2e / query': 0.1,
-            'Annual usage growth %': 50,
-            'Annual efficiency growth %': 30,
-            'Annual training growth %': 50,
-        };
-        let llms = {};
-
-        const dutyCycle6hDefault = {
-            // Fraction of time active during 0:00-5:59, 6:00-11:59, 12:00-17:59, 18:00-23:59.
-            // Just a guess, but probably not unreasonable.
-            'Laptops': [0.1, 0.5, 1.0, 0.3],
-            'Desktops': [0.1, 0.5, 1.0, 0.3],
-            'Servers': [0.8, 0.8, 0.8, 0.8],
-            'Mobile phones': [0.0, 0.0, 0.0, 0.5],
-            'Monitors': [0.1, 0.5, 1.0, 0.3],
-            'A/V equipment': [0.0, 0.3, 0.6, 0.1],
-            'Printers': [0.0, 0.0, 0.01, 0.0],
-        };
-        let dutyCycle6h = {};
-
-        // Tooltip definitions
-        const tooltips = {
-            columnHeaders: {
-                'Count': 'Number of devices',
-                'Lifetime': 'Average lifetime (y)',
-                'Days per year': 'Days per year the device is used',
-                'Mean': 'Mean value',
-                'Stdev': 'Standard deviation',
-                'Min': 'Minimum value',
-                'Max': 'Maximum value',
-                'Standby': 'Standby power (W)'
-            },
-            parameters: {
-                'Campus networking overhead %': 'Campus networking energy use as percentage (x100) of energy used by laptop, desktops, and servers',
-                'Campus data center PUE x100': 'Power usage effectiveness of campus data center (x100)',
-                'Cloud PUE x100': 'Power usage effectiveness of cloud (x100)',
-                'Cloud % servers in cloud': 'Percentage of campus servers that are migrated to cloud',
-                'Cloud instances per 100 local servers': 'Number of cloud instances required to replace 100 campus servers',
-                'Cloud instance embodied kg': 'Embodied emissions of a cloud instance (kg CO2e)',
-                'Cloud instance power W': 'Power consumption of a cloud instance (W)',
-                'Cloud instance lifetime y': 'Average lifetime of a cloud instance (y)',
-                'Supercomputing mean power kW': 'Mean power consumption of workloads at supercomputing facility (kW)',
-                'User population': 'Number of users',
-                'Mean daily user queries': 'Mean number of queries per user per day',
-                'Days per year': 'Days per year average user uses LLMs',
-                'Mean query Wh': 'Mean energy consumption of a query (Wh)',
-                'Training overhead %': 'Energy used for training as percentage of energy used for inference',
-                'Emissions intensity g CO2e / kWh': 'Emissions intensity of electricity (g CO2e / kWh) for LLM facility',
-                'Embodied emissions g CO2e / query': 'Embodied emissions per query (g CO2e)',
-                'Annual usage growth %': 'Annual growth rate of LLM usage',
-                'Annual efficiency growth %': 'Annual growth rate of LLM inference efficiency',
-                'Annual training growth %': 'Annual growth rate of LLM training overhead',
-            }
-        };
-
-        // Per-country emissions intensity (g CO2e / kWh). Only CH for now.
-        class Emissions {
-            static gco2PerKwhByHours = {
-                'ch': [63, 58, 58, 52, 49, 47, 45, 45, 49, 54, 62, 63]
-            };
-
-            static atHour(hour, country) {
-                return this.gco2PerKwhByHours[country][Math.floor(hour / 2)];
-            }
-
-            static mean(country) {
-                const values = this.gco2PerKwhByHours[country];
-                return values.reduce((a, b) => a + b, 0) / values.length;
-            }
-        }
-
         // Returns a list of n values from a truncated normal distribution.
         // If stochastic is false, returns a list of n values all equal to mu.
         function truncatedNormal(mu, sigma, minValue, maxValue, n) {
