@@ -156,7 +156,6 @@
         .results-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 2rem;
         }
 
         .results-table th,
@@ -168,6 +167,7 @@
         .results-table th:first-child,
         .results-table td:first-child {
             text-align: left;
+            width: 40%;
         }
         .results-table th:not(:first-child),
         .results-table td:not(:first-child) {
@@ -188,6 +188,14 @@
             font-weight: 600;
             color: rgba(var(--c-black), 1);
             background-color: rgba(var(--c-blue), 0.05);
+        }
+
+        /* Combined totals row */
+        #total-table {
+            border-top: 1px solid rgba(var(--c-blue), 0.5);
+        }
+        #total-table td {
+            border-top: none;
         }
 
         .chart-container {
@@ -471,6 +479,10 @@
                                 </tr>
                             </thead>
                             <tbody id="results-tbody">
+                            </tbody>
+                        </table>
+                        <table class="results-table" id="total-table">
+                            <tbody id="total-tbody">
                             </tbody>
                         </table>
                     </section>
@@ -1076,13 +1088,14 @@
         }
 
         function updateData() {
-            let total = 0;
+            let totalU = 0, totalM = 0;
             const data = [];
 
             // Device emissions
             Object.keys(deviceInfo).forEach(device => {
                 const [u, m] = deviceEmissionsKgCO2e(device);
-                total += u + m;
+                totalU += u;
+                totalM += m;
                 data.push({
                     category: device,
                     embodied: m,
@@ -1097,7 +1110,8 @@
                 nu += u * compute['Campus networking overhead %'] / 100;
                 nm += m * compute['Campus networking overhead %'] / 100;
             });
-            total += nu + nm;
+            totalU += nu;
+            totalM += nm;
             data.push({
                 category: 'Campus networking',
                 embodied: nm,
@@ -1111,7 +1125,7 @@
                 embodied: null,
                 usage: dcCoolingU
             });
-            total += dcCoolingU;
+            totalU += dcCoolingU;
 
             // Cloud
             const [cloudU, cloudM] = cloudEmissionsKgCO2e();
@@ -1120,7 +1134,8 @@
                 embodied: cloudM,
                 usage: cloudU
             });
-            total += cloudU + cloudM;
+            totalU += cloudU;
+            totalM += cloudM;
 
             // Supercomputing
             const supercomputingU = supercomputingEmissionsKgCO2e();
@@ -1129,7 +1144,7 @@
                 embodied: null,
                 usage: supercomputingU
             });
-            total += supercomputingU;
+            totalU += supercomputingU;
 
             // LLM
             const [llmU, llmM] = llmEmissionsKgCO2e();
@@ -1138,13 +1153,14 @@
                 embodied: llmM,
                 usage: llmU
             });
-            total += llmU + llmM;
+            totalU += llmU;
+            totalM += llmM;
 
             // Total
             data.push({
-                category: 'Total',
-                embodied: null,
-                usage: total
+                category: 'Totals',
+                embodied: totalM,
+                usage: totalU
             });
             return data;
         }
@@ -1161,6 +1177,14 @@
                 `;
                 tbody.appendChild(tr);
             });
+
+            const totalsRow = data[data.length - 1];
+            const combined = Math.round(totalsRow.embodied + totalsRow.usage);
+
+            const totalTbody = document.getElementById('total-tbody');
+            totalTbody.innerHTML = `
+                <tr><td>Combined total</td><td>${combined}</td></tr>
+            `;
         }
 
         // Update device chart
