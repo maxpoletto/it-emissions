@@ -966,6 +966,7 @@
         function togglePercentage() {
             percentage = !percentage;
             refreshTable(results);
+            updateURL();
         }
 
         function initializeTables() {
@@ -1347,6 +1348,7 @@
 
         function refreshOutput() {
             results = updateData();
+            document.getElementById('percentage-checkbox').checked = percentage;
             refreshTable(results);
             refreshDeviceChart(results.slice(0, -1)); // Exclude total row
             refreshLLMChart();
@@ -1359,6 +1361,7 @@
             compute = JSON.parse(JSON.stringify(computeDefault));
             llms = JSON.parse(JSON.stringify(llmsDefault));
             dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
+            percentage = false;
 
             initializeTables();
             updateDevices();
@@ -1372,7 +1375,8 @@
                 powerW: powerW,
                 dutyCycle6h: dutyCycle6h,
                 compute: compute,
-                llms: llms
+                llms: llms,
+                percentage: percentage
             };
         }
 
@@ -1384,6 +1388,7 @@
             if (stateObj.dutyCycle6h) Object.assign(dutyCycle6h, stateObj.dutyCycle6h);
             if (stateObj.compute) Object.assign(compute, stateObj.compute);
             if (stateObj.llms) Object.assign(llms, stateObj.llms);
+            if (stateObj.percentage) percentage = stateObj.percentage;
         }
 
         function updateURL() {
