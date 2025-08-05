@@ -409,24 +409,25 @@ In a provocative and maybe dystopian paper, \textcite{tomlinson:2024:carbon} arg
 
 \section{Conclusion}
 
-We have presented a simple but powerful model
+We have presented a simple but powerful model to estimate the carbon footprint of IT infrastructure and IT-related activities at the University of Zürich. While the concrete parameter values we chose are specific to UZH, we have attempted to create a framework that can be applied to other universities (and maybe other large campus facilities) and can help provide a basis for evaluation and planning.
 
-The proposed research addresses multiple critical gaps: developing consistent methodological frameworks for institutional IT and AI assessment, creating granular modeling approaches that capture technological heterogeneity, integrating embodied and operational emissions across full technology lifecycles, and establishing standardized metrics for institutional comparison and benchmarking. By synthesizing insights from LCA methodologies, AI emissions research, and institutional sustainability practices, this work can contribute substantially to both academic understanding and practical institutional climate action capabilities.
+Our model has broad system boundaries: it includes both university- and student-owned devices, cloud and supercomputing facilities, and generative AI services. Whenever possible it accounts for both embodied and operational emissions. The model is bottom-up and exposes almost 100 configurable parameters to support different environments and enable exploration of different scenarios. It is available at \url{https://maxp.net/it-emissions} and can be freely modified under an MIT License.
 
-
-Our analysis shows that manufacturing (“embodied”) emissions dominate UZH's IT carbon footprint, while operational impacts, including AI adoption, are relatively modest.
+Within the context of UZH, our analysis shows that embodied emissions dominate the IT carbon footprint, while operational impacts, including large-scale adoption of generative AI, are relatively modest. In particular:
 
 \begin{itemize}
 
-  \item Under the assumption that the vast majority (90\%) of UZH students and staff have a laptop and smartphone, manufacturing personal devices accounts for over half of UZH's IT carbon footprint. For the estimated 32,000 laptops and smartphones, embodied emissions total $\sim 2400$ \tcoe\ annually. Usage-related emissions amount to about a tenth of that.
+  \item Under the assumption that a large majority (80\%) of UZH students and staff have a laptop and smartphone, the manufacture of personal devices represents about $\frac{2}{3}$ of the university IT carbon footprint. Operational emissions account for only 15--20\% of total emissions of end-user devices (laptops, monitors, phones, etc.).
 
-  \item Widespread adoption of LLMs and other frontier models should have moderate impact on total emissions. If everyone at UZH made heavy use of AI (15 queries daily), this would add approximately 220 t CO2e annually, of which 160 t directly attributable to queries. While this would almost double an individual's real-time energy use, the impact on overall emissions is relatively small.
+  \item Embodied emissions of end-user devices account for almost half of total emissoins even we consider only university-owned devices (equivalent to about $\frac{1}{4}$ of the population).
 
-  \item Embodied emissions are an important consideration for university-owned devices as well. If we exclude personal devices and LLMs, then total IT emissions shrink to $\sim 1500$ \tcoe, of which $\frac{2}{3}$ comprises the embodied emissions of classroom computers, wall displays, printers, etc.
+  \item Data center cooling and efficiency represent a potential savings opportunity. Inefficient cooling in on-premise data centers causes for 150--200 t \coe\ / year of emissions that could be avoided by a migration to a commercial cloud facility. However, any such move requires in-depth analysis with the cloud vendor to ensure that it is still a net savings after accounting for the different server infrastructure and other changes.
 
-  \item Data center cooling and efficiency represents a potential savings opportunity. The largest operational emissions are from data center servers and cooling (320 t). UZH data centers currently require as much energy for cooling as for computation, compared to the $6-15\%$ cooling overhead of cloud industry leaders. Moving workloads to efficient cloud providers could reduce data center emissions from $\sim 560$ t to $\sim 135$ \tcoe\ annually, though this estimate requires further validation.
+  \item Widespread adoption of LLMs and other frontier models should have only moderate impact on total emissions. Today LLM use probably causes about 1\% of total IT emissions, even when accounting for training overhead and the LLM's embodied emissins. Even assuming very aggressive growth, generative AI is unlikely to exceed 5--10\% of overall IT emissions five years from now.
 
 \end{itemize}
+
+These results appear to be robust even when shifting parameter values to the extremes of their likely ranges (\eg, low embodied emissions, high per-query AI overhead, etc.) and lead us to make some high-level IT policy recommendations in Section~\ref{sec:recommendations}.
 
 \printbibliography
 
