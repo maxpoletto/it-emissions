@@ -542,100 +542,98 @@
 </head>
 <body>
     <main>
-        <div>
-            <div class="emissions-calculator">
-                <div class="header-with-logo">
-                    <img src="assets/uzh_logo.svg" alt="UZH Logo" class="uzh-logo">
-                    <h1 class="t-text-h1 header-title">IT Emissions Calculator</h1>
-                </div>
-                <div class="intro-text">
-                    <p>
-                        This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
-                    </p>
-                    <p>
-                        The model should be generally applicable to other similar campuses. Edit any of the parameters below to explore different scenarios.</p>
-                    <p>
-                        For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
-                    </p>
-                </div>
-                <!-- Device Population - Full Width Row -->
+        <div class="emissions-calculator">
+            <div class="header-with-logo">
+                <img src="assets/uzh_logo.svg" alt="UZH Logo" class="uzh-logo">
+                <h1 class="t-text-h1 header-title">IT Emissions Calculator</h1>
+            </div>
+            <div class="intro-text">
+                <p>
+                    This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
+                </p>
+                <p>
+                    The model should be generally applicable to other similar campuses. Edit any of the parameters below to explore different scenarios.</p>
+                <p>
+                    For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
+                </p>
+            </div>
+            <!-- Device Population - Full Width Row -->
+            <section class="calculator-section">
+                <h2 class="section-title">Device Population</h2>
+                <table class="parameter-table" id="device-table"></table>
+            </section>
+
+            <!-- Two column layout for Embodied Emissions and Power Consumption -->
+            <div class="two-column">
                 <section class="calculator-section">
-                    <h2 class="section-title">Device Population</h2>
-                    <table class="parameter-table" id="device-table"></table>
+                    <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
+                    <table class="parameter-table" id="embodied-table"></table>
                 </section>
 
-                <!-- Two column layout for Embodied Emissions and Power Consumption -->
-                <div class="two-column">
-                    <section class="calculator-section">
-                        <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
-                        <table class="parameter-table" id="embodied-table"></table>
-                    </section>
-
-                    <section class="calculator-section">
-                        <h2 class="section-title">Power Consumption (W)</h2>
-                        <table class="parameter-table" id="power-table"></table>
-                    </section>
-                </div>
-
-                <!-- Compute Parameters - Full Width Row -->
                 <section class="calculator-section">
-                    <h2 class="section-title">Compute Parameters</h2>
-                    <table class="parameter-table" id="compute-table"></table>
-                </section>
-
-                <!-- LLM Parameters - Full Width Row -->
-                <section class="calculator-section">
-                    <h2 class="section-title">LLM Parameters</h2>
-                    <table class="parameter-table" id="llm-table"></table>
-                </section>
-
-                <!-- Duty Cycles -->
-                <section class="calculator-section">
-                    <h2 class="section-title">Device Duty Cycles (fraction of time active)
-                        <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
-                    </h2>
-                    <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
-                </section>
-
-                <!-- Controls -->
-                <div class="controls">
-                    <button class="run-btn" onclick="updateModel()">Rerun Calculation</button>
-                    <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
-                    <button class="run-btn" onclick="exportResults()">Export Results</button>
-                </div>
-
-                <!-- Results Section -->
-                <h1 class="section-title">Results</h1>
-                <div class="results-controls">
-                    <input type="checkbox" id="percentage-checkbox" onchange="togglePercentage()">
-                    <label for="percentage-checkbox">Show as percentages</label>
-                </div>
-                <!-- Results Table - Full Width -->
-                <section class="results-section">
-                    <table class="results-table" id="results-table">
-                        <thead id="results-thead">
-                        </thead>
-                        <tbody id="results-tbody">
-                        </tbody>
-                    </table>
-                    <table class="results-table" id="total-table">
-                        <tbody id="total-tbody">
-                        </tbody>
-                    </table>
-                </section>
-
-                <!-- Charts - Stacked Vertically -->
-                <section class="results-section">
-                    <div class="chart-container">
-                        <canvas id="emissions-chart"></canvas>
-                    </div>
-                </section>
-                <section class="results-section">
-                    <div class="chart-container">
-                        <canvas id="llm-projection-chart"></canvas>
-                    </div>
+                    <h2 class="section-title">Power Consumption (W)</h2>
+                    <table class="parameter-table" id="power-table"></table>
                 </section>
             </div>
+
+            <!-- Compute Parameters - Full Width Row -->
+            <section class="calculator-section">
+                <h2 class="section-title">Compute Parameters</h2>
+                <table class="parameter-table" id="compute-table"></table>
+            </section>
+
+            <!-- LLM Parameters - Full Width Row -->
+            <section class="calculator-section">
+                <h2 class="section-title">LLM Parameters</h2>
+                <table class="parameter-table" id="llm-table"></table>
+            </section>
+
+            <!-- Duty Cycles -->
+            <section class="calculator-section">
+                <h2 class="section-title">Device Duty Cycles (fraction of time active)
+                    <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
+                </h2>
+                <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
+            </section>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="run-btn" onclick="updateModel()">Rerun Calculation</button>
+                <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
+                <button class="run-btn" onclick="exportResults()">Export Results</button>
+            </div>
+
+            <!-- Results Section -->
+            <h1 class="section-title">Results</h1>
+            <div class="results-controls">
+                <input type="checkbox" id="percentage-checkbox" onchange="togglePercentage()">
+                <label for="percentage-checkbox">Show as percentages</label>
+            </div>
+            <!-- Results Table - Full Width -->
+            <section class="results-section">
+                <table class="results-table" id="results-table">
+                    <thead id="results-thead">
+                    </thead>
+                    <tbody id="results-tbody">
+                    </tbody>
+                </table>
+                <table class="results-table" id="total-table">
+                    <tbody id="total-tbody">
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Charts - Stacked Vertically -->
+            <section class="results-section">
+                <div class="chart-container">
+                    <canvas id="emissions-chart"></canvas>
+                </div>
+            </section>
+            <section class="results-section">
+                <div class="chart-container">
+                    <canvas id="llm-projection-chart"></canvas>
+                </div>
+            </section>
         </div>
     </main>
 
