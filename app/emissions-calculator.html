@@ -254,25 +254,12 @@
     </script>
     <style>
         .emissions-calculator {
-            max-width: none !important;
-            width: 95vw !important;
+            max-width: 840px !important;
+            width: 840px !important;
             margin-left: auto !important;
             margin-right: auto !important;
-            padding-left: 5vw !important;
-            padding-right: 5vw !important;
-        }
-        .emissions-calculator .l-SiteWidth {
-            max-width: none !important;
-            width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        @media(max-width: 700px) {
-            .emissions-calculator {
-                margin-top: 2rem;
-                margin-bottom: 2rem;
-            }
+            padding-left: 20px !important;
+            padding-right: 20px !important;
         }
         .intro-text {
             margin-bottom: 2rem;
@@ -285,25 +272,12 @@
             background: rgba(var(--c-white), 1);
         }
 
-        @media(max-width: 700px) {
-            .calculator-section {
-                margin-bottom: 2rem;
-                padding: 1rem;
-            }
-        }
-
         .section-title {
             font-size: 1.125rem;
             line-height: 1.4;
             font-weight: 600;
             color: rgba(var(--c-black), 1);
             margin-bottom: 1rem;
-        }
-
-        @media(max-width: 700px) {
-            .section-title {
-                font-size: 1rem;
-            }
         }
 
         .parameter-table {
@@ -463,14 +437,6 @@
             border: 1px solid rgba(var(--c-grey), 0.2);
             border-radius: 0.5rem;
         }
-/*
-        @media(max-width: 700px) {
-            .chart-container {
-                height: 300px;
-                padding: 1rem;
-            }
-        }
-*/
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -480,24 +446,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 1.5rem;
-        }
-
-        @media(max-width: 1050px) {
-            .three-column {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-            }
-            .two-column {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-        }
-
-        @media(max-width: 850px) {
-            .three-column {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
         }
 
         /* Use site's button styles */
@@ -516,24 +464,6 @@
 
         .run-btn:hover {
             background-color: rgba(var(--c-blue), 0.8);
-        }
-
-        @media(max-width: 700px) {
-            .header-with-logo {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .uzh-logo {
-                height: 3rem;
-            }
-
-            .header-title {
-                font-size: 1.5rem;
-            }
-            .run-btn {
-                font-size: 0.75rem;
-            }
         }
 
         /* Header with logo styling */
@@ -639,27 +569,16 @@
         .additional-headers.visible {
             display: table-cell;
         }
-
-        @media(max-width: 700px) {
-            .expand-toggle {
-                font-size: 0.875rem;
-            }
-        }
     </style>
 </head>
 <body>
     <main>
-        <div class="emissions-calculator">
-            <!-- Page Title using UZH typography -->
-            <div class="l-SiteWidth">
+        <div class="l-SiteWidth">
+            <div class="emissions-calculator">
                 <div class="header-with-logo">
                     <img src="assets/uzh_logo.svg" alt="UZH Logo" class="uzh-logo">
                     <h1 class="t-text-h1 header-title">IT Emissions Calculator</h1>
                 </div>
-            </div>
-
-            <!-- Main Content Area -->
-            <div class="l-SiteWidth">
                 <div class="intro-text">
                     <p>
                         This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
@@ -670,17 +589,17 @@
                         For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
                     </p>
                 </div>
-                <!-- Three column layout for Device Population, Embodied Emissions, and Power Consumption -->
-                <div class="three-column">
-                    <section class="calculator-section">
-                        <div class="table-header">
-                            <h2 class="section-title">Device Population
-                                <button class="expand-toggle" onclick="toggleTableExpansion('device-table')" id="device-toggle">&gt;&gt;</button>
-                            </h2>
-                        </div>
-                        <table class="parameter-table" id="device-table"></table>
-                    </section>
+                <!-- Device Population - Full Width Row -->
+                <section class="calculator-section">
+                    <div class="table-header">
+                        <h2 class="section-title">Device Population
+                        </h2>
+                    </div>
+                    <table class="parameter-table" id="device-table"></table>
+                </section>
 
+                <!-- Two column layout for Embodied Emissions and Power Consumption -->
+                <div class="two-column">
                     <section class="calculator-section">
                         <div class="table-header">
                             <h2 class="section-title">Embodied Emissions (kg CO2e)
@@ -700,18 +619,17 @@
                     </section>
                 </div>
 
-                <!-- Two Column Layout for Compute and LLMs -->
-                <div class="two-column">
-                    <section class="calculator-section">
-                        <h2 class="section-title">Compute Parameters</h2>
-                        <table class="parameter-table" id="compute-table"></table>
-                    </section>
+                <!-- Compute Parameters - Full Width Row -->
+                <section class="calculator-section">
+                    <h2 class="section-title">Compute Parameters</h2>
+                    <table class="parameter-table" id="compute-table"></table>
+                </section>
 
-                    <section class="calculator-section">
-                        <h2 class="section-title">LLM Parameters</h2>
-                        <table class="parameter-table" id="llm-table"></table>
-                    </section>
-                </div>
+                <!-- LLM Parameters - Full Width Row -->
+                <section class="calculator-section">
+                    <h2 class="section-title">LLM Parameters</h2>
+                    <table class="parameter-table" id="llm-table"></table>
+                </section>
 
                 <!-- Duty Cycles -->
                 <div class="single-column">
@@ -738,28 +656,31 @@
                     <input type="checkbox" id="percentage-checkbox" onchange="togglePercentage()">
                     <label for="percentage-checkbox">Show as percentages</label>
                 </div>
-                <div class="two-column">
-                    <section class="results-section">
-                        <table class="results-table" id="results-table">
-                            <thead id="results-thead">
-                            </thead>
-                            <tbody id="results-tbody">
-                            </tbody>
-                        </table>
-                        <table class="results-table" id="total-table">
-                            <tbody id="total-tbody">
-                            </tbody>
-                        </table>
-                    </section>
-                    <section class="results-section">
-                        <div class="chart-container">
-                            <canvas id="emissions-chart"></canvas>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="llm-projection-chart"></canvas>
-                        </div>
-                    </section>
-                </div>
+                <!-- Results Table - Full Width -->
+                <section class="results-section">
+                    <table class="results-table" id="results-table">
+                        <thead id="results-thead">
+                        </thead>
+                        <tbody id="results-tbody">
+                        </tbody>
+                    </table>
+                    <table class="results-table" id="total-table">
+                        <tbody id="total-tbody">
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Charts - Stacked Vertically -->
+                <section class="results-section">
+                    <div class="chart-container">
+                        <canvas id="emissions-chart"></canvas>
+                    </div>
+                </section>
+                <section class="results-section">
+                    <div class="chart-container">
+                        <canvas id="llm-projection-chart"></canvas>
+                    </div>
+                </section>
             </div>
         </div>
     </main>
