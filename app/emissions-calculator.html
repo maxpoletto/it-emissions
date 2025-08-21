@@ -353,6 +353,7 @@
         /* Do the same for Firefox */
         input[type=number] {
             -moz-appearance: textfield;
+            appearance: textfield;
         }
         .parameter-table input {
             width: 100%;
@@ -462,14 +463,14 @@
             border: 1px solid rgba(var(--c-grey), 0.2);
             border-radius: 0.5rem;
         }
-
+/*
         @media(max-width: 700px) {
             .chart-container {
                 height: 300px;
                 padding: 1rem;
             }
         }
-
+*/
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -481,8 +482,19 @@
             gap: 1.5rem;
         }
 
-        @media(max-width: 900px) {
+        @media(max-width: 1050px) {
+            .three-column {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
             .two-column {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media(max-width: 850px) {
+            .three-column {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
@@ -507,6 +519,18 @@
         }
 
         @media(max-width: 700px) {
+            .header-with-logo {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .uzh-logo {
+                height: 3rem;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
             .run-btn {
                 font-size: 0.75rem;
             }
@@ -534,19 +558,6 @@
             font-weight: 600;
             margin: 0;
             color: rgba(var(--c-black), 1);
-        }
-
-        @media(max-width: 700px) {
-            .header-with-logo {
-            }
-
-            .uzh-logo {
-                height: 3rem;
-            }
-
-            .header-title {
-                font-size: 1.5rem;
-            }
         }
 
         /* Collapsible table functionality */
