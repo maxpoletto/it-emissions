@@ -9,8 +9,8 @@
 \renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
 \newcommand{\eg}{{\em e.g.}}
 \newcommand{\coe}{CO$_2$e}
-\newcommand{\gcoe}{g \coe}
-\newcommand{\tcoe}{t \coe}
+\newcommand{\gcoe}{g~\coe}
+\newcommand{\tcoe}{t~\coe}
 \newcommand{\kgcoe}{k\gcoe}
 \newcommand{\gcoekwh}{\gcoe\ / kWh}
 %\usepackage{helvet} % Helvetica font for sans-serif
@@ -160,12 +160,12 @@ We have an authoritative census of devices (workstations, servers, audiovisual e
   \begin{tabular}{|l|r|r|}
     \hline
     \textbf{Device type} & \textbf{Count} & \textbf{Life (y)}\\ \hline
-    Laptops & 10,440 & 4 \\
-    Monitors & 10,400 & 6 \\
+    Laptops & 10,440 & 8 \\
+    Monitors & 10,400 & 8 \\
     Servers & 1,121 & 5 \\
-    Printers & 333 & 6 \\
+    Printers & 333 & 8 \\
     Mobile phones & 2,439 & 3 \\
-    A/V devices & 431 & 6 \\ \hline
+    A/V devices & 431 & 8 \\ \hline
   \end{tabular}
   \label{tab:oncampusdevices}
 \end{center}
@@ -173,6 +173,8 @@ We have an authoritative census of devices (workstations, servers, audiovisual e
 In addition to these numbers, which cover staff and facilities, we assume that 80\% of the student population of 28,000 people have a laptop (or equivalent device, such as a tablet), and that everyone at the university has mobile phone, resulting in a rough estimate of 32,000 laptops and 35,000 mobile phones.
 
 Traditional desktop computers appear to be infrequent on campus. By default we set their number to zero in our model, but we still provide the framework to model them if desired.
+
+The device lifetime for university-managed laptops and monitors comes from UZH's central IT department and is remarkably long. For other types of devices we assume a similarly conservative management of hardware resources. We also estimate that student-owned laptops have a shorter lifetime of 5 years, and therefore, for the purposes of the results later in this paper, we set the default average lifetime of laptops in our model to 6 years.
 
 \subsubsection*{Operational emissions}
 
@@ -192,7 +194,7 @@ The Swiss electricity mix is substantially cleaner than the European or North Am
   \end{tabular}
 \end{center}
 
-Our assumptions about device duty cycle can be summarized as follows: (1) end-user devices are used during the day on weekdays, (2) servers run around-the-clock but at 80\% of peak power load, (3) mobile phones draw no power (they are unplugged) except for a few hours in the evening to charge, (4) printers are idle except for a few minutes per day. Standby power for all devices is negligible ($\sim 1$ W), except for printers which often draw 50--100 W.
+Our assumptions about device duty cycle can be summarized as follows: (1) end-user devices are used during the day on weekdays (250 days per year), (2) servers run around-the-clock but at 80\% of peak power load, (3) mobile phones draw no power (they are unplugged) except for a few hours in the evening to charge, (4) printers are idle except for a few minutes per day. Standby power for all devices is negligible ($\sim 1$ W), except for printers which often draw 50--100 W.
 
 We lack good data about the campus network, save for the existence of approximately 4,000 wifi access points. Based on this, we choose to model network emissions as a configurable percentage of device (local, desktop, server) emissions, by default 10\%.
 
@@ -301,7 +303,7 @@ However, all these points of uncertainty are exposed as user-configurable parame
 
 \subsection{Initial model validation}
 
-Using only the types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, and restricting embodied emissions to the Ecoinvent~\cite{ecoinvent} model used by that report, our model estimates emissions of 1,460 \tcoe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe\ / device for embodied emissions, \kgcoe\ / device / day for operational emissions) provided by Ecoinvent.
+Using only the types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, and restricting embodied emissions and mean device lifetimes to the Ecoinvent~\cite{ecoinvent} model used by that report, our model estimates emissions of 1,460 \tcoe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe\ / device for embodied emissions, \kgcoe\ / device / day for operational emissions) provided by Ecoinvent.
 
 While this is admittedly just one data point, and the extreme proximity of the two values is likely a coincidence, it provides some confidence that our assumptions are reasonable and that the model can be used to make directional decisions and extrapolate trends beyond the immediate scope of the sustainability report.
 
@@ -324,7 +326,7 @@ Many studies~\cite{wb:itu:ict,umich:factsheet} agree that a large fraction of co
 
 \subsubsection*{Impact of cloud computing}
 
-Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170 \tcoe\ of cooling overhead, and replaces 415 \tcoe\ of total server emissions with 380 \tcoe\ of cloud emissions. See Figure~\ref{fig:cloud}.
+Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170~\tcoe\ of cooling overhead, and replaces 415~\tcoe\ of total server emissions with 380~\tcoe\ of cloud emissions. See Figure~\ref{fig:cloud}.
 
 \begin{figure}[h]
   \centering
@@ -357,7 +359,7 @@ These results are consistent with other analyses that attempt to put LLM use in 
 
 The results above are robust under remarkably different assumptions.
 
-For example, if we (1) massively reduce the set of end-user devices in scope to just those owned and managed by the university (about 10,000 laptops and monitors, 2,400 mobile phones), (2) triple the LLM per-query energy use to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a GPT-4o-class LLM 40 times per day, then emissions from AI still remain around 10\% of total (Figure~\ref{fig:sens1}).
+For example, if we (1) massively reduce the set of end-user devices in scope to just those owned and managed by the university (about 10,000 laptops and monitors, 2,400 mobile phones), (2) triple the LLM per-query energy use to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a GPT-4o-class LLM 40 times per day, then emissions from AI are still just 11\% of total (Figure~\ref{fig:sens1}).
 
 \begin{figure}[h]
   \centering
@@ -366,7 +368,7 @@ For example, if we (1) massively reduce the set of end-user devices in scope to 
   \label{fig:sens1}
 \end{figure}
 
-Similarly, if we cut our estimate for the embodied emissions of every type of device to the lowest value found in the literature (as opposed to a more representative middle-of-the-road value), but keep all other parameters at their default values, embodied emissions {\em still} dominate and LLM emissions continue to be a small fraction of the total, as seen in Figure~\ref{fig:sens2}.
+Similarly, if we cut our estimate for the embodied emissions of every type of device to the lowest value found in the literature (as opposed to a more representative middle-of-the-road value), but keep all other parameters at their default values,  embodied emissions {\em still} dominate and LLM emissions continue to be a small fraction of the total, as seen in Figure~\ref{fig:sens2}.
 
 \begin{figure}[h]
   \centering
@@ -375,7 +377,7 @@ Similarly, if we cut our estimate for the embodied emissions of every type of de
   \label{fig:sens2}
 \end{figure}
 
-Only if we combine the ``low embodied emissions'' scenario with the ``pessimal LLM'' scenario does generative AI become a major factor, contributing 18\% of total emissions.
+Only if we combine the ``low embodied emissions'' scenario with the ``pessimal LLM'' scenario does generative AI become a substantial factor, contributing 16\% of total emissions.
 
 \section{Recommendations}
 \label{sec:recommendations}
@@ -384,9 +386,9 @@ Our recommendations for university policy makers can be summarized in three main
 
 First, do not panic about the potential impact of generative AI. Despite the popular narratives of breathtaking data center growth, LLM emissions comprise only a small fraction of per-capita IT emissions, and are likely to continue to do so in the foreseeable future. While training costs are likely to continue to grow, they will also likely be amortized over longer useful lifetimes, since the models will be more capable and AI companies will need to recoup their financial investments. Additionally, inference is likely to continue to become more efficient as hardware and software both improve.
 
-Second, management of physical IT assets (workstations, monitors, etc.) is probably an underappreciated and underutilized lever for emissions reduction. Total emissions for these devices are dominated by manufacturing and disposal, so extending their life by a certain amount leads to an almost reciprocal reduction in emissions. For example, if we start the model with default parameters and then increase laptop lifetime from 4 to 6 years and mobile phone lifetime from 3 to 4 years, total campus emissions decrease from 3.9 k\tcoe\ to 3.2 k\tcoe, an 18\% reduction!
+Second, management of physical IT assets (workstations, monitors, etc.) is probably an underappreciated and underutilized lever for emissions reduction. Total emissions for these devices are dominated by manufacturing and disposal, so extending their life by a certain amount leads to an almost reciprocal reduction in emissions. For example, if we start the model with default parameters and an industry-standard device lifetime of 4 years for laptops and 3 for mobile phones, then extend those to 6 and 4 years, respectively, total campus emissions decrease from 3.9 k\tcoe\ to 3.2 k\tcoe, an 18\% reduction! To its credit, the University of Zürich central IT department already keeps devices in service for about 8 years on average, so UZH may not have much room for improvement in this regard.
 
-Note that an effective, large-scale extension of IT device lifetime is probably not just a matter of IT policy but of communication and education. The university could reach out to students and staff to sensitize them to these issues, provide more support for device maintenance and repair, etc.
+Note that an effective, large-scale extension of IT device lifetime is probably not just a matter of IT policy but of communication and education. Universities could reach out to students and staff to sensitize them to these issues, provide more support for device maintenance and repair, etc.
 
 Third, migration to a commercial cloud may help reduce emissions by improving cooling efficiency relative to on-campus data centers. However, the reduction in cooling emissions in the best case is probably moderate ($\le 5$\% of total IT emissions), and it should be weighed against the emissions of cloud servers that would replace on-premise servers. An exact accounting requires detailed work with the cloud vendor: it is of course possible that the servers themselves would be more efficient, further increasing the margin of improvement. However, decision makers should also consider whether the costs of a cloud migration could be redirected to more cost-effective emission reduction actions (possibly unrelated to IT).
 
@@ -417,9 +419,9 @@ Within the context of UZH, our analysis shows that embodied emissions dominate t
 
 \begin{itemize}
 
-  \item Under the assumption that a large majority (80\%) of UZH students and staff have a laptop and smartphone, the manufacture of personal devices represents about $\frac{2}{3}$ of the university IT carbon footprint. Operational emissions account for only 15--20\% of total emissions of end-user devices (laptops, monitors, phones, etc.).
+  \item Under the assumption that a large majority (80\%) of UZH students and staff have a laptop and smartphone, the manufacture of personal devices represents almost $\frac{2}{3}$ of the university IT carbon footprint. Operational emissions account for only 15--20\% of total emissions of end-user devices (laptops, monitors, phones, etc.).
 
-  \item Embodied emissions of end-user devices account for almost half of total emissoins even we consider only university-owned devices (equivalent to about $\frac{1}{4}$ of the population).
+  \item Embodied emissions of end-user devices account for almost half of total emissions even we consider only university-owned devices (equivalent to about $\frac{1}{4}$ of the population).
 
   \item Data center cooling and efficiency represent a potential savings opportunity. Inefficient cooling in on-premise data centers causes for 150--200 t \coe\ / year of emissions that could be avoided by a migration to a commercial cloud facility. However, any such move requires in-depth analysis with the cloud vendor to ensure that it is still a net savings after accounting for the different server infrastructure and other changes.
 
