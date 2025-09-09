@@ -12,3 +12,5 @@
 *.synctex.gz
 *.toc
 .DS_Store
+doc/it-emissions.pdf
+doc/paper.pdf
