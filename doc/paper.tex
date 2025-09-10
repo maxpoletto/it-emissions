@@ -20,7 +20,6 @@
 \hypersetup{
     hidelinks
 }
-\usepackage[style=numeric]{biblatex}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{titling}
@@ -31,7 +30,10 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
 
+\usepackage[style=authoryear]{biblatex}
 \addbibresource{ref.bib}
+\let\cite\parencite
+
 \title{Modeling the impact of IT- and AI-related emissions in a university setting}
 \author{Massimiliano Poletto\thanks{Independent consultant, max.poletto@gmail.com}, Nils Handler\thanks{University of Zürich, nils.handler@uzh.ch}}
 
