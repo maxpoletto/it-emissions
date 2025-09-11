@@ -1,20 +1,7 @@
-% boavizta mention immaturity of assessments and variability of estimates
-
 \documentclass[11pt]{article}
 \usepackage[margin=0.9in]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{libertine}
-\renewcommand{\sfdefault}{fvs} % Use as sans-serif
-\renewcommand{\ttdefault}{fvm} % Use as monospace
-\renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
-\newcommand{\eg}{{\em e.g.}}
-\newcommand{\coe}{CO$_2$e}
-\newcommand{\gcoe}{g~\coe}
-\newcommand{\tcoe}{t~\coe}
-\newcommand{\kgcoe}{k\gcoe}
-\newcommand{\gcoekwh}{\gcoe\ / kWh}
-%\usepackage{helvet} % Helvetica font for sans-serif
-%\usepackage{courier} % Courier font for monospace
 \usepackage{graphicx}
 \usepackage{hyperref}
 \hypersetup{
@@ -24,18 +11,28 @@
 \usepackage{enumitem}
 \usepackage{titling}
 
+\usepackage[style=authoryear]{biblatex}
+\addbibresource{ref.bib}
+\let\cite\parencite
+
+\renewcommand{\sfdefault}{fvs} % Use as sans-serif
+\renewcommand{\ttdefault}{fvm} % Use as monospace
+\renewcommand{\ttfamily}{\small\fontfamily{\ttdefault}\selectfont} % Slightly smaller monospace font
+\newcommand{\eg}{{\em e.g.}}
+\newcommand{\coe}{CO$_2$e}
+\newcommand{\gcoe}{g~\coe}
+\newcommand{\tcoe}{t~\coe}
+\newcommand{\kgcoe}{k\gcoe}
+\newcommand{\gcoekwh}{\gcoe\ / kWh}
+
 \titleformat{\section}{\sffamily\Large}{\thesection}{1em}{}
 \titleformat{\subsection}{\sffamily\large}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\sffamily\normalsize}{\thesubsubsection}{1em}{}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.5em}
 
-\usepackage[style=authoryear]{biblatex}
-\addbibresource{ref.bib}
-\let\cite\parencite
-
 \title{Modeling the impact of IT- and AI-related emissions in a university setting}
-\author{Massimiliano Poletto\thanks{Independent consultant, max.poletto@gmail.com}, Nils Handler\thanks{University of Zürich, nils.handler@uzh.ch}}
+\author{Massimiliano Poletto\thanks{Independent researcher, max.poletto@gmail.com}, Nils Handler\thanks{University of Zürich, nils.handler@uzh.ch}}
 
 \begin{document}
 
@@ -399,13 +396,15 @@ Third, migration to a commercial cloud may help reduce emissions by improving co
 
 Emissions modeling of information technology at organizational scales remains underdeveloped. Universities seem to lack standardized frameworks for measuring IT-related carbon footprints, and our work is in part an effort to help close this gap.
 
+Studies such as \textcite{larsen:2013} assess the carbon footprint of a university but do not consider IT-related emissions specifically. For example, Larsen et al. lump IT with ``equipment'', including machinery and science and technology equipment.
+
 Many carbon footprint studies treat IT as a minor subcomponent, despite IT infrastructure representing 5-10\% of total institutional emissions. For example, \textcite{herth:quantifying:2022} make a comprehensive carbon assessment of TU Delft and find that ICT constitutes 8\% of emissions, but do not break that down further, making it difficult to know how to improve. \textcite{helmers:universities:2021} exclude IT impacts from their 20-university comparison study, claiming that ``almost all universities worldwide will be working with quite similar IT technology''. \textcite{kiehle:2023} include IT equipment in a carbon accounting of the University of Oulu but limit themselves to lifecycle analysis of equipment purchased in the last 3 years.
 
 We are not alone in struggling with data availability problems, including incomplete asset inventories, sparse energy consumption data, etc. \textcite{jurgens:2023} writes that ``data availability is the main limiting factor for a holistic assessment'' of higher education institutions (not limited to IT).
 
 Efforts to standardize IT emissions measurement and reporting are advancing, \eg, through standards such as ITU-T L.1420, but they remain fragmented~\cite{wb:itu:ict}. Our own research on embodied and operational emissions revealed massive variability in carbon reporting among manufacturers and across studies: system boundaries range from cradle-to-gate through cradle-to-grave, functional units vary from per-device to per-computation, and values for the same parameter might vary by a factor of 2 or more.
 
-In this study, our analysis has been bottom up, building a model of the university's IT emissions from individual estimates of devices, queries, etc. There are important tradeoffs between bottom-up precision and top-down comprehensiveness~\cite{hilty:2009:lca}. Bottom-up approaches provide higher accuracy for specific sources and transparency through clear traceability. They also make it easier to identify specific improvement areas. However, they require extensive primary data collection, require up-front decisions about what components to include or not, and may miss system-wide effects. Conversely, top-down approaches offer efficiency and a broader system perspective, but sacrifice the precision and granularity necessary for operational decision-making. 
+In this study, our analysis has been bottom up, building a model of the university's IT emissions from individual estimates of devices, queries, etc. Some other studies, including \textcite{larsen:2013} and \textcite{garciaalaminos:2022}, have used top-down approaches based on environmental input-output (EIO) models. There are important tradeoffs between bottom-up precision and top-down comprehensiveness~\cite{hilty:2009:lca}. Bottom-up approaches provide higher accuracy for specific sources and transparency through clear traceability. They also make it easier to identify specific improvement areas. However, they require extensive primary data collection, force up-front decisions about what components to include or not, and may miss system-wide effects. Conversely, top-down approaches offer efficiency and a broader system perspective, but sacrifice the precision and granularity necessary for operational decision-making.
 
 The field of AI is evolving rapidly and the main AI vendors are secretive about the architecture and scale of their models. This has led to many efforts to estimate the footprint of LLMs, from academic papers to blog posts~\cite{devries2023growing,heguerte2023estimate,luccioni2022estimating,ritchie:chatgpt,epoch2025howmuchenergydoeschatgptuse}. More generally, the energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,epoch2024optimallyallocatingcomputebetweeninferenceandtraining,gowda2024watt,harding2024watts,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring}. \textcite{lacoste:mlco2} and \textcite{faiz2024llmcarbon} have developed more systematic approaches to estimate the footprint of models based on factors like electricity emissions intensity, hardware specifications, and network architecture.
 
