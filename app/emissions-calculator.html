@@ -1382,6 +1382,7 @@
 
         function serializeState() {
             return {
+                modelVersion: MODEL_VERSION, // Encode version for future backwards compatibility
                 deviceInfo: deviceInfo,
                 embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2e,
                 powerW: powerW,
