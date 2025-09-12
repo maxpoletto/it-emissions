@@ -260,6 +260,30 @@
             padding: 20px;
         }
 
+        .header-with-logo {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .uzh-logo {
+            height: 4rem;
+            width: auto;
+            flex-shrink: 2;
+            margin-right: 1rem;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            font-size: 1.8rem;
+            line-height: 1.2;
+            font-weight: 600;
+            margin: 0;
+            color: rgba(var(--c-black), 1);
+        }
+
         .intro-text {
             margin-bottom: 30px;
         }
@@ -555,6 +579,10 @@
 <body>
     <main>
         <div class="emissions-calculator">
+            <div class="header-with-logo">
+                <img src="assets/uzh_logo.svg" alt="UZH Logo" class="uzh-logo">
+                <h1 class="header-title">IT Emissions Calculator</h1>
+            </div>
             <div class="intro-text">
                 <p>
                     This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
