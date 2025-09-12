@@ -13,6 +13,7 @@
         // Globals
         let stochastic = false;
         let percentage = false;
+        let annotation = '';
         let devices = {};
         let emissionsIntensity = {};
         let cloudInstances = 0;
@@ -286,6 +287,37 @@
             background-color: rgba(var(--c-grey-light), 0.5);
         }
 
+        #annotation-title {
+            margin-bottom: 0.25rem;
+        }
+        #annotation-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
+         #copy-url-button {
+             width: 100px;
+         }
+         #copy-url-button::before {
+             content: "Copy URL";
+         }
+         #copy-url-button.copied {
+             background-color: rgba(var(--c-green), 1);
+             color: rgba(var(--c-white), 1);
+         }
+         #copy-url-button.copied::before {
+             content: "Copied!";
+         }
+
+        .section-note {
+            font-size: 0.8rem;
+            font-style: italic;
+            color: rgba(var(--c-grey), 0.8);
+            margin-bottom: 0.25rem;
+        }
+
         .parameter-table {
             width: 100%;
             border-collapse: collapse;
@@ -434,10 +466,17 @@
             line-height: 1.5;
             font-weight: 400;
             transition: background-color 0.2s ease-in-out;
+            white-space: nowrap;
         }
 
         .run-btn:hover {
             background-color: rgba(var(--c-blue), 0.8);
+        }
+
+        .run-btn:active {
+            background-color: rgba(var(--c-blue), 0.6);
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         /* Collapsible table functionality */
@@ -526,6 +565,17 @@
                     For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
                 </p>
             </div>
+            <!-- Annotation - Full Width Row -->
+            <div class="one-column">
+                <div class="input-section">
+                    <h2 id="annotation-title" class="section-title">Scenario Notes</h2>
+                    <p class="section-note">Add text here to describe your scenario. This note and all parameters are automatically saved in the URL so you can easily archive or share your configuration. (Below you can also export the model as a JSON file.)</p>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="text" id="annotation-input" placeholder="Enter description..." onchange="updateAnnotation()">
+                        <button id="copy-url-button" class="run-btn" onclick="copyToClipboard(this)"></button>
+                    </div>
+                </div>
+            </div>
             <!-- Device Population - Full Width Row -->
             <div class="one-column">
                 <div class="input-section">
@@ -573,7 +623,7 @@
             <div class="controls">
                 <button class="run-btn" onclick="updateModel()">Rerun Calculation</button>
                 <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
-                <button class="run-btn" onclick="exportResults()">Export Results</button>
+                <button class="run-btn" onclick="exportResults()">Export to JSON</button>
             </div>
 
             <!-- Results Section -->
@@ -609,6 +659,8 @@
     </main>
 
     <script>
+        const BUTTON_TIMEOUT = 1000;
+
         // Returns a list of n values from a truncated normal distribution.
         // If stochastic is false, returns a list of n values all equal to mu.
         function truncatedNormal(mu, sigma, minValue, maxValue, n) {
@@ -831,12 +883,64 @@
             updateURL();
         }
 
+        function updateAnnotation() {
+            annotation = document.getElementById('annotation-input').value;
+            updateURL();
+        }
+
+        function copyToClipboard(button) {
+            function fallbackCopy(text, button) {
+                // For older browsers or non-secure contexts
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    const ok = document.execCommand('copy');
+                    if (ok) {
+                        button.classList.add('copied');
+                        setTimeout(() => {
+                            button.classList.remove('copied');
+                        }, BUTTON_TIMEOUT);
+                    } else {
+                        alert('Failed to copy URL to clipboard');
+                    }
+                } catch (err) {
+                   alert('Failed to copy URL to clipboard ' + err);
+                }
+
+                document.body.removeChild(textArea);
+            }
+
+            const currentUrl = window.location.href;
+
+            // Use the modern Clipboard API if available
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(currentUrl).then(() => {
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                    }, BUTTON_TIMEOUT);
+                }).catch(err => {
+                    fallbackCopy(currentUrl, button);
+                });
+            } else {
+                fallbackCopy(currentUrl, button);
+            }
+        }
+
         function exportResults() {
             const exportData = {
                 metadata: {
                     exportDate: new Date().toISOString(),
                     modelVersion: MODEL_VERSION,
-                    description: MODEL_DESCRIPTION
+                    description: MODEL_DESCRIPTION,
+                    annotation: annotation
                 },
                 parameters: {
                     deviceInfo: deviceInfo,
@@ -1269,7 +1373,9 @@
             llms = JSON.parse(JSON.stringify(llmsDefault));
             dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
             percentage = false;
+            annotation = '';
 
+            document.getElementById('annotation-input').value = '';
             createInputTables();
             updateModel();
         }
@@ -1282,7 +1388,8 @@
                 dutyCycle6h: dutyCycle6h,
                 compute: compute,
                 llms: llms,
-                percentage: percentage
+                percentage: percentage,
+                annotation: annotation
             };
         }
 
@@ -1295,6 +1402,7 @@
             if (stateObj.compute) Object.assign(compute, stateObj.compute);
             if (stateObj.llms) Object.assign(llms, stateObj.llms);
             if (stateObj.percentage) percentage = stateObj.percentage;
+            if (stateObj.annotation) annotation = stateObj.annotation;
         }
 
         function updateURL() {
@@ -1318,6 +1426,7 @@
                     deserializeState(stateObj);
                     createInputTables();
                     updateModel();
+                    document.getElementById('annotation-input').value = annotation;
                     console.log('Loaded configuration from URL');
                 } catch (error) {
                     console.warn('Failed to parse URL configuration:', error);
