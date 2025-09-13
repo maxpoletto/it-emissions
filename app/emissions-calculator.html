@@ -333,7 +333,7 @@
             text-align: left;
             width: 40%;
             min-width: 100px;
-            text-wrap: pretty;
+            text-wrap: wrap;
         }
         .parameter-table th:not(:first-child),
         .parameter-table td:not(:first-child) {
@@ -343,7 +343,7 @@
         .parameter-table th {
             background-color: rgba(var(--c-grey-light), 0.5);
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.4;
         }
         .parameter-table td:first-child {
@@ -502,8 +502,13 @@
         .additional-columns {
             display: none;
         }
-
         .additional-columns.visible {
+            display: table-cell;
+        }
+        .additional-headers {
+            display: none;
+        }
+        .additional-headers.visible {
             display: table-cell;
         }
 
@@ -514,40 +519,35 @@
             border-bottom: 1px dotted rgba(var(--c-grey), 0.5);
         }
 
-        [data-tooltip]:not([data-tooltip=""]):hover::after {
+        [data-tooltip]:not([data-tooltip=""]):hover::before {
             content: attr(data-tooltip);
             position: absolute;
             bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 10%;
             background-color: rgba(var(--c-black), 0.9);
             color: rgba(var(--c-white), 1);
-            padding: 0.5rem 0.75rem;
+            padding: 0.5rem;
             border-radius: 0.25rem;
-            line-height: 1.3;
-            white-space: nowrap;
+            line-height: 1.2;
+            white-space: normal;
+            width: 90%;
+            font-size: 0.9rem;
+            text-align: left;
+            text-wrap: wrap;
             z-index: 1000;
             pointer-events: none;
         }
 
-        [data-tooltip]:not([data-tooltip=""]):hover::before {
+        [data-tooltip]:not([data-tooltip=""]):hover::after {
             content: '';
             position: absolute;
             bottom: 100%;
-            left: 50%;
+            left: 55%;
             transform: translateX(-50%) translateY(100%);
             border: 4px solid transparent;
             border-top-color: rgba(var(--c-black), 0.9);
-            z-index: 999;
+            z-index: 1001;
             pointer-events: none;
-        }
-
-        .additional-headers {
-            display: none;
-        }
-
-        .additional-headers.visible {
-            display: table-cell;
         }
     </style>
 </head>
