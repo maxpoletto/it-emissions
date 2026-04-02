@@ -12,3 +12,6 @@ https://dataspan.com/blog/how-to-calculate-cooling-requirements-for-a-data-cente
 
 Thermal performance analyses and optimization of data center centralized-cooling system
 https://www.sciencedirect.com/science/article/abs/pii/S1359431122017471
+
+Useful LCA database:
+https://db.resilio.tech/
