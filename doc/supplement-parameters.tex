@@ -1,0 +1,135 @@
+\section{Model Parameters and Review Scenarios}
+\label{app:parameters}
+
+This appendix inventories the configurable defaults used by the UZH IT emissions model and the additional scenario parameters introduced for the revision. Values are grouped by the model objects in the emissions calculator.
+
+{\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.12}
+
+\begin{longtable}{|L{0.16\textwidth}|r|r|r|L{0.26\textwidth}|L{0.27\textwidth}|}
+\caption{Device inventory and lifetimes.}\label{tab:param-devices}\\
+\hline
+\textbf{Device} & \textbf{Count} & \textbf{Lifetime (y)} & \textbf{Days/y} & \textbf{Source / basis} & \textbf{Uncertainty treatment} \\ \hline
+\endfirsthead
+\hline
+\textbf{Device} & \textbf{Count} & \textbf{Lifetime (y)} & \textbf{Days/y} & \textbf{Source / basis} & \textbf{Uncertainty treatment} \\ \hline
+\endhead
+Laptops & 32,000 & 6 & 250 & UZH central IT count plus estimated student ownership & Count and lifetime varied in sensitivity scenarios \\ \hline
+Monitors & 10,440 & 8 & 250 & UZH central IT inventory & Low uncertainty for centrally managed devices \\ \hline
+Desktops & 0 & 8 & 250 & UZH central IT / rare campus use & Kept configurable for other campuses \\ \hline
+Servers & 1,121 & 5 & 365 & UZH central IT inventory & Power and cloud-migration scenarios varied \\ \hline
+Mobile phones & 35,000 & 3 & 250 & UZH central IT phones plus population estimate & Count and lifetime varied in sensitivity scenarios \\ \hline
+A/V equipment & 431 & 8 & 250 & UZH central IT inventory & Proxy category for classroom/lecture equipment \\ \hline
+Printers & 333 & 8 & 250 & UZH central IT inventory & Standby-power uncertainty dominates operation \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.18\textwidth}|r|r|r|r|L{0.36\textwidth}|}
+\caption{Embodied-emissions defaults.}\label{tab:param-embodied}\\
+\hline
+\textbf{Device} & \textbf{Mean kg \coe} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Source / basis} \\ \hline
+\endfirsthead
+\hline
+\textbf{Device} & \textbf{Mean kg \coe} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Source / basis} \\ \hline
+\endhead
+Laptops & 180 & 128 & 104 & 372 & Ecoinvent, Rarecoil, Teehan and Kandlikar, UNCTAD \\ \hline
+Monitors & 340 & 50 & 150 & 394 & Dell PCF, Loevehagen et al., Teehan and Kandlikar \\ \hline
+Desktops & 290 & 80 & 209 & 403 & Dell PCF, Ecoinvent, Boavizta, UNCTAD \\ \hline
+Servers & 1,100 & 330 & 383 & 1,582 & Davy/Teads EC2 dataset, Boavizta, Teehan and Kandlikar \\ \hline
+Mobile phones & 50 & 10 & 30 & 70 & Apple, Google, UNCTAD, Loevehagen et al. \\ \hline
+A/V equipment & 700 & 109 & 644 & 862 & Scaled display/monitor proxy \\ \hline
+Printers & 1,100 & 200 & 967 & 1,367 & Ecoinvent printer/copier proxy \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.16\textwidth}|r|r|r|r|r|L{0.30\textwidth}|}
+\caption{Operational power defaults.}\label{tab:param-power}\\
+\hline
+\textbf{Device} & \textbf{Mean W} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Standby W} & \textbf{Source / basis} \\ \hline
+\endfirsthead
+\hline
+\textbf{Device} & \textbf{Mean W} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Standby W} & \textbf{Source / basis} \\ \hline
+\endhead
+Laptops & 50 & 20 & 20 & 100 & 1 & Manufacturer data sheets and conservative active-use default \\ \hline
+Monitors & 50 & 10 & 30 & 90 & 1 & Manufacturer data sheets \\ \hline
+Desktops & 100 & 20 & 60 & 200 & 1 & Manufacturer data sheets \\ \hline
+Servers & 400 & 100 & 200 & 600 & 1 & UZH server-class proxy \\ \hline
+Mobile phones & 10 & 2 & 5 & 20 & 0 & Battery-capacity and charger-efficiency charging estimate \\ \hline
+A/V equipment & 250 & 50 & 150 & 350 & 1 & Lecture-room equipment proxy \\ \hline
+Printers & 1,000 & 200 & 600 & 1,400 & 90 & Printer/copier active and standby estimates \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.20\textwidth}|r|r|r|r|L{0.32\textwidth}|}
+\caption{Six-hour duty-cycle defaults. Fractions apply to 0:00--5:59, 6:00--11:59, 12:00--17:59, and 18:00--23:59.}\label{tab:param-duty}\\
+\hline
+\textbf{Device} & \textbf{Night} & \textbf{Morning} & \textbf{Afternoon} & \textbf{Evening} & \textbf{Basis} \\ \hline
+\endfirsthead
+\hline
+\textbf{Device} & \textbf{Night} & \textbf{Morning} & \textbf{Afternoon} & \textbf{Evening} & \textbf{Basis} \\ \hline
+\endhead
+Laptops & 0.1 & 0.5 & 1.0 & 0.3 & Weekday daytime use \\ \hline
+Desktops & 0.1 & 0.5 & 1.0 & 0.3 & Weekday daytime use \\ \hline
+Servers & 0.8 & 0.8 & 0.8 & 0.8 & Continuous operation below peak load \\ \hline
+Mobile phones & 0.0 & 0.0 & 0.0 & 0.5 & Evening charging window \\ \hline
+Monitors & 0.1 & 0.5 & 1.0 & 0.3 & Weekday daytime use \\ \hline
+A/V equipment & 0.0 & 0.3 & 0.6 & 0.1 & Teaching-room schedule proxy \\ \hline
+Printers & 0.0 & 0.0 & 0.01 & 0.0 & Short active-use window plus standby \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.27\textwidth}|r|L{0.10\textwidth}|L{0.27\textwidth}|L{0.18\textwidth}|}
+\caption{Compute, cloud, and supercomputing defaults.}\label{tab:param-compute}\\
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Source / basis} & \textbf{Sensitivity range} \\ \hline
+\endfirsthead
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Source / basis} & \textbf{Sensitivity range} \\ \hline
+\endhead
+Campus networking overhead & 10 & \% & Bottom-up AP estimate plus switching/router allowance & 0--20\% \\ \hline
+Campus data center PUE & 200 & x100 & UZH historical power estimate & 150--250 x100 \\ \hline
+Cloud PUE & 115 & x100 & Microsoft/Google regional PUE disclosures & 109--156 x100 \\ \hline
+Cloud servers in cloud & 0 & \% & Scenario parameter & 0--100\% \\ \hline
+Cloud instances per 100 local servers & 100 & count & One-to-one replacement default & 50--200 \\ \hline
+Cloud instance embodied emissions & 700 & kg \coe & Boavizta Azure instance estimate, rounded & 500--1,500 kg \\ \hline
+Cloud instance power & 300 & W & Boavizta/Azure instance estimate, rounded & 150--600 W \\ \hline
+Cloud instance lifetime & 4 & years & Cloud server lifecycle proxy & 3--6 years \\ \hline
+Supercomputing mean power & 66 & kW & Original CSCS estimate retained for legacy model compatibility & Replaced in revision by 3.6 GWh/year UZH allocation \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.23\textwidth}|r|L{0.15\textwidth}|L{0.25\textwidth}|L{0.16\textwidth}|}
+\caption{LLM and agentic-AI defaults.}\label{tab:param-ai}\\
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Source / basis} & \textbf{Sensitivity range} \\ \hline
+\endfirsthead
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Source / basis} & \textbf{Sensitivity range} \\ \hline
+\endhead
+User population & 38,000 & users & UZH population & Fixed for UZH scenarios \\ \hline
+Ordinary chat volume & 15 & queries/user/day & Scenario assumption & 5--40 queries/user/day \\ \hline
+AI active days & 250 & days/year & Workday use & 200--365 days/year \\ \hline
+Ordinary query energy & 1.0 & Wh/query & Conservative value above recent 0.3 Wh estimates & 0.3--3 Wh/query \\ \hline
+Training overhead & 25 & \% & Conservative inference/training allocation & 0--100\% \\ \hline
+AI electricity intensity & 207 & g \coe/kWh & EU electricity generation intensity & 50--400 g \coe/kWh \\ \hline
+Embodied emissions & 0.1 & g \coe/query & Conservative GPU/server allocation default & 0.01--0.1 g/query \\ \hline
+Annual usage growth & 50 & \% & Aggressive growth scenario & 0--100\% \\ \hline
+Annual efficiency growth & 30 & \% & Hardware/software improvement scenario & 0--50\% \\ \hline
+Annual training growth & 50 & \% & Frontier-model training growth scenario & 0--100\% \\ \hline
+Long/reasoning task energy & 10--50 & Wh/task & Jegham et al., IEA/Ritchie synthesis & Scenario range \\ \hline
+Agentic AI adoption & 1--20 & \% of users & No campus survey; threshold scenario & Scenario range \\ \hline
+Agentic AI intensity & 0.1--2.4 & kWh/active user-day & IEA/Ritchie and Claude Code case study & Scenario range \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.19\textwidth}|L{0.15\textwidth}|L{0.15\textwidth}|L{0.24\textwidth}|L{0.18\textwidth}|}
+\caption{Added boundary-completeness scenarios.}\label{tab:param-boundary}\\
+\hline
+\textbf{Category} & \textbf{Central value} & \textbf{Range} & \textbf{Basis} & \textbf{Notes} \\ \hline
+\endfirsthead
+\hline
+\textbf{Category} & \textbf{Central value} & \textbf{Range} & \textbf{Basis} & \textbf{Notes} \\ \hline
+\endhead
+Productivity SaaS & 114 \tcoe/year & 38--380 \tcoe/year & 38,000 users times 3 kg \coe/user/year, varied 1--10 & Replace with Microsoft 365 or Google Workspace tenant report when available \\ \hline
+CSCS operational electricity & 180 \tcoe/year & Depends on grid factor & 3.6 GWh/year UZH allocation at $\sim$50 g \coe/kWh & Based on CSCS contact data \\ \hline
+CSCS facility overhead & 18--54 \tcoe/year & PUE 1.1--1.3 if allocation excludes overhead & Conservative PUE sensitivity & Avoid if allocation already includes facility electricity \\ \hline
+CSCS embodied emissions & 50--250 \tcoe/year & Broad server-equivalent range & Allocated-power estimate with uncertain node mix & Replace with node/accelerator inventory when available \\ \hline
+Agentic AI example A & 160 \tcoe/year & 5\% users, 1.3 kWh/day & Claude Code heavy-use case study & Includes 25\% training overhead \\ \hline
+Agentic AI example B & 590 \tcoe/year & 10\% users, 2.4 kWh/day & IEA/Ritchie heavy-agent example & Includes 25\% training overhead \\ \hline
+\end{longtable}
+}
