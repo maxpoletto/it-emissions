@@ -20,6 +20,7 @@ import numpy as np
 BASE_YEAR = 2026
 
 CH_GCO2_PER_KWH_BY_2H = [63, 58, 58, 52, 49, 47, 45, 45, 49, 54, 62, 63]
+CH_MEAN_GCO2_PER_KWH = float(np.mean(CH_GCO2_PER_KWH_BY_2H))
 
 DEVICE_INFO_DEFAULT = {
     "Laptops": {"Lifetime": 6, "Count": 32_000, "Days per year": 250},
@@ -87,8 +88,37 @@ DUTY_CYCLE_6H_DEFAULT = {
     "Printers": [0.0, 0.0, 0.01, 0.0],
 }
 
+NETWORK_DEFAULT = {
+    "Access points": 4_000,
+    "Access point power W": 15,
+    "Access point embodied kg": 50,
+    "Switch/router count per AP": 0.10,
+    "Switch/router power W": 250,
+    "Switch/router embodied kg": 290,
+    "Network equipment lifetime y": 8,
+}
+
+
+def annual_power_tcoe(count: float, power_w: float, grid_gco2_per_kwh: float = CH_MEAN_GCO2_PER_KWH) -> float:
+    return count * power_w * 8760 * grid_gco2_per_kwh / 1_000_000_000
+
+
+def networking_boundary_tcoe() -> dict[str, float]:
+    aps = NETWORK_DEFAULT["Access points"]
+    switch_routers = aps * NETWORK_DEFAULT["Switch/router count per AP"]
+    usage = annual_power_tcoe(aps, NETWORK_DEFAULT["Access point power W"]) + annual_power_tcoe(
+        switch_routers,
+        NETWORK_DEFAULT["Switch/router power W"],
+    )
+    embodied = (
+        aps * NETWORK_DEFAULT["Access point embodied kg"]
+        + switch_routers * NETWORK_DEFAULT["Switch/router embodied kg"]
+    ) / NETWORK_DEFAULT["Network equipment lifetime y"] / 1000
+    return {"embodied": round(embodied), "usage": round(usage)}
+
+
 BOUNDARY_DEFAULT = {
-    "Campus networking": {"embodied": 0.0, "usage": 75.0},
+    "Campus networking": networking_boundary_tcoe(),
     "Productivity SaaS": {"embodied": 0.0, "usage": 209.0},
     "CSCS": {"embodied": 150.0, "usage": 216.0},
 }
@@ -146,7 +176,7 @@ def default_state() -> ModelState:
 
 
 def mean_ch_gco2_per_kwh() -> float:
-    return float(np.mean(CH_GCO2_PER_KWH_BY_2H))
+    return CH_MEAN_GCO2_PER_KWH
 
 
 def emission_at_hour(hour: int) -> float:
@@ -209,16 +239,16 @@ def supercomputing_emissions_kg(state: ModelState) -> float:
 
 
 def llm_emissions_kg(state: ModelState) -> tuple[float, float]:
-    nqueries = state.llms["Mean daily user queries"] * state.llms["User population"]
+    daily_queries = state.llms["Mean daily user queries"] * state.llms["User population"]
+    annual_queries = daily_queries * state.llms["Days per year"]
     usage = (
-        nqueries
-        * state.llms["Days per year"]
+        annual_queries
         * state.llms["Mean query Wh"]
         * state.llms["Emissions intensity g CO2e / kWh"]
         / 1_000_000
     )
     overhead = usage * state.llms["Training overhead %"] / 100
-    embodied = nqueries * state.llms["Embodied emissions g CO2e / query"] / 1000
+    embodied = annual_queries * state.llms["Embodied emissions g CO2e / query"] / 1000
     return usage, overhead + embodied
 
 
@@ -311,38 +341,41 @@ def run_model(state: ModelState, include_boundary: bool = True) -> list[dict[str
 
 
 def llm_projection(state: ModelState) -> list[dict[str, float]]:
-    usage = state.llms["Mean daily user queries"] * state.llms["User population"]
+    daily_queries = state.llms["Mean daily user queries"] * state.llms["User population"]
     energy_per_query = state.llms["Mean query Wh"]
     emissions_intensity = state.llms["Emissions intensity g CO2e / kWh"]
     training_overhead = state.llms["Training overhead %"] / 100
+    embodied_per_query = state.llms["Embodied emissions g CO2e / query"]
     usage_growth = state.llms["Annual usage growth %"] / 100
     efficiency_growth = state.llms["Annual efficiency growth %"] / 100
     training_growth = state.llms["Annual training growth %"] / 100
-    embodied = 0.0
+    training_emissions = 0.0
     rows = []
 
     for offset in range(5):
+        annual_queries = daily_queries * state.llms["Days per year"]
         usage_emissions = (
-            usage
-            * state.llms["Days per year"]
+            annual_queries
             * energy_per_query
             * emissions_intensity
             / 1_000_000
             / 1000
         )
         if offset == 0:
-            embodied = usage_emissions * training_overhead
+            training_emissions = usage_emissions * training_overhead
         else:
-            embodied *= 1 + training_growth
+            training_emissions *= 1 + training_growth
+        embodied_emissions = annual_queries * embodied_per_query / 1_000_000
+        overhead = training_emissions + embodied_emissions
         rows.append(
             {
                 "year": BASE_YEAR + offset,
                 "usage": usage_emissions,
-                "embodied": embodied,
-                "total": usage_emissions + embodied,
+                "embodied": overhead,
+                "total": usage_emissions + overhead,
             }
         )
-        usage *= 1 + usage_growth
+        daily_queries *= 1 + usage_growth
         energy_per_query *= 1 - efficiency_growth
 
     return rows

@@ -83,7 +83,8 @@ Printers & 0.0 & 0.0 & 0.01 & 0.0 & Short active-use window plus standby \\ \hli
 \hline
 \textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Source / basis} & \textbf{Sensitivity range} \\ \hline
 \endhead
-Campus networking midpoint & 75 & \tcoe/year & Bottom-up AP estimate plus switching/router allowance & 50--100 \tcoe/year operational \\ \hline
+Campus networking operational midpoint & 75 & \tcoe/year & 4,000 APs at 15 W plus switch/router allowance & 50--100 \tcoe/year operational \\ \hline
+Campus networking embodied midpoint & 40 & \tcoe/year & AP CPE proxy plus switch/router desktop proxy, 8-year lifetime & Scenario midpoint \\ \hline
 Campus networking overhead & 10 & \% & Legacy calculator proxy for campuses without a network inventory & 0--20\% \\ \hline
 Campus data center PUE & 200 & x100 & UZH historical power estimate & 150--250 x100 \\ \hline
 Cloud PUE & 115 & x100 & Microsoft/Google regional PUE disclosures & 109--156 x100 \\ \hline
@@ -110,6 +111,7 @@ Ordinary query energy & 1.0 & Wh/query & Conservative value above recent 0.3 Wh 
 Training overhead & 25 & \% & Conservative inference/training allocation & 0--100\% \\ \hline
 AI electricity intensity & 207 & g \coe/kWh & EU electricity generation intensity & 50--400 g \coe/kWh \\ \hline
 Embodied emissions & 0.1 & g \coe/query & Conservative GPU/server allocation default & 0.01--0.1 g/query \\ \hline
+Agentic hardware allocation & 100 & g \coe/kWh & Amortized H100/server allocation per kWh server-side AI energy & 50--150 g \coe/kWh \\ \hline
 Annual usage growth & 50 & \% & Aggressive growth scenario & 0--100\% \\ \hline
 Annual efficiency growth & 30 & \% & Hardware/software improvement scenario & 0--50\% \\ \hline
 Annual training growth & 50 & \% & Frontier-model training growth scenario & 0--100\% \\ \hline
@@ -126,13 +128,13 @@ Agentic AI intensity & 0.1--2.4 & kWh/active user-day & IEA/Ritchie and Claude C
 \hline
 \textbf{Category} & \textbf{Central value} & \textbf{Range} & \textbf{Basis} & \textbf{Notes} \\ \hline
 \endhead
-Campus networking & 75 \tcoe/year & 50--100 \tcoe/year & Midpoint of bottom-up operational range & Embodied network emissions remain an inventory gap \\ \hline
+Campus networking & 115 \tcoe/year & 90--140 \tcoe/year & Operational midpoint plus embodied equipment estimate & 75 operational and 40 embodied in main figures \\ \hline
 Productivity SaaS & 209 \tcoe/year & 38--380 \tcoe/year & 38,000 users times midpoint of 1--10 kg \coe/user/year & Replace with Microsoft 365 or Google Workspace tenant report when available \\ \hline
 CSCS operational electricity & 180 \tcoe/year & Depends on grid factor & 3.6 GWh/year UZH allocation at $\sim$50 g \coe/kWh & Based on CSCS contact data \\ \hline
 CSCS facility overhead & 36 \tcoe/year & 18--54 \tcoe/year & Midpoint of PUE 1.1--1.3 if allocation excludes overhead & Avoid if allocation already includes facility electricity \\ \hline
 CSCS embodied emissions & 150 \tcoe/year & 50--250 \tcoe/year & Midpoint of broad server-equivalent range & Replace with node/accelerator inventory when available \\ \hline
-Agentic AI example A & 160 \tcoe/year & 5\% users, 1.3 kWh/day & Claude Code heavy-use case study & Includes 25\% training overhead \\ \hline
-Agentic AI main-chart scenario & 320 \tcoe/year & 10\% users, 1.3 kWh/day & Illustrative agentic-AI adoption scenario & Includes 25\% training overhead \\ \hline
-Agentic AI example B & 590 \tcoe/year & 10\% users, 2.4 kWh/day & IEA/Ritchie heavy-agent example & Includes 25\% training overhead \\ \hline
+Agentic AI example A & 220 \tcoe/year & 5\% users, 1.3 kWh/day & Claude Code heavy-use case study & Includes 25\% training and 100 g \coe/kWh hardware allocation \\ \hline
+Agentic AI main-chart scenario & 440 \tcoe/year & 10\% users, 1.3 kWh/day & Illustrative agentic-AI adoption scenario & Includes 25\% training and 100 g \coe/kWh hardware allocation \\ \hline
+Agentic AI example B & 820 \tcoe/year & 10\% users, 2.4 kWh/day & IEA/Ritchie heavy-agent example & Includes 25\% training and 100 g \coe/kWh hardware allocation \\ \hline
 \end{longtable}
 }
