@@ -14,3 +14,5 @@
 .DS_Store
 doc/it-emissions.pdf
 doc/paper.pdf
+__pycache__
+/app/main2.css
