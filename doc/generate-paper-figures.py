@@ -91,6 +91,23 @@ BOUNDARY_DEFAULT = {
     "CSCS": {"embodied": 150.0, "usage": 216.0},
 }
 
+PLOT_CATEGORY_ORDER = [
+    "Laptops",
+    "Monitors",
+    "Desktops",
+    "Servers",
+    "Mobile phones",
+    "A/V equipment",
+    "Printers",
+    "Campus networking",
+    "DC cooling",
+    "Cloud",
+    "Legacy supercomputing",
+    "CSCS",
+    "Productivity SaaS",
+    "Ordinary chat AI",
+]
+
 
 @dataclass
 class ModelState:
@@ -296,14 +313,11 @@ def nonzero_rows(rows: list[dict[str, float | str]]) -> list[dict[str, float | s
 
 def plot_stacked_emissions(rows: list[dict[str, float | str]], title: str, output: Path) -> None:
     data = nonzero_rows(rows)
+    order_index = {category: i for i, category in enumerate(PLOT_CATEGORY_ORDER)}
+    data = sorted(data, key=lambda row: order_index.get(str(row["category"]), len(order_index)))
     labels = [str(row["category"]) for row in data]
     embodied = np.array([float(row["embodied"]) for row in data])
     usage = np.array([float(row["usage"]) for row in data])
-    total = embodied + usage
-    order = np.argsort(total)[::-1]
-    labels = [labels[i] for i in order]
-    embodied = embodied[order]
-    usage = usage[order]
 
     fig_width = max(8.6, 0.46 * len(labels))
     fig, ax = plt.subplots(figsize=(fig_width, 5.2), dpi=180)
