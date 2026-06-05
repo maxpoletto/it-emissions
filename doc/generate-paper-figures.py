@@ -71,6 +71,7 @@ LLMS_DEFAULT = {
     "Training overhead %": 25,
     "Emissions intensity g CO2e / kWh": 207,
     "Embodied emissions g CO2e / query": 0.1,
+    "Agentic hardware g CO2e / kWh": 100,
     "Annual usage growth %": 50,
     "Annual efficiency growth %": 30,
     "Annual training growth %": 50,
@@ -222,16 +223,16 @@ def llm_emissions_kg(state: ModelState) -> tuple[float, float]:
 
 
 def agentic_ai_emissions_t(state: ModelState) -> tuple[float, float]:
-    usage = (
+    server_side_energy_kwh = (
         state.llms["User population"]
         * AGENTIC_AI_DEFAULT["Adoption share"]
         * state.llms["Days per year"]
         * AGENTIC_AI_DEFAULT["Energy kWh per active user-day"]
-        * state.llms["Emissions intensity g CO2e / kWh"]
-        / 1_000_000
     )
+    usage = server_side_energy_kwh * state.llms["Emissions intensity g CO2e / kWh"] / 1_000_000
     overhead = usage * state.llms["Training overhead %"] / 100
-    return usage, overhead
+    hardware = server_side_energy_kwh * state.llms["Agentic hardware g CO2e / kWh"] / 1_000_000
+    return usage, overhead + hardware
 
 
 def run_model(state: ModelState, include_boundary: bool = True) -> list[dict[str, float | str]]:
@@ -365,7 +366,7 @@ def plot_stacked_emissions(rows: list[dict[str, float | str]], title: str, outpu
     fig_width = max(9.2, 0.50 * len(labels))
     fig, ax = plt.subplots(figsize=(fig_width, 5.2), dpi=180)
     x = np.arange(len(labels))
-    ax.bar(x, embodied, label="Embodied / lifecycle", color="#4472c4")
+    ax.bar(x, embodied, label="Embodied / overhead", color="#4472c4")
     ax.bar(x, usage, bottom=embodied, label="Operational", color="#ed7d31")
     ax.set_title(title)
     ax.set_ylabel("Annual emissions (t CO2e)")
@@ -406,10 +407,13 @@ def plot_agentic_heatmap(output: Path) -> None:
     emissions = (
         LLMS_DEFAULT["User population"]
         * LLMS_DEFAULT["Days per year"]
-        * (1 + LLMS_DEFAULT["Training overhead %"] / 100)
-        * LLMS_DEFAULT["Emissions intensity g CO2e / kWh"]
         * adoption_grid
         * intensity_grid
+        * (
+            LLMS_DEFAULT["Emissions intensity g CO2e / kWh"]
+            * (1 + LLMS_DEFAULT["Training overhead %"] / 100)
+            + LLMS_DEFAULT["Agentic hardware g CO2e / kWh"]
+        )
         / 1_000_000
     )
 
@@ -419,7 +423,7 @@ def plot_agentic_heatmap(output: Path) -> None:
         adoption_grid * 100,
         intensity_grid,
         emissions,
-        levels=[50, 100, 250, 500, 1000],
+        levels=[100, 250, 500, 1000, 1500],
         colors="black",
         linewidths=0.7,
         alpha=0.65,
