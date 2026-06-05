@@ -2,7 +2,7 @@
 """Regenerate the figures used by paper.tex.
 
 This script mirrors the deterministic model in app/emissions-calculator.html and
-adds the bounded SaaS/CSCS scenarios described in the revised manuscript. It
+adds the range-based SaaS/CSCS/AI scenarios described in the revised manuscript. It
 produces the paper figures without relying on browser screenshots.
 """
 
@@ -87,26 +87,38 @@ DUTY_CYCLE_6H_DEFAULT = {
 }
 
 BOUNDARY_DEFAULT = {
-    "Productivity SaaS": {"embodied": 0.0, "usage": 114.0},
+    "Campus networking": {"embodied": 0.0, "usage": 75.0},
+    "Productivity SaaS": {"embodied": 0.0, "usage": 209.0},
     "CSCS": {"embodied": 150.0, "usage": 216.0},
 }
 
+AGENTIC_AI_DEFAULT = {
+    "Adoption share": 0.10,
+    "Energy kWh per active user-day": 1.3,
+}
+
 PLOT_CATEGORY_ORDER = [
+    "Mobile phones",
     "Laptops",
     "Monitors",
-    "Desktops",
-    "Servers",
-    "Mobile phones",
+    "Campus networking",
     "A/V equipment",
     "Printers",
-    "Campus networking",
+    "Servers",
     "DC cooling",
-    "Cloud",
-    "Legacy supercomputing",
     "CSCS",
+    "Cloud",
     "Productivity SaaS",
-    "Ordinary chat AI",
+    "AI (chatbot)",
+    "AI (agents)",
 ]
+
+PLOT_LABELS = {
+    "Campus networking": "Networking",
+    "Productivity SaaS": "SaaS",
+}
+
+STACKED_Y_MAX = 1250
 
 
 @dataclass
@@ -209,6 +221,19 @@ def llm_emissions_kg(state: ModelState) -> tuple[float, float]:
     return usage, overhead + embodied
 
 
+def agentic_ai_emissions_t(state: ModelState) -> tuple[float, float]:
+    usage = (
+        state.llms["User population"]
+        * AGENTIC_AI_DEFAULT["Adoption share"]
+        * state.llms["Days per year"]
+        * AGENTIC_AI_DEFAULT["Energy kWh per active user-day"]
+        * state.llms["Emissions intensity g CO2e / kWh"]
+        / 1_000_000
+    )
+    overhead = usage * state.llms["Training overhead %"] / 100
+    return usage, overhead
+
+
 def run_model(state: ModelState, include_boundary: bool = True) -> list[dict[str, float | str]]:
     rows = []
     total_usage = 0.0
@@ -220,21 +245,33 @@ def run_model(state: ModelState, include_boundary: bool = True) -> list[dict[str
         total_usage += usage
         total_embodied += embodied
 
-    networking_usage = 0.0
-    networking_embodied = 0.0
-    for device in ["Laptops", "Desktops", "Servers"]:
-        usage, embodied = device_emissions_kg(state, device)
-        networking_usage += usage * state.compute["Campus networking overhead %"] / 100
-        networking_embodied += embodied * state.compute["Campus networking overhead %"] / 100
-    rows.append(
-        {
-            "category": "Campus networking",
-            "usage": networking_usage / 1000,
-            "embodied": networking_embodied / 1000,
-        }
-    )
-    total_usage += networking_usage
-    total_embodied += networking_embodied
+    if include_boundary and "Campus networking" in state.boundary:
+        networking_values = state.boundary["Campus networking"]
+        rows.append(
+            {
+                "category": "Campus networking",
+                "usage": networking_values["usage"],
+                "embodied": networking_values["embodied"],
+            }
+        )
+        total_usage += networking_values["usage"] * 1000
+        total_embodied += networking_values["embodied"] * 1000
+    else:
+        networking_usage = 0.0
+        networking_embodied = 0.0
+        for device in ["Laptops", "Desktops", "Servers"]:
+            usage, embodied = device_emissions_kg(state, device)
+            networking_usage += usage * state.compute["Campus networking overhead %"] / 100
+            networking_embodied += embodied * state.compute["Campus networking overhead %"] / 100
+        rows.append(
+            {
+                "category": "Campus networking",
+                "usage": networking_usage / 1000,
+                "embodied": networking_embodied / 1000,
+            }
+        )
+        total_usage += networking_usage
+        total_embodied += networking_embodied
 
     cooling = data_center_cooling_kg(state)
     rows.append({"category": "DC cooling", "usage": cooling / 1000, "embodied": 0.0})
@@ -251,12 +288,19 @@ def run_model(state: ModelState, include_boundary: bool = True) -> list[dict[str
         total_usage += supercomputing
 
     llm_usage, llm_embodied = llm_emissions_kg(state)
-    rows.append({"category": "Ordinary chat AI", "usage": llm_usage / 1000, "embodied": llm_embodied / 1000})
+    rows.append({"category": "AI (chatbot)", "usage": llm_usage / 1000, "embodied": llm_embodied / 1000})
     total_usage += llm_usage
     total_embodied += llm_embodied
 
+    agentic_usage, agentic_embodied = agentic_ai_emissions_t(state)
+    rows.append({"category": "AI (agents)", "usage": agentic_usage, "embodied": agentic_embodied})
+    total_usage += agentic_usage * 1000
+    total_embodied += agentic_embodied * 1000
+
     if include_boundary:
         for category, values in state.boundary.items():
+            if category == "Campus networking":
+                continue
             rows.append({"category": category, "usage": values["usage"], "embodied": values["embodied"]})
             total_usage += values["usage"] * 1000
             total_embodied += values["embodied"] * 1000
@@ -303,29 +347,29 @@ def llm_projection(state: ModelState) -> list[dict[str, float]]:
     return rows
 
 
-def nonzero_rows(rows: list[dict[str, float | str]]) -> list[dict[str, float | str]]:
-    return [
-        row
-        for row in rows
-        if row["category"] != "Totals" and (float(row["usage"]) + float(row["embodied"])) > 0.05
-    ]
-
-
 def plot_stacked_emissions(rows: list[dict[str, float | str]], title: str, output: Path) -> None:
-    data = nonzero_rows(rows)
-    order_index = {category: i for i, category in enumerate(PLOT_CATEGORY_ORDER)}
-    data = sorted(data, key=lambda row: order_index.get(str(row["category"]), len(order_index)))
-    labels = [str(row["category"]) for row in data]
+    rows_by_category = {
+        str(row["category"]): row
+        for row in rows
+        if row["category"] != "Totals"
+    }
+    data = []
+    for category in PLOT_CATEGORY_ORDER:
+        row = rows_by_category.get(category, {"category": category, "usage": 0.0, "embodied": 0.0})
+        data.append(row)
+
+    labels = [PLOT_LABELS.get(str(row["category"]), str(row["category"])) for row in data]
     embodied = np.array([float(row["embodied"]) for row in data])
     usage = np.array([float(row["usage"]) for row in data])
 
-    fig_width = max(8.6, 0.46 * len(labels))
+    fig_width = max(9.2, 0.50 * len(labels))
     fig, ax = plt.subplots(figsize=(fig_width, 5.2), dpi=180)
     x = np.arange(len(labels))
     ax.bar(x, embodied, label="Embodied / lifecycle", color="#4472c4")
     ax.bar(x, usage, bottom=embodied, label="Operational", color="#ed7d31")
     ax.set_title(title)
     ax.set_ylabel("Annual emissions (t CO2e)")
+    ax.set_ylim(0, STACKED_Y_MAX)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=35, ha="right")
     ax.grid(axis="y", alpha=0.25)
@@ -381,8 +425,9 @@ def plot_agentic_heatmap(output: Path) -> None:
         alpha=0.65,
     )
     ax.clabel(contours, inline=True, fmt="%d t", fontsize=8)
-    ax.scatter([5, 10], [1.3, 2.4], color="black", s=24, zorder=3)
+    ax.scatter([5, 10, 10], [1.3, 1.3, 2.4], color="black", s=24, zorder=3)
     ax.text(5.4, 1.30, "5%, 1.3 kWh", fontsize=8, va="center")
+    ax.text(10.4, 1.30, "10%, 1.3 kWh", fontsize=8, va="center")
     ax.text(10.4, 2.33, "10%, 2.4 kWh", fontsize=8, va="center")
     ax.set_xlabel("Share of UZH population using agents heavily on workdays (%)")
     ax.set_ylabel("Agentic AI energy per active user-day (kWh)")
@@ -390,7 +435,7 @@ def plot_agentic_heatmap(output: Path) -> None:
     colorbar = fig.colorbar(mesh, ax=ax)
     colorbar.set_label("t CO2e per year")
     ax.set_xlim(1, 20)
-    ax.set_ylim(0.1, 2.4)
+    ax.set_ylim(0.1, 2.45)
     ax.grid(color="white", linewidth=0.4, alpha=0.55)
     fig.tight_layout()
     fig.savefig(output)
@@ -450,8 +495,13 @@ def print_summary() -> None:
                 values["Mean"] = values["Min"]
         rows = run_model(state)
         total = rows[-1]["usage"] + rows[-1]["embodied"]
-        ordinary_ai = next(row for row in rows if row["category"] == "Ordinary chat AI")
-        print(f"{name}: total={total:.0f} t CO2e, ordinary_chat={ordinary_ai['usage'] + ordinary_ai['embodied']:.0f} t")
+        ordinary_ai = next(row for row in rows if row["category"] == "AI (chatbot)")
+        agentic_ai = next(row for row in rows if row["category"] == "AI (agents)")
+        print(
+            f"{name}: total={total:.0f} t CO2e, "
+            f"chatbot_ai={ordinary_ai['usage'] + ordinary_ai['embodied']:.0f} t, "
+            f"agentic_ai={agentic_ai['usage'] + agentic_ai['embodied']:.0f} t"
+        )
 
 
 def main() -> None:

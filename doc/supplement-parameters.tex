@@ -83,7 +83,8 @@ Printers & 0.0 & 0.0 & 0.01 & 0.0 & Short active-use window plus standby \\ \hli
 \hline
 \textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Source / basis} & \textbf{Sensitivity range} \\ \hline
 \endhead
-Campus networking overhead & 10 & \% & Bottom-up AP estimate plus switching/router allowance & 0--20\% \\ \hline
+Campus networking midpoint & 75 & \tcoe/year & Bottom-up AP estimate plus switching/router allowance & 50--100 \tcoe/year operational \\ \hline
+Campus networking overhead & 10 & \% & Legacy calculator proxy for campuses without a network inventory & 0--20\% \\ \hline
 Campus data center PUE & 200 & x100 & UZH historical power estimate & 150--250 x100 \\ \hline
 Cloud PUE & 115 & x100 & Microsoft/Google regional PUE disclosures & 109--156 x100 \\ \hline
 Cloud servers in cloud & 0 & \% & Scenario parameter & 0--100\% \\ \hline
@@ -125,11 +126,13 @@ Agentic AI intensity & 0.1--2.4 & kWh/active user-day & IEA/Ritchie and Claude C
 \hline
 \textbf{Category} & \textbf{Central value} & \textbf{Range} & \textbf{Basis} & \textbf{Notes} \\ \hline
 \endhead
-Productivity SaaS & 114 \tcoe/year & 38--380 \tcoe/year & 38,000 users times 3 kg \coe/user/year, varied 1--10 & Replace with Microsoft 365 or Google Workspace tenant report when available \\ \hline
+Campus networking & 75 \tcoe/year & 50--100 \tcoe/year & Midpoint of bottom-up operational range & Embodied network emissions remain an inventory gap \\ \hline
+Productivity SaaS & 209 \tcoe/year & 38--380 \tcoe/year & 38,000 users times midpoint of 1--10 kg \coe/user/year & Replace with Microsoft 365 or Google Workspace tenant report when available \\ \hline
 CSCS operational electricity & 180 \tcoe/year & Depends on grid factor & 3.6 GWh/year UZH allocation at $\sim$50 g \coe/kWh & Based on CSCS contact data \\ \hline
-CSCS facility overhead & 18--54 \tcoe/year & PUE 1.1--1.3 if allocation excludes overhead & Conservative PUE sensitivity & Avoid if allocation already includes facility electricity \\ \hline
-CSCS embodied emissions & 50--250 \tcoe/year & Broad server-equivalent range & Allocated-power estimate with uncertain node mix & Replace with node/accelerator inventory when available \\ \hline
+CSCS facility overhead & 36 \tcoe/year & 18--54 \tcoe/year & Midpoint of PUE 1.1--1.3 if allocation excludes overhead & Avoid if allocation already includes facility electricity \\ \hline
+CSCS embodied emissions & 150 \tcoe/year & 50--250 \tcoe/year & Midpoint of broad server-equivalent range & Replace with node/accelerator inventory when available \\ \hline
 Agentic AI example A & 160 \tcoe/year & 5\% users, 1.3 kWh/day & Claude Code heavy-use case study & Includes 25\% training overhead \\ \hline
+Agentic AI main-chart scenario & 320 \tcoe/year & 10\% users, 1.3 kWh/day & Illustrative agentic-AI adoption scenario & Includes 25\% training overhead \\ \hline
 Agentic AI example B & 590 \tcoe/year & 10\% users, 2.4 kWh/day & IEA/Ritchie heavy-agent example & Includes 25\% training overhead \\ \hline
 \end{longtable}
 }

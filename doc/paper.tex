@@ -95,7 +95,7 @@ For servers, which are mostly located in on-premise data centers, we also attemp
 
 UZH at present does not make significant use of commercial cloud compute, but the model allows simulating the shift of some fraction of the server load to cloud VMs. For this hypothetical cloud footprint, like for on-premise data centers, we attempt to model operational emissions, embodied emissions, and emissions from cooling.
 
-Application-level cloud services such as Microsoft 365 or Google Workspace are ubiquitous but difficult to model bottom-up without tenant-level vendor reports. We include a rough bounded estimate of operational emissions, but do not attempt to estimate embodied emissions.
+Application-level cloud services such as Microsoft 365 or Google Workspace are ubiquitous but difficult to model bottom-up without tenant-level vendor reports. We include a rough range estimate of operational emissions, but do not attempt to estimate embodied emissions.
 
 UZH faculties use shared off-campus supercomputing facilities, primarily the Swiss National Supercomputing Center, CSCS~\cite{cscs}. Both operational impacts and embodied emissions are in scope for our analysis.
 
@@ -105,7 +105,7 @@ We distinguish three classes of generative-AI use: short chatbot queries, long o
 
 \subsubsection*{Summary}
 
-This table summarizes what is in scope in the current model and which components are treated as bounded estimates rather than measured.
+This table summarizes what is in scope in the current model and which components are treated as range estimates rather than measured values.
 
 This table summarizes what is in scope in the current model. The entries indicate whether each category is included in the operational, lifecycle, and cooling/facility-overhead
   accounting; the precision and data sources vary by category and are discussed below.
@@ -146,6 +146,8 @@ We attempt to model a hypothetical shift of some workloads from servers in an on
 For application-level cloud services we include a preliminary estimate of operational emissions informed by vendor carbon-accounting tools~\cite{microsoft:m365:emissions,google:workspace:carbon} and treat those estimates separately from higher-confidence campus device and server results. This estimate excludes embedded generative-AI features such as Copilot or Gemini, which are covered by the separate AI scenarios. As mentioned, we do not attempt to estimate embodied emissions for these cloud services.
 
 For supercomputing facilities, primarily CSCS, we estimate both the operational impact of workloads and a range of likely embodied emissions based on the UZH allocation of total CSCS electricity use and an approximate model of server hardware. Since we lack a detailed hardware inventory for CSCS, we cannot model embodied emissions precisely at the node level.
+
+For networking, productivity SaaS, and supercomputing, the result figures display midpoint values from the ranges described below. These bars should therefore be read as central scenario estimates rather than measured inventory values.
 
 \subsubsection*{Generative and agentic AI}
 
@@ -204,7 +206,7 @@ The Swiss electricity mix is substantially cleaner than the European or North Am
 
 Our assumptions about device duty cycle can be summarized as follows: (1) end-user devices are used during the day on weekdays (250 days per year), (2) servers run around-the-clock but at 80\% of peak power load, (3) mobile phones are modeled through their charging energy rather than as continuously plugged-in devices, and (4) printers are idle except for a few minutes per day. A typical smartphone battery capacity of 15--20 Wh, charged once per day with 80--90\% charger efficiency, corresponds to roughly 20--25 Wh/day. In the model this is represented as a 10 W charging load for three-hour period on 250 days/year. Standby power for all devices is negligible ($\sim 1$ W), except for printers which often draw 50--100 W.
 
-For campus networking, UZH has approximately 4,000 wifi access points. A bottom-up access-point estimate is 4,000 devices $\times$ 15 W $\times$ 8,760 h/year $\approx$ 526 MWh/year, corresponding to roughly 25--35 \tcoe/year under the Swiss electricity mix. Core switches, distribution switches, routers, controllers, and storage networking are less well inventoried; allowing these to add one to two times the access-point load gives an operational range of roughly 50--100 \tcoe/year. This is close to the default 10\% network overhead used in the model, but we now treat that parameter explicitly in the sensitivity analysis rather than as a fixed assumption. % XXX check
+For campus networking, UZH has approximately 4,000 wifi access points. A bottom-up access-point estimate is 4,000 devices $\times$ 15 W $\times$ 8,760 h/year $\approx$ 526 MWh/year, corresponding to roughly 25--35 \tcoe/year under the Swiss electricity mix. Core switches, distribution switches, routers, controllers, and storage networking are less well inventoried; allowing these to add one to two times the access-point load gives an operational range of roughly 50--100 \tcoe/year. In the result figures, the networking bar displays the midpoint of this operational range, 75 \tcoe/year.
 
 \subsubsection*{Embodied emissions}
 
@@ -254,7 +256,7 @@ We found less data for other types of devices. For now, we model them as follows
   \item Computer monitors: 340 \kgcoe~\cite{dellpcf,lovehagen2023,teehan2013}.
   \item Conference room displays: 700 \kgcoe\ (scaling monitor by $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment (lecture room projectors, etc.). Note that the numbers are sufficiently low that errors in this estimate do not significantly affect the overall result.
   \item Printer/copier stations: 1100 \kgcoe~\cite{ecoinvent}.
-  \item Network equipment: We did not find reliable lifecycle assessments for routers and switches, and have little information about UZH network architecture. The vast majority ($80-95\%$) of lifecycle emissions of network gear stem from usage~\cite{cisco2024,jacob2023}. We therefore keep embodied network emissions as a low-order proxy tied to operational network scale and vary the network overhead from 0--20\% in sensitivity analysis.
+  \item Network equipment: We did not find reliable lifecycle assessments for routers and switches, and have little information about UZH network architecture. The vast majority ($80-95\%$) of lifecycle emissions of network gear stem from usage~\cite{cisco2024,jacob2023}. We therefore plot networking as an operational midpoint in the main figures and treat embodied network emissions as an unresolved inventory gap rather than assigning a precise blue-stack value.
 \end{itemize}
 
 \subsection{Cloud and supercomputing facilities}
@@ -265,9 +267,9 @@ Lacking information about UZH's workloads, we model a hypothetical UZH cloud foo
 
 Given all these parameters, we can then compute cloud server operational emissions, embodied emissions, and cooling overhead as we do for on-premise servers.
 
-For application-level cloud services, Microsoft and Google provide tenant-specific carbon reports for Microsoft 365 and Google Workspace, respectively~\cite{microsoft:m365:emissions,google:workspace:carbon}. Since we do not have access to UZH tenant reports, we use a preliminary sensitivity range of 1--10 \kgcoe/user/year for productivity SaaS, with 3 \kgcoe/user/year as the central value. For a population of 38,000 users, this corresponds to 38--380 \tcoe/year, with a central estimate of 114 \tcoe/year. This estimate is intentionally separated from the baseline because vendor-reported tenant data should replace it whenever available.
+For application-level cloud services, Microsoft and Google provide tenant-specific carbon reports for Microsoft 365 and Google Workspace, respectively~\cite{microsoft:m365:emissions,google:workspace:carbon}. Since we do not have access to UZH tenant reports, we use a preliminary sensitivity range of 1--10 \kgcoe/user/year for productivity SaaS. For a population of 38,000 users, this corresponds to 38--380 \tcoe/year. The result figures use the midpoint of this range, 209 \tcoe/year. This estimate is intentionally separated from the higher-confidence campus device and server results because vendor-reported tenant data should replace it whenever available.
 
-For supercomputing at CSCS, recent information~\cite{cscs:supercomputing} indicates total compute electricity use of approximately 60 GWh/year and an estimated UZH allocation of approximately 3.6 GWh/year, or about 6\% of the total. Using the Swiss electricity mix carbon intensity, this corresponds to approximately 180 \tcoe/year of operational emissions. Since the 3.6 GWh/year figure excludes facility overhead, a PUE range of 1.1--1.3 would add 18--54 \tcoe/year. For embodied emissions, since we lack a precise hardware inventory, we use a rough server-equivalent estimate. The UZH electricity allocation corresponds to an average allocated power of $3.6$ GWh / 8,760 h $\approx 411$ kW. Assuming that this load is represented by server nodes drawing 0.4--2.0 kW each, and that, per the analysis above, each node has embodied emissions of 1.1 \tcoe\ and a 5-year lifetime, amortized embodied emissions fall in the range of 45--226 \tcoe/year. We round this to a broad 50--250 \tcoe/year range to reflect uncertainty about node power, accelerator mix, and lifetime. We use these values as a bounded CSCS emissions estimate in the sensitivity analysis.
+For supercomputing at CSCS, recent information~\cite{cscs:supercomputing} indicates total compute electricity use of approximately 60 GWh/year and an estimated UZH allocation of approximately 3.6 GWh/year, or about 6\% of the total. Using the Swiss electricity mix carbon intensity, this corresponds to approximately 180 \tcoe/year of operational emissions. Since the 3.6 GWh/year figure excludes facility overhead, a PUE range of 1.1--1.3 would add 18--54 \tcoe/year; the result figures use the midpoint, 36 \tcoe/year. For embodied emissions, since we lack a precise hardware inventory, we use a rough server-equivalent estimate. The UZH electricity allocation corresponds to an average allocated power of $3.6$ GWh / 8,760 h $\approx 411$ kW. Assuming that this load is represented by server nodes drawing 0.4--2.0 kW each, and that, per the analysis above, each node has embodied emissions of 1.1 \tcoe\ and a 5-year lifetime, amortized embodied emissions fall in the range of 45--226 \tcoe/year. We round this to a broad 50--250 \tcoe/year range to reflect uncertainty about node power, accelerator mix, and lifetime; the result figures use the midpoint, 150 \tcoe/year. Thus the plotted CSCS estimate is 366 \tcoe/year, split into 216 \tcoe/year operational and 150 \tcoe/year embodied emissions.
 
 \subsection{Generative and agentic AI}
 
@@ -300,7 +302,7 @@ For the agentic scenarios, a useful approximation is:
 
 \[\mathrm{annual~emissions~(t~CO_2e)} \approx 2{,}460 \times f \times E\]
 
-where $f$ is the fraction of the 38,000-person UZH population that uses agentic AI heavily on workdays, and $E$ is kWh per active user-day. Thus 5\% adoption at 1.3 kWh/day is approximately 160 \tcoe/year, and 10\% adoption at 2.4 kWh/day is approximately 590 \tcoe/year.
+where $f$ is the fraction of the 38,000-person UZH population that uses agentic AI heavily on workdays, and $E$ is kWh per active user-day. Thus 5\% adoption at 1.3 kWh/day is approximately 160 \tcoe/year, 10\% adoption at 1.3 kWh/day is approximately 320 \tcoe/year, and 10\% adoption at 2.4 kWh/day is approximately 590 \tcoe/year.
 
 \subsection{Model limitations}
 
@@ -327,12 +329,12 @@ We now discuss the main takeaways from our model when it is configured with the 
 
 \subsubsection*{Impact of embodied emissions}
 
-Maybe the most striking result is that, when we consider the entire population of campus devices, and not only those owned and managed by the university, end-user devices remain the largest source of emissions even after adding bounded estimates for productivity SaaS and CSCS. See Figure~\ref{fig:baseline}.
+Maybe the most striking result is that, when we consider the entire population of campus devices, and not only those owned and managed by the university, end-user devices remain the largest source of emissions even after adding midpoint estimates for networking, productivity SaaS, CSCS, and an illustrative agentic-AI scenario. See Figure~\ref{fig:baseline}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.7\textwidth]{fig-baseline.png}
-  \caption{Baseline results}
+  \caption{Baseline results. Networking, SaaS, and CSCS are plotted at the midpoint of the ranges described in the text; AI agents represent an illustrative scenario with 10\% adoption at 1.3 kWh per active user-day.}
   \label{fig:baseline}
 \end{figure}
 
@@ -340,7 +342,7 @@ Many studies~\cite{wb:itu:ict,umich:factsheet} agree that a large fraction of co
 
 \subsubsection*{Impact of cloud computing}
 
-Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170~\tcoe\ of cooling overhead and replaces about 415~\tcoe\ of on-premise server emissions with about 380~\tcoe\ of cloud emissions. In the broad baseline that includes the bounded SaaS and CSCS estimates, total IT emissions fall from approximately 3.66~\ktcoe\ to 3.41~\ktcoe. See Figure~\ref{fig:cloud}.
+Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170~\tcoe\ of cooling overhead and replaces about 415~\tcoe\ of on-premise server emissions with about 380~\tcoe\ of cloud emissions. In the broad baseline that includes the midpoint estimates for networking, SaaS, CSCS, and agentic AI, total IT emissions fall from approximately 3.99~\ktcoe\ to 3.78~\ktcoe. See Figure~\ref{fig:cloud}.
 
 \begin{figure}[h]
   \centering
@@ -362,11 +364,11 @@ There is also a financial argument to consider: if migration to the cloud is mor
   \label{fig:llm:growth}
 \end{figure}
 
-AI adoption is growing rapidly, driving demand for data centers and potentially stressing electrical infrastructure in coming years~\cite{lbl:dc:2024,iea:ai:energy,iea:keyquestions:ai}. For ordinary chatbot use, however, emissions remain a relatively small addition to the UZH IT footprint. In our default scenario of 15 queries/user/day at 1 Wh/query, ordinary chat contributes roughly 1--2\% of total IT emissions, depending on whether conservative embodied GPU overhead is included.
+AI adoption is growing rapidly, driving demand for data centers and potentially stressing electrical infrastructure in coming years~\cite{lbl:dc:2024,iea:ai:energy,iea:keyquestions:ai}. For ordinary chatbot use, however, emissions remain a relatively small addition to the UZH IT footprint. In our default scenario of 15 queries/user/day at 1 Wh/query, ordinary chat contributes roughly 1\% of total IT emissions, depending on whether conservative embodied GPU overhead is included.
 
 Moreover, under aggressive ordinary-chat growth projections (50\% YoY usage growth, 50\% YoY training overhead growth, and a moderate 20--30\% YoY improvement in inference efficiency), that overhead remains in the low single digits at the end of 5 years. See Figure~\ref{fig:llm:growth}. This result is consistent with other analyses that put simple LLM use in the context of other computer activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt,ritchie:ai:electricity:2026}.
 
-Agentic AI is different. If only 5\% of the UZH population used coding or research agents heavily on workdays at 1.3 kWh/user-day, emissions would be approximately 160 \tcoe/year. If 10\% used such systems at 2.4 kWh/user-day, emissions would be approximately 590 \tcoe/year, comparable to major existing operational IT categories. Figure~\ref{fig:agentic:ai} shows the sensitivity of annual emissions to both adoption and intensity. The conclusion is therefore not that all AI use is negligible, but that emissions depend strongly on whether usage remains dominated by simple chat or shifts toward high-intensity agentic work.
+Agentic AI is different. The main result figures therefore split AI into ``AI (chatbot)'' and ``AI (agents)''. The agent bar represents an illustrative scenario in which 10\% of the UZH population uses coding or research agents heavily on workdays at 1.3 kWh/user-day, yielding approximately 320 \tcoe/year. If 10\% used such systems at 2.4 kWh/user-day, emissions would be approximately 590 \tcoe/year, comparable to major existing operational IT categories. Figure~\ref{fig:agentic:ai} shows the sensitivity of annual emissions to both adoption and intensity. The conclusion is therefore not that all AI use is negligible, but that emissions depend strongly on whether usage remains dominated by simple chat or shifts toward high-intensity agentic work.
 
 \begin{figure}[h]
   \centering
@@ -380,7 +382,7 @@ Agentic AI is different. If only 5\% of the UZH population used coding or resear
 
 The results above are robust for ordinary chat use, but more conditional for high-intensity agentic AI.
 
-For example, if we (1) massively reduce the set of end-user devices in scope to just those owned and managed by the university (about 10,000 laptops and monitors, 2,400 mobile phones), (2) triple the ordinary LLM per-query energy use to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a GPT-4o-class LLM 40 times per day, then emissions from ordinary chat are still about 12\% of total (Figure~\ref{fig:sens1}).
+For example, if we (1) massively reduce the set of end-user devices in scope to just those owned and managed by the university (about 10,000 laptops and monitors, 2,400 mobile phones), (2) triple the ordinary LLM per-query energy use to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a GPT-4o-class LLM 40 times per day, then emissions from ordinary chat are about 10\% of total (Figure~\ref{fig:sens1}).
 
 \begin{figure}[h]
   \centering
@@ -398,11 +400,11 @@ Similarly, if we cut our estimate for the embodied emissions of every type of de
   \label{fig:sens2}
 \end{figure}
 
-Only if we combine the ``low embodied emissions'' scenario with the ``pessimal ordinary LLM'' scenario does simple generative AI become a substantial factor, contributing 16\% of total emissions.
+Combining the ``low embodied emissions'' scenario with the ``pessimal ordinary LLM'' scenario makes simple generative AI visible but still not dominant, contributing roughly 9--10\% of total emissions depending on whether the illustrative agentic-AI bar is included in the denominator.
 
 Regional context matters as expected. Moving from the Swiss electricity intensity of roughly 50 \gcoekwh\ to the EU average of 207 \gcoekwh\ increases operational emissions by about a factor of four, while a high-carbon grid of 400 \gcoekwh\ increases them by about a factor of eight. Embodied emissions remain important for end-user devices under long lifetimes, but in high-carbon regions operational server, network, supercomputing, cloud, and AI emissions become much more prominent. Shorter device refresh cycles push in the opposite direction: they increase the embodied-emissions share and make device-lifetime policy more important.
 
-The new boundary estimates do not overturn the main device-lifetime conclusion, but they are large enough to matter. The bottom-up networking estimate implies roughly 50--100 \tcoe/year operational emissions, and varying the network-overhead parameter from 0--20\% changes total IT emissions by low single-digit percentages. The preliminary productivity-SaaS estimate spans 38--380 \tcoe/year, and the updated CSCS scenario spans roughly 250--480 \tcoe/year once operational electricity, possible PUE overhead, and embodied server-equivalent emissions are included. These categories should therefore be included in future UZH inventories even if they are not the dominant source in the current baseline.
+The new boundary estimates do not overturn the main device-lifetime conclusion, but they are large enough to matter. The bottom-up networking estimate implies roughly 50--100 \tcoe/year operational emissions, with 75 \tcoe/year shown in the figures. The preliminary productivity-SaaS estimate spans 38--380 \tcoe/year, with 209 \tcoe/year shown in the figures. The updated CSCS scenario spans roughly 250--480 \tcoe/year once operational electricity, possible PUE overhead, and embodied server-equivalent emissions are included; the plotted midpoint is 366 \tcoe/year. These categories should therefore be included in future UZH inventories even if they are not the dominant source in the current baseline.
 
 \section{Recommendations}
 \label{sec:recommendations}
