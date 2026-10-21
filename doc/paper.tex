@@ -61,15 +61,15 @@ workloads.
 \section{Introduction}
 
 Information technology accounts for over 5\% of global electricity consumption
-and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. According to
-the most recent sustainability report~\cite{uzh:sustainability:report} from the
+and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the
 University of Zürich (UZH), which has over 38,000 students and staff and is the
-largest Swiss university, IT accounted for about 1.5~\ktcoe\ of greenhouse gas
-(GHG) emissions in 2024, approximately 6.3\% of total university emissions. The
-report takes into account university-owned workstations, servers, and
-audiovisual equipment, but does not include other IT-related activities such as
-networking, cloud computing, or the growing use of artificial intelligence, and
-in particular the adoption of generative AI and large language models (LLMs).
+largest Swiss university, a recent sustainability report estimated that IT
+accounted for about 1.5~\ktcoe\ of greenhouse gas (GHG) emissions in 2024,
+approximately 6.3\% of total university
+emissions~\cite{uzh:sustainability:report}. The report takes into account
+university-owned workstations, servers, and audiovisual equipment, but does not
+include other IT-related items such as personal devices, networking, cloud
+computing, or the growing use of artificial intelligence.
 
 AI applications are being adopted at historically high rates, more quickly than
 the personal computer or the internet were adopted in the
@@ -83,13 +83,13 @@ share of global electricity consumption for data centers from $\sim 1\%$ in 2024
 to $\sim 3\%$ by 2030~\cite{iea:ai:energy,iea:keyquestions:ai}.
 
 The character of generative-AI use is also changing. Early consumer use was
-dominated by short chatbot prompts, for which recent estimates converge around
+dominated by short chatbot interactions, for which  estimates converge around
 fractions of a watt-hour to a few watt-hours per request. Newer agentic systems,
-including coding assistants such as Codex and Claude Code and research agents
-that plan, iterate, and call tools autonomously, can consume orders of magnitude
-more energy per user-day because they issue many sequential long-context
+including research agents and coding assistants such as Codex and Claude Code,
+can consume on the order of kilowatt-hours per user-day because they issue many
+sequential long-context
 requests~\cite{jegham2025hungry,ritchie:ai:electricity:2026,couch:claude:code:energy}.
-A university assessment therefore needs to distinguish ordinary LLM chat from
+A campus-level assessment therefore needs to distinguish ordinary LLM chat from
 agentic AI workflows.
 
 The University of Zürich has set itself the target of becoming climate-neutral
@@ -108,17 +108,19 @@ university campuses or large corporate facilities.
 We seek to answer three broad questions:
 \begin{itemize}
   \item What are the main contributors to the IT emissions of a university?
-  \item Could migrating some on-campus IT services to commercial cloud providers decrease the overall campus footprint?
-  \item What is the likely impact of the surge in AI adoption? In particular, under what usage levels could chatbot or agentic AI become a material source of IT emissions?
+  \item Could migrating some on-campus IT services to commercial cloud providers
+  decrease the overall campus footprint?
+  \item What is the likely impact of the surge in AI adoption, and under what
+  usage levels do chatbots or agentic AI become a material source of IT
+  emissions?
 \end{itemize}
 
 Our model sets relatively broad system boundaries. It takes into account
 university-owned equipment but also university services hosted by commercial
-cloud providers and university use of commercial generative AI products. We have
-also parameterized it to account for student devices not owned by the
-university, since they are key to student work and constitute the bulk of the
-university's end-user devices. We attempt to model devices' full lifecycle
-impact, including manufacture and disposal. 
+cloud providers and university use of commercial generative AI products. It also
+accounts for students' personal devices, since they are key to student work and
+constitute the bulk of the university's end-user devices. We attempt to model
+devices' full lifecycle impact, including manufacture and disposal. 
 
 Experts rightly point to the many potential benefits of AI in the areas of
 climate change mitigation and adaptation~\cite{climate:change:ai}. On a
