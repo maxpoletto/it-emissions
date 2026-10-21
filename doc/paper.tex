@@ -43,19 +43,67 @@
 \maketitle
 
 \section*{Abstract}
-Information technology (IT), including rapidly expanding artificial intelligence (AI) services, is a necessary component of university net-zero planning. We present a parameterizable model of IT emissions on a university campus, developed in the context of the University of Zürich's net-zero initiative. The model approximates operational and lifecycle emissions of personal devices, university-owned computing and network infrastructure, cloud computing, supercomputing, cloud productivity services, and generative-AI workloads. Our analysis shows that embodied emissions of end-user devices are a major component of overall IT emissions, while operational impacts are surprisingly modest. Emissions from simple chatbot use remain small in most scenarios, but agentic AI workflows such as coding assistants can lead to substantial emissions if adopted heavily. These results support a cleaner-IT strategy centered on device lifetime extension, transparent cloud procurement, and governance of high-intensity AI workloads.
+Information technology (IT), including rapidly expanding artificial intelligence
+(AI) services, is a necessary component of university net-zero planning. We
+present a parameterizable model of IT emissions on a university campus,
+developed in the context of the University of Zürich's net-zero initiative. The
+model approximates operational and lifecycle emissions of personal devices,
+university-owned computing and network infrastructure, cloud computing,
+supercomputing, cloud productivity services, and generative-AI workloads. Our
+analysis shows that embodied emissions of end-user devices are a major component
+of overall IT emissions, while operational impacts are surprisingly modest.
+Emissions from simple chatbot use remain small in most scenarios, but agentic AI
+workflows such as coding assistants can lead to substantial emissions if adopted
+heavily. These results support a cleaner-IT strategy centered on device lifetime
+extension, transparent cloud procurement, and governance of high-intensity AI
+workloads.
 
 \section{Introduction}
 
-Information technology accounts for over 5\% of global electricity consumption and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the University of Zürich (UZH), which with over 38,000 students and staff is the largest Swiss university, IT in 2024 accounted for about 1.5~\ktcoe\ of greenhouse gas (GHG) emissions, approximately 6.3\% of total university emissions in 2024~\cite{uzh:sustainability:report}. The cited report takes into account university-owned workstations, servers, and audiovisual equipment, but does not include other IT-related activities such as networking, cloud computing, or the growing use of artificial intelligence, and in particular the adoption of generative AI and large language models (LLMs).
+Information technology accounts for over 5\% of global electricity consumption
+and at least 1.7\% of global carbon emissions~\cite{wb:itu:ict}. At the
+University of Zürich (UZH), which with over 38,000 students and staff is the
+largest Swiss university, IT in 2024 accounted for about 1.5~\ktcoe\ of
+greenhouse gas (GHG) emissions, approximately 6.3\% of total university
+emissions in 2024~\cite{uzh:sustainability:report}. The cited report takes into
+account university-owned workstations, servers, and audiovisual equipment, but
+does not include other IT-related activities such as networking, cloud
+computing, or the growing use of artificial intelligence, and in particular the
+adoption of generative AI and large language models (LLMs).
 
-AI applications are being adopted at historically high rates, more quickly than the personal computer or the internet were adopted in the past~\cite{bick:ai:adoption}. Enterprise AI adoption has accelerated, with generative AI tools seeing widespread deployment across industries within months of their release~\cite{mckinsey2024ai}. In July 2025, ChatGPT received 2.5 billion queries per day, up from 1 billion in December 2024, and within an order of magnitude of Google's approximately 15 billion queries per day~\cite{techcrunch:chatgpt}. AI growth is currently projected to increase the share of global electricity consumption for data centers from $\sim 1\%$ in 2024 to $\sim 3\%$ by 2030~\cite{iea:ai:energy,iea:keyquestions:ai}.
+AI applications are being adopted at historically high rates, more quickly than
+the personal computer or the internet were adopted in the
+past~\cite{bick:ai:adoption}. Enterprise AI adoption has accelerated, with
+generative AI tools seeing widespread deployment across industries within months
+of their release~\cite{mckinsey2024ai}. In July 2025, ChatGPT received 2.5
+billion queries per day, up from 1 billion in December 2024, and within an order
+of magnitude of Google's approximately 15 billion queries per
+day~\cite{techcrunch:chatgpt}. AI growth is currently projected to increase the
+share of global electricity consumption for data centers from $\sim 1\%$ in 2024
+to $\sim 3\%$ by 2030~\cite{iea:ai:energy,iea:keyquestions:ai}.
 
-The character of generative-AI use is also changing. Early consumer use was dominated by short chatbot prompts, for which recent estimates converge around fractions of a watt-hour to a few watt-hours per request. Newer agentic systems, including coding assistants such as Codex and Claude Code and research agents that plan, iterate, and call tools autonomously, can consume orders of magnitude more energy per user-day because they issue many sequential long-context requests~\cite{jegham2025hungry,ritchie:ai:electricity:2026,couch:claude:code:energy}. A university assessment therefore needs to distinguish ordinary LLM chat from agentic AI workflows.
+The character of generative-AI use is also changing. Early consumer use was
+dominated by short chatbot prompts, for which recent estimates converge around
+fractions of a watt-hour to a few watt-hours per request. Newer agentic systems,
+including coding assistants such as Codex and Claude Code and research agents
+that plan, iterate, and call tools autonomously, can consume orders of magnitude
+more energy per user-day because they issue many sequential long-context
+requests~\cite{jegham2025hungry,ritchie:ai:electricity:2026,couch:claude:code:energy}.
+A university assessment therefore needs to distinguish ordinary LLM chat from
+agentic AI workflows.
 
-The University of Zürich has set itself the target of becoming climate-neutral by 2030 within the categories of energy, transportation, food, and waste, with additional goals in 2035 and beyond~\cite{uzh:sustainability:report}. Given the current sizable contribution of IT to the university's emissions, and the potential for growth through AI adoption in the coming years, we felt it was necessary to understand IT emissions and their growth trajectories in more detail.
+The University of Zürich has set itself the target of becoming climate-neutral
+by 2030 within the categories of energy, transportation, food, and waste, with
+additional goals in 2035 and beyond~\cite{uzh:sustainability:report}. Given the
+current sizable contribution of IT to the university's emissions, and the
+potential for growth through AI adoption in the coming years, we felt it was
+necessary to understand IT emissions and their growth trajectories in more
+detail.
 
-This paper presents a simple interactive model of IT emissions on a university campus. We developed it in the specific context of the University of Zürich, but believe that it is parameterizable and general enough to apply to other similar university campuses or large corporate facilities.
+This paper presents a simple interactive model of IT emissions on a university
+campus. We developed it in the specific context of the University of Zürich, but
+believe that it is parameterizable and general enough to apply to other similar
+university campuses or large corporate facilities.
 
 We seek to answer three broad questions:
 \begin{itemize}
@@ -64,16 +112,39 @@ We seek to answer three broad questions:
   \item What is the likely impact of the surge in AI adoption? In particular, under what usage levels could chatbot or agentic AI become a material source of IT emissions?
 \end{itemize}
 
-Our model sets relatively broad system boundaries. It takes into account university-owned equipment but also university services hosted by commercial cloud providers and university use of commercial generative AI products. We have also parameterized it to account for student devices not owned by the university, since they are key to student work and constitute the bulk of the university's end-user devices. We attempt to model devices' full lifecycle impact, including manufacture and disposal. 
+Our model sets relatively broad system boundaries. It takes into account
+university-owned equipment but also university services hosted by commercial
+cloud providers and university use of commercial generative AI products. We have
+also parameterized it to account for student devices not owned by the
+university, since they are key to student work and constitute the bulk of the
+university's end-user devices. We attempt to model devices' full lifecycle
+impact, including manufacture and disposal. 
 
-Experts rightly point to the many potential benefits of AI in the areas of climate change mitigation and adaptation~\cite{climate:change:ai}. On a university campus, these might include more efficient building heating and cooling, improved transportation logistics, and reduced administrative overhead. However, those benefits are uncertain, indirect, and likely to interact with rebound effects. In this paper, we consider only the {\em direct} impacts of AI in terms of increased electricity consumption and the resulting emissions.
+Experts rightly point to the many potential benefits of AI in the areas of
+climate change mitigation and adaptation~\cite{climate:change:ai}. On a
+university campus, these might include more efficient building heating and
+cooling, improved transportation logistics, and reduced administrative overhead.
+However, those benefits are uncertain, indirect, and likely to interact with
+rebound effects. In this paper, we consider only the {\em direct} impacts of AI
+in terms of increased electricity consumption and the resulting emissions.
 
-The rest of this paper is organized as follows. Section~\ref{sec:model:methodology} presents the general modeling framework, including system boundaries and assumptions. Section~\ref{sec:model:details} justifies some of the specific parameter values used in the model. Section~\ref{sec:results} describes results and explores different scenarios and assumptions. Section~\ref{sec:recommendations} offers recommendations to university IT administrators. Section~\ref{sec:related:work} describes related work in this area.
+The rest of this paper is organized as follows.
+Section~\ref{sec:model:methodology} presents the general modeling framework,
+including system boundaries and assumptions. Section~\ref{sec:model:details}
+justifies some of the specific parameter values used in the model.
+Section~\ref{sec:results} describes results and explores different scenarios and
+assumptions. Section~\ref{sec:recommendations} offers recommendations to
+university IT administrators. Section~\ref{sec:related:work} describes related
+work in this area.
 
 \section{Modeling methodology}
 \label{sec:model:methodology}
 
-Our aim is to model energy use from university IT and AI broadly, without restricting ourselves to university-owned devices, specific IT departments, etc. At the same time, we want to be able to distinguish the contributions of different factors, such as student-owned devices or LLMs, and to compare the model's output against existing university data points (energy bills, etc.).
+Our aim is to model energy use from university IT and AI broadly, without
+restricting ourselves to university-owned devices, specific IT departments, etc.
+At the same time, we want to be able to distinguish the contributions of
+different factors, such as student-owned devices or LLMs, and to compare the
+model's output against existing university data points (energy bills, etc.).
 
 \subsection{System boundaries}
 
@@ -81,31 +152,59 @@ We define the boundaries of our model as follows.
 
 \subsubsection*{Population}
 
-We include IT-related activity from all members of the UZH community: faculty, staff, and students.
+We include IT-related activity from all members of the UZH community: faculty,
+staff, and students.
 
 \subsubsection*{On-campus devices}
 
-Student-owned devices, such as laptops and smartphones, are in scope, since they are the primary means by which students access university IT services and do their coursework. Given the duration of studies, we include personal devices' embodied emissions in the model.
+Student-owned devices, such as laptops and smartphones, are in scope, since they
+are the primary means by which students access university IT services and do
+their coursework. Given the duration of studies, we include personal devices'
+embodied emissions in the model.
 
-University-owned devices are in scope. We have accurate numbers for staff workstations, classroom computers, network access points, and audiovisual devices managed by the central IT department. We can only estimate other devices, such as networking equipment or computers managed by individual research groups. We include these devices' embodied emissions in the model.
+University-owned devices are in scope. We have accurate numbers for staff
+workstations, classroom computers, network access points, and audiovisual
+devices managed by the central IT department. We can only estimate other
+devices, such as networking equipment or computers managed by individual
+research groups. We include these devices' embodied emissions in the model.
 
-For servers, which are mostly located in on-premise data centers, we also attempt to take into account emissions from cooling. (We do not model the manufacturing emissions of the cooling equipment itself.)
+For servers, which are mostly located in on-premise data centers, we also
+attempt to take into account emissions from cooling. (We do not model the
+manufacturing emissions of the cooling equipment itself.)
 
 \subsubsection*{Cloud and supercomputing facilities}
 
-UZH at present does not make significant use of commercial cloud compute, but the model allows simulating the shift of some fraction of the server load to cloud VMs. For this hypothetical cloud footprint, like for on-premise data centers, we attempt to model operational emissions, embodied emissions, and emissions from cooling.
+UZH at present does not make significant use of commercial cloud compute, but
+the model allows simulating the shift of some fraction of the server load to
+cloud VMs. For this hypothetical cloud footprint, like for on-premise data
+centers, we attempt to model operational emissions, embodied emissions, and
+emissions from cooling.
 
-Application-level cloud services such as Microsoft 365 or Google Workspace are ubiquitous but difficult to model bottom-up without tenant-level vendor reports. We include a rough range estimate of operational emissions, but do not attempt to estimate embodied emissions.
+Application-level cloud services such as Microsoft 365 or Google Workspace are
+ubiquitous but difficult to model bottom-up without tenant-level vendor reports.
+We include a rough range estimate of operational emissions, but do not attempt
+to estimate embodied emissions.
 
-UZH faculties use shared off-campus supercomputing facilities, primarily the Swiss National Supercomputing Center, CSCS~\cite{cscs}. Both operational impacts and embodied emissions are in scope for our analysis.
+UZH faculties use shared off-campus supercomputing facilities, primarily the
+Swiss National Supercomputing Center, CSCS~\cite{cscs}. Both operational impacts
+and embodied emissions are in scope for our analysis.
 
 \subsubsection*{Generative and agentic AI}
 
-We distinguish three classes of generative-AI use: short chatbot queries, long or reasoning queries, and agentic workflows. We estimate inference-time emissions from current literature and public benchmarks, and include training overhead, embodied emissions, and data-center overhead as conservative multipliers. Agentic workflows are modeled separately because they may involve many sequential long-context calls per task and cannot be represented well by estimating ``queries per day''.
+We distinguish three classes of generative-AI use: short chatbot queries, long
+or reasoning queries, and agentic workflows. We estimate inference-time
+emissions from current literature and public benchmarks, and include training
+overhead, embodied emissions, and data-center overhead as conservative
+multipliers. Agentic workflows are modeled separately because they may involve
+many sequential long-context calls per task and cannot be represented well by
+estimating ``queries per day''.
 
 \subsubsection*{Summary}
 
-This table summarizes what is in scope in the model. The entries indicate whether each category is included in the operational, lifecycle, and cooling/facility-overhead accounting; the precision and data sources vary by category and are discussed below.
+This table summarizes what is in scope in the model. The entries indicate
+whether each category is included in the operational, lifecycle, and
+cooling/facility-overhead accounting; the precision and data sources vary by
+category and are discussed below.
 
 \begin{center}
 \begin{tabular}{|l|c|c|c|l|}
@@ -126,42 +225,104 @@ This table summarizes what is in scope in the model. The entries indicate whethe
 
 \subsubsection*{On-campus devices}
 
-We model campus device emissions bottom-up. We first identify categories of devices (phones, laptops, workstations, monitors, routers, etc.). For each device type, we research a range of common models, then use manufacturer data sheets or other available documentation to identify operational power draw (in watts) as well as embodied emissions related to manufacture and disposal (in \kgcoe) per device. Based on this data, we model the power draw and embodied emissions of an ``exemplar'' device of each type.
+We model campus device emissions bottom-up. We first identify categories of
+devices (phones, laptops, workstations, monitors, routers, etc.). For each
+device type, we research a range of common models, then use manufacturer data
+sheets or other available documentation to identify operational power draw (in
+watts) as well as embodied emissions related to manufacture and disposal (in
+\kgcoe) per device. Based on this data, we model the power draw and embodied
+emissions of an ``exemplar'' device of each type.
 
-For each device type we also estimate (1) a count (\eg, a laptop for every student and staff), (2) an estimated duty cycle (\eg, laptops used 8 hours per day, 200 days per year), and (3) a useful lifetime (in years).
+For each device type we also estimate (1) a count (\eg, a laptop for every
+student and staff), (2) an estimated duty cycle (\eg, laptops used 8 hours per
+day, 200 days per year), and (3) a useful lifetime (in years).
 
-Given all this, for each device type we can straightforwardly obtain an annual energy use (kWh) and annual embodied emissions (embodied emissions amortized over useful lifetime) (\kgcoe). We then estimate the local grid's carbon emissions intensity (\gcoekwh) to convert the energy use to emissions and obtain a combined total annual emissions number\footnote{The model can also operate stochastically, instantiating devices from a distribution, but we lack good data on the  form of such a distribution, so we limit our analysis to this simple linear mode.}.
+Given all this, for each device type we can straightforwardly obtain an annual
+energy use (kWh) and annual embodied emissions (embodied emissions amortized
+over useful lifetime) (\kgcoe). We then estimate the local grid's carbon
+emissions intensity (\gcoekwh) to convert the energy use to emissions and obtain
+a combined total annual emissions number\footnote{The model can also operate
+stochastically, instantiating devices from a distribution, but we lack good data
+on the  form of such a distribution, so we limit our analysis to this simple
+linear mode.}.
 
-The Swiss Federal Office for the Environment has an extensive report on the environmental impact of electricity generation in Switzerland~\cite{krebs2018umweltbilanz}, but we are fortunate to also have hourly emissions intensity data from \textcite{electricitymaps}. We use the hourly intensity data for {\em consumption} (not production) to compute emissions intensity for every hour of the day averaged over all days in 2024. Emissions vary from a high of 64 \gcoekwh\ in the middle of the night to a low of 45 \gcoekwh\ in the middle of the day. This variation is sufficiently large that we refine the model's device duty cycle to represent four six-hour periods over the course of the day. It allows us to specify, for example, that user devices are mostly used during the day whereas servers run around the clock.
+The Swiss Federal Office for the Environment has an extensive report on the
+environmental impact of electricity generation in
+Switzerland~\cite{krebs2018umweltbilanz}, but we are fortunate to also have
+hourly emissions intensity data from \textcite{electricitymaps}. We use the
+hourly intensity data for {\em consumption} (not production) to compute
+emissions intensity for every hour of the day averaged over all days in 2024.
+Emissions vary from a high of 64 \gcoekwh\ in the middle of the night to a low
+of 45 \gcoekwh\ in the middle of the day. This variation is sufficiently large
+that we refine the model's device duty cycle to represent four six-hour periods
+over the course of the day. It allows us to specify, for example, that user
+devices are mostly used during the day whereas servers run around the clock.
 
-For servers (in on-premise data centers) we also account for cooling overhead. Based on limited UZH historical power data, we estimate that the on-premise power usage effectiveness (PUE), the ratio of total data center power (including cooling) to power used for computation, is approximately 2. This value, higher than the commercial average of 1.56~\cite{google:datacenter:efficiency}, is attributable to inefficient cooling.
+For servers (in on-premise data centers) we also account for cooling overhead.
+Based on limited UZH historical power data, we estimate that the on-premise
+power usage effectiveness (PUE), the ratio of total data center power (including
+cooling) to power used for computation, is approximately 2. This value, higher
+than the commercial average of 1.56~\cite{google:datacenter:efficiency}, is
+attributable to inefficient cooling.
 
 \subsubsection*{Cloud and supercomputing facilities}
 
-We model a hypothetical shift of some workloads from servers in an on-premise data center to a commercial cloud. We model the shift as a fraction of servers that are moved to the cloud, the average conversion ratio of on-premise servers to cloud servers, and cloud data center PUE and electricity emissions intensity (since the cloud data center may be located in a different region than the on-premise data center).
+We model a hypothetical shift of some workloads from servers in an on-premise
+data center to a commercial cloud. We model the shift as a fraction of servers
+that are moved to the cloud, the average conversion ratio of on-premise servers
+to cloud servers, and cloud data center PUE and electricity emissions intensity
+(since the cloud data center may be located in a different region than the
+on-premise data center).
 
-Vendors of application-level cloud services~\cite{microsoft:m365:emissions,google:workspace:carbon} provide per-tenant carbon accounting tools, but UZH has no such data. As a placeholder, we model a wide range of possible emissions per user, from 1 to 10 \kgcoe/year.
+Vendors of application-level cloud
+services~\cite{microsoft:m365:emissions,google:workspace:carbon} provide
+per-tenant carbon accounting tools, but UZH has no such data. As a placeholder,
+we model a wide range of possible emissions per user, from 1 to 10 \kgcoe/year.
 
-For supercomputing facilities, primarily CSCS, we estimate both the operational impact of workloads and a range of likely embodied emissions based on the UZH allocation of total CSCS electricity use and an approximate model of server hardware. Since we lack a detailed hardware inventory for CSCS, we cannot model embodied emissions precisely bottom-up.
+For supercomputing facilities, primarily CSCS, we estimate both the operational
+impact of workloads and a range of likely embodied emissions based on the UZH
+allocation of total CSCS electricity use and an approximate model of server
+hardware. Since we lack a detailed hardware inventory for CSCS, we cannot model
+embodied emissions precisely bottom-up.
 
-For networking, productivity SaaS, and supercomputing, the figures in Section~\ref{sec:results} display midpoint values from the ranges described below. These bars should therefore be read as central scenario estimates rather than measured inventory values.
+For networking, productivity SaaS, and supercomputing, the figures in
+Section~\ref{sec:results} display midpoint values from the ranges described
+below. These bars should therefore be read as central scenario estimates rather
+than measured inventory values.
 
 \subsubsection*{Generative and agentic AI}
 
-For LLMs, we estimate operational energy use using current estimates in the literature of state-of-the-art models~\cite{devries2023growing,epoch2025howmuchenergydoeschatgptuse,jegham2025hungry}. Simple text-query scenarios are represented in Wh per query. Agentic scenarios are represented in kWh per active user-day, because coding and research agents combine many model calls, tool calls, context-cache reads and writes, and long outputs into one work session~\cite{ritchie:ai:electricity:2026,couch:claude:code:energy}.
+For LLMs, we estimate operational energy use using current estimates in the
+literature of state-of-the-art
+models~\cite{devries2023growing,epoch2025howmuchenergydoeschatgptuse,jegham2025hungry}.
+Simple text-query scenarios are represented in Wh per query. Agentic scenarios
+are represented in kWh per active user-day, because coding and research agents
+combine many model calls, tool calls, context-cache reads and writes, and long
+outputs into one work
+session~\cite{ritchie:ai:electricity:2026,couch:claude:code:energy}.
 
-We account for training overhead and the embodied emissions of the servers and GPUs that the model runs on. For ordinary chatbot use, this is represented as an amortized per-query hardware allocation. For agentic workflows, where the natural unit is a full work session rather than a single query, we add an amortized hardware allocation per kWh of server-side AI energy. Because AI providers do not publish workload-level energy data, the AI scenarios are presented as sensitivity ranges.
+We account for training overhead and the embodied emissions of the servers and
+GPUs that the model runs on. For ordinary chatbot use, this is represented as an
+amortized per-query hardware allocation. For agentic workflows, where the
+natural unit is a full work session rather than a single query, we add an
+amortized hardware allocation per kWh of server-side AI energy. Because AI
+providers do not publish workload-level energy data, the AI scenarios are
+presented as sensitivity ranges.
 
 \section{Model details}
 \label{sec:model:details}
 
-The previous section describes our overall modeling approach, which we believe is broadly applicable to university and other large campus settings. This section presents the reasoning behind specific values we employ in the UZH evaluation.
+The previous section describes our overall modeling approach, which we believe
+is broadly applicable to university and other large campus settings. This
+section presents the reasoning behind specific values we employ in the UZH
+evaluation.
 
 \subsection{On-campus devices}
 
 \subsubsection*{Number of devices}
 
-We have an authoritative census of devices (workstations, servers, audiovisual equipment) managed by central IT, as follows.
+We have an authoritative census of devices (workstations, servers, audiovisual
+equipment) managed by central IT, as follows.
 
 \begin{center}
   \begin{tabular}{|l|r|r|}
@@ -177,15 +338,33 @@ We have an authoritative census of devices (workstations, servers, audiovisual e
   \label{tab:oncampusdevices}
 \end{center}
 
-In addition to these numbers, which cover staff and facilities, we assume that 80\% of the student population of 28,000 people have a laptop (or equivalent device, such as a tablet), and that everyone at the university has a mobile phone, resulting in a rough estimate of 32,000 laptops and 35,000 mobile phones.
+In addition to these numbers, which cover staff and facilities, we assume that
+80\% of the student population of 28,000 people have a laptop (or equivalent
+device, such as a tablet), and that everyone at the university has a mobile
+phone, resulting in a rough estimate of 32,000 laptops and 35,000 mobile phones.
 
-Traditional desktop computers appear to be infrequent on campus. By default we set their number to zero in our model, but we still provide the framework to model them if desired.
+Traditional desktop computers appear to be infrequent on campus. By default we
+set their number to zero in our model, but we still provide the framework to
+model them if desired.
 
-The device lifetime for university-managed laptops and monitors comes from UZH's central IT department and is remarkably long. For other types of devices we assume a similarly conservative management of hardware resources. We also estimate that student-owned laptops have a shorter lifetime of 5 years, and therefore, for the purposes of the results later in this paper, we set the default average lifetime of laptops in our model to 6 years. These long lifetimes make embodied emissions less dominant than they would be under shorter refresh cycles, since manufacturing emissions are amortized over more years.
+The device lifetime for university-managed laptops and monitors comes from UZH's
+central IT department and is remarkably long. For other types of devices we
+assume a similarly conservative management of hardware resources. We also
+estimate that student-owned laptops have a shorter lifetime of 5 years, and
+therefore, for the purposes of the results later in this paper, we set the
+default average lifetime of laptops in our model to 6 years. These long
+lifetimes make embodied emissions less dominant than they would be under shorter
+refresh cycles, since manufacturing emissions are amortized over more years.
 
 \subsubsection*{Operational emissions}
 
-The Swiss electricity mix is substantially cleaner than the European or North American average, so generic manufacturer estimates of lifetime usage-related emissions are unsuitable. Unfortunately, in manufacturer documentation we found surprisingly few sources of data on device power consumption, as opposed to estimated lifetime CO$_2$ emissions. Based on some manufacturer data sheets, primarily from Apple, Cisco, and Dell, we model power draw of different devices while under load using the following initial parameters:
+The Swiss electricity mix is substantially cleaner than the European or North
+American average, so generic manufacturer estimates of lifetime usage-related
+emissions are unsuitable. Unfortunately, in manufacturer documentation we found
+surprisingly few sources of data on device power consumption, as opposed to
+estimated lifetime CO$_2$ emissions. Based on some manufacturer data sheets,
+primarily from Apple, Cisco, and Dell, we model power draw of different devices
+while under load using the following initial parameters:
 
 \begin{center}
   \begin{tabular}{|l|r|r|}
@@ -201,14 +380,36 @@ The Swiss electricity mix is substantially cleaner than the European or North Am
   \end{tabular}
 \end{center}
 
-Our assumptions about device duty cycle can be summarized as follows: (1) end-user devices are used during the day on weekdays (250 days per year), (2) servers run around-the-clock but at 80\% of peak power load, (3) mobile phones are modeled through their charging energy rather than as continuously plugged-in devices, and (4) printers are idle except for a few minutes per day. A typical smartphone battery capacity of 15--20 Wh, charged once per day with 80--90\% charger efficiency, corresponds to roughly 20--25 Wh/day. In the model this is represented as a 10 W charging load for three-hour period on 250 days/year. Standby power for all devices is negligible ($\sim 1$ W), except for printers which often draw 50--100 W.
+Our assumptions about device duty cycle can be summarized as follows: (1)
+end-user devices are used during the day on weekdays (250 days per year), (2)
+servers run around-the-clock but at 80\% of peak power load, (3) mobile phones
+are modeled through their charging energy rather than as continuously plugged-in
+devices, and (4) printers are idle except for a few minutes per day. A typical
+smartphone battery capacity of 15--20 Wh, charged once per day with 80--90\%
+charger efficiency, corresponds to roughly 20--25 Wh/day. In the model this is
+represented as a 10 W charging load for three-hour period on 250 days/year.
+Standby power for all devices is negligible ($\sim 1$ W), except for printers
+which often draw 50--100 W.
 
-For campus networking, UZH has approximately 4,000 wifi access points. A bottom-up access-point estimate is 4,000 devices $\times$ 15 W $\times$ 8,760 h/year $\approx$ 526 MWh/year, corresponding to roughly 25--35 \tcoe/year under the Swiss electricity mix. Core switches, distribution switches, routers, controllers, and storage networking are less well inventoried. We approximate the upstream network as 10\% of the access-point count, or 400 switch/router-class devices. At 100--250 W each, this adds approximately 350--876 MWh/year. Including additional uncertainty from controllers, PoE losses, and storage networking, we retain an operational range of roughly 50--100 \tcoe/year. In the result figures, the networking bar displays the midpoint of this range, 75 \tcoe/year.
+For campus networking, UZH has approximately 4,000 wifi access points. A
+bottom-up access-point estimate is 4,000 devices $\times$ 15 W $\times$ 8,760
+h/year $\approx$ 526 MWh/year, corresponding to roughly 25--35 \tcoe/year under
+the Swiss electricity mix. Core switches, distribution switches, routers,
+controllers, and storage networking are less well inventoried. We approximate
+the upstream network as 10\% of the access-point count, or 400
+switch/router-class devices. At 100--250 W each, this adds approximately
+350--876 MWh/year. Including additional uncertainty from controllers, PoE
+losses, and storage networking, we retain an operational range of roughly
+50--100 \tcoe/year. In the result figures, the networking bar displays the
+midpoint of this range, 75 \tcoe/year.
 
 \subsubsection*{Embodied emissions}
 
-For several device types, especially end-user devices such as phones and laptops, embodied emissions
-comprise a majority of lifetime emissions. Different sources report widely different values for these emissions. Our approach has been to find several studies and industry references, and then estimate a mean reference value as well as likely minimum and maximum values.
+For several device types, especially end-user devices such as phones and
+laptops, embodied emissions comprise a majority of lifetime emissions. Different
+sources report widely different values for these emissions. Our approach has
+been to find several studies and industry references, and then estimate a mean
+reference value as well as likely minimum and maximum values.
 
 The following table summarizes results from the literature.
 
@@ -239,53 +440,168 @@ The following table summarizes results from the literature.
   \label{tab:embodied_emissions}
 \end{center}
 
-For laptops, the numbers from Ecoinvent, a reputable proprietary Swiss life cycle inventory database used in the UZH sustainability report, appear to be on the low end. The most comprehensive publicly available data comes from \textcite{rarecoil}, which lists manufacturer information for over 90 popular devices. Mean supply chain emissions in this data set are 244 \kgcoe\ with a standard deviation of 128 kg. To be conservative, we split the difference between this number and the Ecoinvent values and model laptops embodied emissions at 180 \kgcoe\ / device.
+For laptops, the numbers from Ecoinvent, a reputable proprietary Swiss life
+cycle inventory database used in the UZH sustainability report, appear to be on
+the low end. The most comprehensive publicly available data comes from
+\textcite{rarecoil}, which lists manufacturer information for over 90 popular
+devices. Mean supply chain emissions in this data set are 244 \kgcoe\ with a
+standard deviation of 128 kg. To be conservative, we split the difference
+between this number and the Ecoinvent values and model laptops embodied
+emissions at 180 \kgcoe\ / device.
 
-For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most detailed data comes from Dell's Product Carbon Footprints~\cite{dellpcf}, which the company publishes for each of their products. A sample of 15 desktops has mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model desktop embodied emissions at 290 \kgcoe\ / device.
+For desktops, most estimates are in the range of 250 - 400 \kgcoe. The most
+detailed data comes from Dell's Product Carbon Footprints~\cite{dellpcf}, which
+the company publishes for each of their products. A sample of 15 desktops has
+mean supply chain emissions of 289 \kgcoe\ with $\sigma = 80$ kg. We model
+desktop embodied emissions at 290 \kgcoe\ / device.
 
-In the case of servers, \textcite{davy2021} reports manufacturer data for many Dell servers and estimates for different types of EC2 instances. The former have mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter 1912 kg with $\sigma = 885$ kg. \textcite{boavizta:api} reports mean supply chain emissions of 899 \kgcoe\ for a medium-sized server. We model server supply chain emissions at 1100 \kgcoe\ / device.
+In the case of servers, \textcite{davy2021} reports manufacturer data for many
+Dell servers and estimates for different types of EC2 instances. The former have
+mean supply chain emissions of 1252 \kgcoe\ with $\sigma = 330$ kg, the latter
+1912 kg with $\sigma = 885$ kg. \textcite{boavizta:api} reports mean supply
+chain emissions of 899 \kgcoe\ for a medium-sized server. We model server supply
+chain emissions at 1100 \kgcoe\ / device.
 
-The variability of estimates for mobile phones is much smaller. We model phone embodied emissions at 50 \kgcoe\ / device.
+The variability of estimates for mobile phones is much smaller. We model phone
+embodied emissions at 50 \kgcoe\ / device.
 
 We found less data for other types of devices. We model them as follows:
 
 \begin{itemize}
   \item Computer monitors: 340 \kgcoe~\cite{dellpcf,lovehagen2023,teehan2013}.
-  \item Conference room displays: 700 \kgcoe\ (scaling monitor by $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment (lecture room projectors, etc.). Note that the numbers are sufficiently low that errors in this estimate do not significantly affect the overall result.
+  \item Conference room displays: 700 \kgcoe\ (scaling monitor by
+  $(40''/27'')^2$). We use this as a proxy for all audiovisual equipment
+  (lecture room projectors, etc.). Note that the numbers are sufficiently low
+  that errors in this estimate do not significantly affect the overall result.
   \item Printer/copier stations: 1100 \kgcoe~\cite{ecoinvent}.
-  \item Network equipment: \textcite{lovehagen2023} estimate 30 \kgcoe\ for customer-premises equipment, a category that is close to wireless access points. We use 50 \kgcoe\ per access point as a conservative value. For upstream switches and routers, we again use 10\% of the access-point count and approximate each device with the embodied emissions of a desktop PC, 290 \kgcoe. Over an 8-year lifetime, this gives annual embodied emissions of roughly $(4{,}000 \times 50 + 400 \times 290) / 8 \approx 40$ \tcoe/year. The vast majority ($80-95\%$) of lifecycle emissions of network gear stem from usage~\cite{cisco2024,jacob2023}, so this embodied estimate remains secondary to the operational uncertainty.
+  \item Network equipment: \textcite{lovehagen2023} estimate 30 \kgcoe\ for
+  customer-premises equipment, a category that is close to wireless access
+  points. We use 50 \kgcoe\ per access point as a conservative value. For
+  upstream switches and routers, we again use 10\% of the access-point count and
+  approximate each device with the embodied emissions of a desktop PC, 290
+  \kgcoe. Over an 8-year lifetime, this gives annual embodied emissions of
+  roughly $(4{,}000 \times 50 + 400 \times 290) / 8 \approx 40$ \tcoe/year. The
+  vast majority ($80-95\%$) of lifecycle emissions of network gear stem from
+  usage~\cite{cisco2024,jacob2023}, so this embodied estimate remains secondary
+  to the operational uncertainty.
 \end{itemize}
 
 \subsection{Cloud and supercomputing facilities}
 
-The secretiveness of major cloud providers makes it difficult to estimate the embodied and operational emissions of cloud infrastructure. The best resource we have found is the Datavizta API by the Boavizta working group~\cite{boavizta:api}.
+The secretiveness of major cloud providers makes it difficult to estimate the
+embodied and operational emissions of cloud infrastructure. The best resource we
+have found is the Datavizta API by the Boavizta working
+group~\cite{boavizta:api}.
 
-Lacking information about UZH's workloads, we model a hypothetical UZH cloud footprint as the replacement of one campus server with a configurable number (by default, one) of Azure {\tt standard\_d48s\_v3} instances (Intel Xeon, 48 cores, 192 GB RAM, 2TB SSD)~\cite{msftvms}. Based on data from Boavizta, such a machine has embodied emissions of 667 \kgcoe\ and mean electricity power usage of 255 W. Given the uncertainty, we round up to 700 \kgcoe\ and 300 W. We assume deployment to Microsoft Azure's ``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland North}'' region, which makes sense for a Swiss university and means that the electricity mix is the same as for on-premise facilities. We estimate a power usage effectiveness of 1.15 for this facility. (As of 2025, average PUE for cloud computing is 1.56, with Google averaging 1.09 across its fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.14 to 1.19 in Europe~\cite{microsoft:datacenter:efficiency}.)
+Lacking information about UZH's workloads, we model a hypothetical UZH cloud
+footprint as the replacement of one campus server with a configurable number (by
+default, one) of Azure {\tt standard\_d48s\_v3} instances (Intel Xeon, 48 cores,
+192 GB RAM, 2TB SSD)~\cite{msftvms}. Based on data from Boavizta, such a machine
+has embodied emissions of 667 \kgcoe\ and mean electricity power usage of 255 W.
+Given the uncertainty, we round up to 700 \kgcoe\ and 300 W. We assume
+deployment to Microsoft Azure's
+``\href{https://datacenters.microsoft.com/globe/explore?info=region_switzerlandnorth}{Switzerland
+North}'' region, which makes sense for a Swiss university and means that the
+electricity mix is the same as for on-premise facilities. We estimate a power
+usage effectiveness of 1.15 for this facility. (As of 2025, average PUE for
+cloud computing is 1.56, with Google averaging 1.09 across its
+fleet~\cite{google:datacenter:efficiency} and Microsoft ranging from 1.14 to
+1.19 in Europe~\cite{microsoft:datacenter:efficiency}.)
 
-Given all these parameters, we can then compute cloud server operational emissions, embodied emissions, and cooling overhead as we do for on-premise servers.
+Given all these parameters, we can then compute cloud server operational
+emissions, embodied emissions, and cooling overhead as we do for on-premise
+servers.
 
-As mentioned above, for application-level cloud services such as Microsoft 365 and Google Workspace, we use a range of 1--10 \kgcoe/user/year. For a population of 38,000 users, this corresponds to 38--380 \tcoe/year. The figures use the midpoint of this range, 209 \tcoe/year. This estimate is intentionally separated from the higher-confidence campus device and server results.
+As mentioned above, for application-level cloud services such as Microsoft 365
+and Google Workspace, we use a range of 1--10 \kgcoe/user/year. For a population
+of 38,000 users, this corresponds to 38--380 \tcoe/year. The figures use the
+midpoint of this range, 209 \tcoe/year. This estimate is intentionally separated
+from the higher-confidence campus device and server results.
 
-For supercomputing at CSCS, recent information~\cite{cscs:supercomputing} indicates total compute electricity use of approximately 60 GWh/year and an estimated UZH allocation of approximately 3.6 GWh/year, or about 6\% of the total. Using the Swiss electricity mix carbon intensity, this corresponds to approximately 180 \tcoe/year of operational emissions. Since the 3.6 GWh/year figure excludes facility overhead, a PUE range of 1.1--1.3 would add 18--54 \tcoe/year; the result figures use the midpoint, 36 \tcoe/year. For embodied emissions, since we lack a precise hardware inventory, we use a rough server-equivalent estimate. The UZH electricity allocation corresponds to an average allocated power of $3.6$ GWh / 8,760 h $\approx 411$ kW. Assuming that this load is represented by server nodes drawing 0.4--2.0 kW each, and that, per the analysis above, each node has embodied emissions of 1.1 \tcoe\ and a 5-year lifetime, amortized embodied emissions fall in the range of 45--226 \tcoe/year. We round this to a broad 50--250 \tcoe/year range to reflect uncertainty about node power, accelerator mix, and lifetime; the result figures use the midpoint, 150 \tcoe/year. Thus the plotted CSCS estimate is 366 \tcoe/year, split into 216 \tcoe/year operational and 150 \tcoe/year embodied emissions.
+For supercomputing at CSCS, recent information~\cite{cscs:supercomputing}
+indicates total compute electricity use of approximately 60 GWh/year and an
+estimated UZH allocation of approximately 3.6 GWh/year, or about 6\% of the
+total. Using the Swiss electricity mix carbon intensity, this corresponds to
+approximately 180 \tcoe/year of operational emissions. Since the 3.6 GWh/year
+figure excludes facility overhead, a PUE range of 1.1--1.3 would add 18--54
+\tcoe/year; the result figures use the midpoint, 36 \tcoe/year. For embodied
+emissions, since we lack a precise hardware inventory, we use a rough
+server-equivalent estimate. The UZH electricity allocation corresponds to an
+average allocated power of $3.6$ GWh / 8,760 h $\approx 411$ kW. Assuming that
+this load is represented by server nodes drawing 0.4--2.0 kW each, and that, per
+the analysis above, each node has embodied emissions of 1.1 \tcoe\ and a 5-year
+lifetime, amortized embodied emissions fall in the range of 45--226 \tcoe/year.
+We round this to a broad 50--250 \tcoe/year range to reflect uncertainty about
+node power, accelerator mix, and lifetime; the result figures use the midpoint,
+150 \tcoe/year. Thus the plotted CSCS estimate is 366 \tcoe/year, split into 216
+\tcoe/year operational and 150 \tcoe/year embodied emissions.
 
 \subsection{Generative and agentic AI}
 
-We model ordinary chatbot use and agentic workflows separately because their natural units differ. Chatbot use is reasonably approximated in Wh/query, while agentic coding and research sessions are better approximated in kWh per active user-day.
+We model ordinary chatbot use and agentic workflows separately because their
+natural units differ. Chatbot use is reasonably approximated in Wh/query, while
+agentic coding and research sessions are better approximated in kWh per active
+user-day.
 
 \subsubsection*{Chatbot use}
 
-A widely cited 2023 study~\cite{devries2023growing} estimated the average energy consumption of a large language model like ChatGPT at approximately 3 Wh/request, about ten times the energy of a standard Google search query. In 2025, \textcite{epoch2025howmuchenergydoeschatgptuse} argued that the energy use for the average GPT-4o query was closer to 0.3 Wh, while noting that unusually long inputs or more ambitious applications such as OpenAI's Deep Research~\cite{oai:deepresearch} could rise into the tens of watt-hours. \textcite{jegham2025hungry} similarly find strong workload dependence: their benchmarked long prompts exceed 29 Wh for the most energy-intensive models and vary by more than a factor of 60 across systems. We therefore use 1 Wh/query as our ordinary-chat default and vary this from 0.3--3 Wh/query in sensitivity scenarios.
+A widely cited 2023 study~\cite{devries2023growing} estimated the average energy
+consumption of a large language model like ChatGPT at approximately 3
+Wh/request, about ten times the energy of a standard Google search query. In
+2025, \textcite{epoch2025howmuchenergydoeschatgptuse} argued that the energy use
+for the average GPT-4o query was closer to 0.3 Wh, while noting that unusually
+long inputs or more ambitious applications such as OpenAI's Deep
+Research~\cite{oai:deepresearch} could rise into the tens of watt-hours.
+\textcite{jegham2025hungry} similarly find strong workload dependence: their
+benchmarked long prompts exceed 29 Wh for the most energy-intensive models and
+vary by more than a factor of 60 across systems. We therefore use 1 Wh/query as
+our ordinary-chat default and vary this from 0.3--3 Wh/query in sensitivity
+scenarios.
 
-Due to the increasing size and complexity of state-of-the-art models, the power required to train such models has been doubling annually~\cite{epoch2024powerusagetrend}. The literature offers little insight into the relative electricity consumption of training and inference~\cite{verdecchia2023systematic}, but Google~\cite{patterson:footprint:2022} reports that in 2019--2021 inference accounted for about 60\% of AI energy consumption, implying a ratio of training energy to inference energy of 2:3. A bottom-up check based on Llama 3.1 training energy gives a lower ratio. Training Llama 3.1, a model comparable to GPT-4o, required roughly 25 MW of power for three months, or 54 GWh~\cite{grattafiori2024llama}. Assuming ChatGPT's recently reported 2.5 billion queries per day~\cite{techcrunch:chatgpt} and 0.3 Wh/query, inference energy is approximately 750 MWh/day, or 203 GWh over a 9-month model lifetime. This gives a training-to-inference ratio of $54:203 \approx 1:4$. Under our ordinary-chat default of 1 Wh/query, inference energy would instead be approximately 675 GWh over the same period, and the training-to-inference ratio would be about $1:13$. We therefore use a 25\% training overhead, which is conservative for the default query-energy assumption but still well below the Google-wide 2:3 estimate.
+Due to the increasing size and complexity of state-of-the-art models, the power
+required to train such models has been doubling
+annually~\cite{epoch2024powerusagetrend}. The literature offers little insight
+into the relative electricity consumption of training and
+inference~\cite{verdecchia2023systematic}, but
+Google~\cite{patterson:footprint:2022} reports that in 2019--2021 inference
+accounted for about 60\% of AI energy consumption, implying a ratio of training
+energy to inference energy of 2:3. A bottom-up check based on Llama 3.1 training
+energy gives a lower ratio. Training Llama 3.1, a model comparable to GPT-4o,
+required roughly 25 MW of power for three months, or 54
+GWh~\cite{grattafiori2024llama}. Assuming ChatGPT's recently reported 2.5
+billion queries per day~\cite{techcrunch:chatgpt} and 0.3 Wh/query, inference
+energy is approximately 750 MWh/day, or 203 GWh over a 9-month model lifetime.
+This gives a training-to-inference ratio of $54:203 \approx 1:4$. Under our
+ordinary-chat default of 1 Wh/query, inference energy would instead be
+approximately 675 GWh over the same period, and the training-to-inference ratio
+would be about $1:13$. We therefore use a 25\% training overhead, which is
+conservative for the default query-energy assumption but still well below the
+Google-wide 2:3 estimate.
 
-For chatbot embodied emissions, we use a bottom-up GPU allocation. \textcite{epoch2025howmuchenergydoeschatgptuse} estimates 1 second of NVIDIA H100 GPU time per query. NVIDIA reports~\cite{nvidia:h100} a cradle-to-gate carbon footprint of 1,312 \kgcoe\ for one H100. GPUs are typically hosted in sets of 4 or 8 in servers such as the NVIDIA DGX~\cite{nvidia:dgx}. Assuming a high-end server footprint of 2,000 \kgcoe\ for such a device and dividing by 8 GPUs, we obtain 250 \kgcoe\ server overhead per GPU. If this platform is used for three years at 70\% utilization, we obtain direct embodied emissions of approximately 0.01 \gcoe/query; the model uses 0.1 \gcoe/query as a conservative default to allow for lower utilization and allocation uncertainty.
+For chatbot embodied emissions, we use a bottom-up GPU allocation.
+\textcite{epoch2025howmuchenergydoeschatgptuse} estimates 1 second of NVIDIA
+H100 GPU time per query. NVIDIA reports~\cite{nvidia:h100} a cradle-to-gate
+carbon footprint of 1,312 \kgcoe\ for one H100. GPUs are typically hosted in
+sets of 4 or 8 in servers such as the NVIDIA DGX~\cite{nvidia:dgx}. Assuming a
+high-end server footprint of 2,000 \kgcoe\ for such a device and dividing by 8
+GPUs, we obtain 250 \kgcoe\ server overhead per GPU. If this platform is used
+for three years at 70\% utilization, we obtain direct embodied emissions of
+approximately 0.01 \gcoe/query; the model uses 0.1 \gcoe/query as a conservative
+default to allow for lower utilization and allocation uncertainty.
 
-The facilities hosting LLMs are distributed and the location that serves a particular request is unknown. To map energy use to emissions we use the average emissions intensity of electricity generation in the EU in 2023, 207 \gcoekwh~\cite{eea:emissions:2025}. This is higher than the Swiss campus electricity intensity and therefore conservative for AI requests served from lower-carbon regions, but not conservative for requests served from carbon-intensive grids.
+The facilities hosting LLMs are distributed and the location that serves a
+particular request is unknown. To map energy use to emissions we use the average
+emissions intensity of electricity generation in the EU in 2023, 207
+\gcoekwh~\cite{eea:emissions:2025}. This is higher than the Swiss campus
+electricity intensity and therefore conservative for AI requests served from
+lower-carbon regions, but not conservative for requests served from
+carbon-intensive grids.
 
 For chatbot use, we make the following default and sensitivity assumptions:
 
 \begin{itemize}
-  \item Ordinary chat: default 15 queries/user/day at 1 Wh/query; sensitivity range 0.3--3 Wh/query and 5--40 queries/user/day.
+  \item Ordinary chat: default 15 queries/user/day at 1 Wh/query; sensitivity
+  range 0.3--3 Wh/query and 5--40 queries/user/day.
   \item Long or reasoning tasks: 1--5 tasks/user/day at 10--50 Wh/task.
   \item Training overhead of 25\% on operational inference energy.
   \item Carbon emission intensity of 207 \gcoekwh.
@@ -294,44 +610,101 @@ For chatbot use, we make the following default and sensitivity assumptions:
 
 \subsubsection*{Agentic AI use}
 
-\textcite{ritchie:ai:electricity:2026}, summarizing IEA and benchmark data, places simple text queries around 0.1--0.6 Wh, while agentic or reasoning tasks move into the range of several to tens of Wh per task. A heavy-use illustration of 24 agentic tasks/day at 100 Wh/task reaches 2.4 kWh/day. \textcite{couch:claude:code:energy} estimates, from personal Claude Code logs, a median coding-agent session of 41 Wh and a heavy coding-agent workday of approximately 1.3 kWh. This source is not a peer-reviewed measurement, but it is useful as a transparent case study of the token volumes created by coding agents.
+\textcite{ritchie:ai:electricity:2026}, summarizing IEA and benchmark data,
+places simple text queries around 0.1--0.6 Wh, while agentic or reasoning tasks
+move into the range of several to tens of Wh per task. A heavy-use illustration
+of 24 agentic tasks/day at 100 Wh/task reaches 2.4 kWh/day.
+\textcite{couch:claude:code:energy} estimates, from personal Claude Code logs, a
+median coding-agent session of 41 Wh and a heavy coding-agent workday of
+approximately 1.3 kWh. This source is not a peer-reviewed measurement, but it is
+useful as a transparent case study of the token volumes created by coding
+agents.
 
-We assume that these kWh/user-day estimates already include full server-side energy for inference, tool use, context-cache reads and writes, and long outputs. We therefore model agentic-AI emissions as the sum of three terms: server-side electricity emissions, a 25\% training overhead on operational inference emissions, and amortized hardware emissions.
+We assume that these kWh/user-day estimates already include full server-side
+energy for inference, tool use, context-cache reads and writes, and long
+outputs. We therefore model agentic-AI emissions as the sum of three terms:
+server-side electricity emissions, a 25\% training overhead on operational
+inference emissions, and amortized hardware emissions.
 
-For amortized hardware, we use the same H100/server allocation described above. The H100 plus an allocated share of its host server is approximately 1,562 \kgcoe. Over three years at 70\% utilization, this corresponds to about 18,000 active hours. The remaining uncertainty is the average server-side power associated with an H100-equivalent share of work. For an allocated power range of 0.6--1.5 kW, amortized hardware emissions are approximately 50--150 \gcoe\ per kWh of server-side AI energy. We use 100 \gcoe/kWh as the central value. This is not a grid carbon intensity but rather an amortized hardware allocation per unit of AI server energy.
+For amortized hardware, we use the same H100/server allocation described above.
+The H100 plus an allocated share of its host server is approximately 1,562
+\kgcoe. Over three years at 70\% utilization, this corresponds to about 18,000
+active hours. The remaining uncertainty is the average server-side power
+associated with an H100-equivalent share of work. For an allocated power range
+of 0.6--1.5 kW, amortized hardware emissions are approximately 50--150 \gcoe\
+per kWh of server-side AI energy. We use 100 \gcoe/kWh as the central value.
+This is not a grid carbon intensity but rather an amortized hardware allocation
+per unit of AI server energy.
 
 For the middle-of-the-road agentic scenario, a useful approximation is:
 
 \[\mathrm{annual~emissions~(t~CO_2e)} \approx 3{,}410 \times f \times E\]
 
-where $f$ is the fraction of the 38,000-person UZH population that uses agentic AI heavily on workdays, and $E$ is kWh per active user-day. The coefficient assumes 250 active days/year, 207 \gcoekwh, a 25\% training overhead, and 100 \gcoe/kWh amortized hardware embodied emissions. Thus 5\% adoption at 1.3 kWh/day is approximately 220 \tcoe/year, 10\% adoption at 1.3 kWh/day is approximately 440 \tcoe/year, and 10\% adoption at 2.4 kWh/day is approximately 820 \tcoe/year.
+where $f$ is the fraction of the 38,000-person UZH population that uses agentic
+AI heavily on workdays, and $E$ is kWh per active user-day. The coefficient
+assumes 250 active days/year, 207 \gcoekwh, a 25\% training overhead, and 100
+\gcoe/kWh amortized hardware embodied emissions. Thus 5\% adoption at 1.3
+kWh/day is approximately 220 \tcoe/year, 10\% adoption at 1.3 kWh/day is
+approximately 440 \tcoe/year, and 10\% adoption at 2.4 kWh/day is approximately
+820 \tcoe/year.
 
 \subsection{Model limitations}
 
-Our biggest limitation is the relative lack of ground truth data about UZH IT systems. We have obtained only estimates of campus data center energy use, and limited information about UZH research workloads, SaaS use, and external high-performance computing infrastructure.
+Our biggest limitation is the relative lack of ground truth data about UZH IT
+systems. We have obtained only estimates of campus data center energy use, and
+limited information about UZH research workloads, SaaS use, and external
+high-performance computing infrastructure.
 
-Additionally, our work relies on assumptions and anecdotal evidence about device ownership and use among the university population. The largest remaining behavioral uncertainty is AI usage, especially the adoption rate of agentic workflows. We therefore avoid a single point prediction for agentic AI and instead report adoption and intensity thresholds.
+Additionally, our work relies on assumptions and anecdotal evidence about device
+ownership and use among the university population. The largest remaining
+behavioral uncertainty is AI usage, especially the adoption rate of agentic
+workflows. We therefore avoid a single point prediction for agentic AI and
+instead report adoption and intensity thresholds.
 
-Moreover, cloud vendors and AI companies are secretive about their infrastructure, and we have had to rely on public datasets, vendor tools, and research literature to estimate cloud and AI emissions. Microsoft and Google tenant-level emissions reports, and provider-level energy-per-task disclosures for AI systems, would substantially reduce uncertainty.
+Moreover, cloud vendors and AI companies are secretive about their
+infrastructure, and we have had to rely on public datasets, vendor tools, and
+research literature to estimate cloud and AI emissions. Microsoft and Google
+tenant-level emissions reports, and provider-level energy-per-task disclosures
+for AI systems, would substantially reduce uncertainty.
 
-However, all these points of uncertainty are exposed as user-configurable parameters or explicit scenario ranges in the model, allowing sensitivity analysis and exploration of alternate contexts.
+However, all these points of uncertainty are exposed as user-configurable
+parameters or explicit scenario ranges in the model, allowing sensitivity
+analysis and exploration of alternate contexts.
 
 \section{Results}
 \label{sec:results}
 
 \subsection{Initial model validation}
 
-Using only the types of devices reported in the UZH 2024 Sustainability Report~\cite{uzh:sustainability:report}, and restricting embodied emissions and mean device lifetimes to the Ecoinvent~\cite{ecoinvent} model used by that report, our model estimates emissions of 1,460 \tcoe, within 1\% of the 1,454 estimated in the UZH report, even though the methodology is somewhat different. Our model exposes average device power ratings and duty cycle, grid emissions intensity, etc., directly, whereas the approach used in the sustainability report relies on gross emissions factors (\kgcoe\ / device for embodied emissions, \kgcoe\ / device / day for operational emissions) provided by Ecoinvent.
+Using only the types of devices reported in the UZH 2024 Sustainability
+Report~\cite{uzh:sustainability:report}, and restricting embodied emissions and
+mean device lifetimes to the Ecoinvent~\cite{ecoinvent} model used by that
+report, our model estimates emissions of 1,460 \tcoe, within 1\% of the 1,454
+estimated in the UZH report, even though the methodology is somewhat different.
+Our model exposes average device power ratings and duty cycle, grid emissions
+intensity, etc., directly, whereas the approach used in the sustainability
+report relies on gross emissions factors (\kgcoe\ / device for embodied
+emissions, \kgcoe\ / device / day for operational emissions) provided by
+Ecoinvent.
 
-While this is admittedly just one data point, and the extreme proximity of the two values is likely a coincidence, it provides some confidence that our assumptions are reasonable and that the model can be used to make directional decisions and extrapolate trends beyond the immediate scope of the sustainability report.
+While this is admittedly just one data point, and the extreme proximity of the
+two values is likely a coincidence, it provides some confidence that our
+assumptions are reasonable and that the model can be used to make directional
+decisions and extrapolate trends beyond the immediate scope of the
+sustainability report.
 
 \subsection{Key results}
 
-We now discuss the main takeaways from our model when it is configured with the parameter values described above. In Section~\ref{sec:sensitivity:analysis} we explore how these results change under different assumptions.
+We now discuss the main takeaways from our model when it is configured with the
+parameter values described above. In Section~\ref{sec:sensitivity:analysis} we
+explore how these results change under different assumptions.
 
 \subsubsection*{Impact of embodied emissions}
 
-Maybe the most striking result is that, when we consider the entire population of campus devices, and not only those owned and managed by the university, end-user devices and embodied emissions are by far the largest source of IT emissions. See Figure~\ref{fig:baseline}.
+Maybe the most striking result is that, when we consider the entire population
+of campus devices, and not only those owned and managed by the university,
+end-user devices and embodied emissions are by far the largest source of IT
+emissions. See Figure~\ref{fig:baseline}.
 
 \begin{figure}[h]
   \centering
@@ -340,11 +713,21 @@ Maybe the most striking result is that, when we consider the entire population o
   \label{fig:baseline}
 \end{figure}
 
-Many studies~\cite{wb:itu:ict,umich:factsheet} agree that a large fraction of computer and mobile phone energy demand stems from the manufacturing phase. This is due in part to the fact that such end-user devices are not used continuously. Our estimate of embodied emissions comprising approximately 85\% of total laptop emissions is near the top of the range in the literature, and it is consistent with the fact that the carbon intensity of Swiss electricity is about one quarter the EU average~\cite{electricitymaps}.
+Many studies~\cite{wb:itu:ict,umich:factsheet} agree that a large fraction of
+computer and mobile phone energy demand stems from the manufacturing phase. This
+is due in part to the fact that such end-user devices are not used continuously.
+Our estimate of embodied emissions comprising approximately 85\% of total laptop
+emissions is near the top of the range in the literature, and it is consistent
+with the fact that the carbon intensity of Swiss electricity is about one
+quarter the EU average~\cite{electricitymaps}.
 
 \subsubsection*{Impact of cloud computing}
 
-Hypothetically moving all UZH server workloads from on-premise data centers to a commercial cloud provider eliminates about 170~\tcoe\ of cooling overhead and replaces about 415~\tcoe\ of on-premise server emissions with about 380~\tcoe\ of cloud emissions. Consequently, total IT emissions fall from approximately 4.17~\ktcoe\ to 3.96~\ktcoe. See Figure~\ref{fig:cloud}.
+Hypothetically moving all UZH server workloads from on-premise data centers to a
+commercial cloud provider eliminates about 170~\tcoe\ of cooling overhead and
+replaces about 415~\tcoe\ of on-premise server emissions with about 380~\tcoe\
+of cloud emissions. Consequently, total IT emissions fall from approximately
+4.17~\ktcoe\ to 3.96~\ktcoe. See Figure~\ref{fig:cloud}.
 
 \begin{figure}[h]
   \centering
@@ -353,9 +736,19 @@ Hypothetically moving all UZH server workloads from on-premise data centers to a
   \label{fig:cloud}
 \end{figure}
 
-For relatively small and inefficiently cooled facilities such as those of UZH, migration to the cloud certainly improves power usage effectiveness. Whether the migration is a net win, however, depends on details that would require an in-depth engagement with the cloud provider. The results above assume a one-for-one swap of on-premise servers with cloud ones, as well as the same electricity emissions intensity for the two facilities. If the cloud footprint needed to be bigger, or if the data center were located in a region with dirtier electricity, those factors might outweight the improved cooling efficiency.
+For relatively small and inefficiently cooled facilities such as those of UZH,
+migration to the cloud certainly improves power usage effectiveness. Whether the
+migration is a net win, however, depends on details that would require an
+in-depth engagement with the cloud provider. The results above assume a
+one-for-one swap of on-premise servers with cloud ones, as well as the same
+electricity emissions intensity for the two facilities. If the cloud footprint
+needed to be bigger, or if the data center were located in a region with dirtier
+electricity, those factors might outweight the improved cooling efficiency.
 
-There is also a financial argument to consider: if migration to the cloud is more expensive than continued on-premise operation, the savings from not migrating might be invested in more cost effective emissions improvements (including ones not related to IT).
+There is also a financial argument to consider: if migration to the cloud is
+more expensive than continued on-premise operation, the savings from not
+migrating might be invested in more cost effective emissions improvements
+(including ones not related to IT).
 
 \subsubsection*{Impact of generative and agentic AI}
 
@@ -366,11 +759,34 @@ There is also a financial argument to consider: if migration to the cloud is mor
   \label{fig:llm:growth}
 \end{figure}
 
-AI adoption is growing rapidly, driving demand for data centers and potentially stressing electrical infrastructure in coming years~\cite{lbl:dc:2024,iea:ai:energy,iea:keyquestions:ai}. For ordinary chatbot use, however, emissions remain a relatively small addition to the UZH IT footprint. In our default scenario of 15 queries/user/day at 1 Wh/query, ordinary chat contributes approximately 51 \tcoe/year, or roughly 1\% of total IT emissions, after including training overhead and amortized hardware emissions.
+AI adoption is growing rapidly, driving demand for data centers and potentially
+stressing electrical infrastructure in coming
+years~\cite{lbl:dc:2024,iea:ai:energy,iea:keyquestions:ai}. For ordinary chatbot
+use, however, emissions remain a relatively small addition to the UZH IT
+footprint. In our default scenario of 15 queries/user/day at 1 Wh/query,
+ordinary chat contributes approximately 51 \tcoe/year, or roughly 1\% of total
+IT emissions, after including training overhead and amortized hardware
+emissions.
 
-Moreover, under aggressive ordinary-chat growth projections (50\% YoY usage growth, 50\% YoY growth in training-overhead emissions, and a moderate 30\% YoY improvement in inference efficiency), ordinary-chat emissions remain below 150 \tcoe/year at the end of 5 years, or about 3--4\% of the baseline broad IT footprint. See Figure~\ref{fig:llm:growth}. This result is consistent with other analyses that put simple LLM use in the context of other computer activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt,ritchie:ai:electricity:2026}.
+Moreover, under aggressive ordinary-chat growth projections (50\% YoY usage
+growth, 50\% YoY growth in training-overhead emissions, and a moderate 30\% YoY
+improvement in inference efficiency), ordinary-chat emissions remain below 150
+\tcoe/year at the end of 5 years, or about 3--4\% of the baseline broad IT
+footprint. See Figure~\ref{fig:llm:growth}. This result is consistent with other
+analyses that put simple LLM use in the context of other computer
+activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt,ritchie:ai:electricity:2026}.
 
-Agentic AI is different. The main result figures therefore split AI into ``AI (chatbot)'' and ``AI (agents)''. The agent bar represents an illustrative scenario in which 10\% of the UZH population uses coding or research agents heavily on workdays at 1.3 kWh/user-day, yielding approximately 440 \tcoe/year once training and amortized hardware overhead are included. If 10\% used such systems at 2.4 kWh/user-day, emissions would be approximately 820 \tcoe/year, comparable to major existing operational IT categories. Figure~\ref{fig:agentic:ai} shows the sensitivity of annual emissions to both adoption and intensity. The conclusion is therefore not that all AI use is negligible, but that emissions depend strongly on whether usage remains dominated by simple chat or shifts toward high-intensity agentic work.
+Agentic AI is different. The main result figures therefore split AI into ``AI
+(chatbot)'' and ``AI (agents)''. The agent bar represents an illustrative
+scenario in which 10\% of the UZH population uses coding or research agents
+heavily on workdays at 1.3 kWh/user-day, yielding approximately 440 \tcoe/year
+once training and amortized hardware overhead are included. If 10\% used such
+systems at 2.4 kWh/user-day, emissions would be approximately 820 \tcoe/year,
+comparable to major existing operational IT categories.
+Figure~\ref{fig:agentic:ai} shows the sensitivity of annual emissions to both
+adoption and intensity. The conclusion is therefore not that all AI use is
+negligible, but that emissions depend strongly on whether usage remains
+dominated by simple chat or shifts toward high-intensity agentic work.
 
 \begin{figure}[h]
   \centering
@@ -382,9 +798,15 @@ Agentic AI is different. The main result figures therefore split AI into ``AI (c
 \subsection{Sensitivity analysis}
 \label{sec:sensitivity:analysis}
 
-The results above are robust for ordinary chat use, but more conditional for high-intensity agentic AI.
+The results above are robust for ordinary chat use, but more conditional for
+high-intensity agentic AI.
 
-For example, if we (1) massively reduce the set of end-user devices in scope to just those owned and managed by the university (about 10,000 laptops and monitors, 2,400 mobile phones), (2) triple the ordinary LLM per-query energy use to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a GPT-4o-class LLM 40 times per day, then emissions from ordinary chat are about 11\% of total (Figure~\ref{fig:sens1}).
+For example, if we (1) massively reduce the set of end-user devices in scope to
+just those owned and managed by the university (about 10,000 laptops and
+monitors, 2,400 mobile phones), (2) triple the ordinary LLM per-query energy use
+to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a
+GPT-4o-class LLM 40 times per day, then emissions from ordinary chat are about
+11\% of total (Figure~\ref{fig:sens1}).
 
 \begin{figure}[h]
   \centering
@@ -393,7 +815,12 @@ For example, if we (1) massively reduce the set of end-user devices in scope to 
   \label{fig:sens1}
 \end{figure}
 
-Similarly, if we cut our estimate for the embodied emissions of every type of device to the lowest value found in the literature (as opposed to a more representative middle-of-the-road value), but keep all ordinary-chat parameters at their default values, embodied emissions {\em still} dominate and simple LLM emissions continue to be a small fraction of the total, as seen in Figure~\ref{fig:sens2}.
+Similarly, if we cut our estimate for the embodied emissions of every type of
+device to the lowest value found in the literature (as opposed to a more
+representative middle-of-the-road value), but keep all ordinary-chat parameters
+at their default values, embodied emissions {\em still} dominate and simple LLM
+emissions continue to be a small fraction of the total, as seen in
+Figure~\ref{fig:sens2}.
 
 \begin{figure}[h]
   \centering
@@ -402,65 +829,209 @@ Similarly, if we cut our estimate for the embodied emissions of every type of de
   \label{fig:sens2}
 \end{figure}
 
-Combining the ``low embodied emissions'' scenario with the ``pessimal ordinary LLM'' scenario makes simple generative AI visible but still not dominant, contributing roughly 10\% of total emissions, or about 11\% if the illustrative agentic-AI bar is excluded from the denominator.
+Combining the ``low embodied emissions'' scenario with the ``pessimal ordinary
+LLM'' scenario makes simple generative AI visible but still not dominant,
+contributing roughly 10\% of total emissions, or about 11\% if the illustrative
+agentic-AI bar is excluded from the denominator.
 
-Regional context matters as expected. Moving from the Swiss electricity intensity of roughly 50 \gcoekwh\ to the EU average of 207 \gcoekwh\ increases operational emissions by about a factor of four, while a high-carbon grid of 400 \gcoekwh\ increases them by about a factor of eight. Embodied emissions remain important for end-user devices under long lifetimes, but in high-carbon regions operational server, network, supercomputing, cloud, and AI emissions become much more prominent. Shorter device refresh cycles push in the opposite direction: they increase the embodied-emissions share and make device-lifetime policy more important.
+Regional context matters as expected. Moving from the Swiss electricity
+intensity of roughly 50 \gcoekwh\ to the EU average of 207 \gcoekwh\ increases
+operational emissions by about a factor of four, while a high-carbon grid of 400
+\gcoekwh\ increases them by about a factor of eight. Embodied emissions remain
+important for end-user devices under long lifetimes, but in high-carbon regions
+operational server, network, supercomputing, cloud, and AI emissions become much
+more prominent. Shorter device refresh cycles push in the opposite direction:
+they increase the embodied-emissions share and make device-lifetime policy more
+important.
 
-Networking, productivity SaaS, and CSCS do not change the conclusion that device lifetimes are central, but they are large enough to matter. The bottom-up networking estimate implies roughly 50--100 \tcoe/year operational emissions plus approximately 40 \tcoe/year of embodied emissions, with 115 \tcoe/year shown in the figures. The preliminary productivity-SaaS estimate spans 38--380 \tcoe/year, with 209 \tcoe/year shown in the figures. The CSCS scenario spans roughly 250--480 \tcoe/year once operational electricity, possible PUE overhead, and embodied server-equivalent emissions are included; the plotted midpoint is 366 \tcoe/year. These categories should therefore be included in future UZH inventories even if they are not the dominant source in the baseline.
+Networking, productivity SaaS, and CSCS do not change the conclusion that device
+lifetimes are central, but they are large enough to matter. The bottom-up
+networking estimate implies roughly 50--100 \tcoe/year operational emissions
+plus approximately 40 \tcoe/year of embodied emissions, with 115 \tcoe/year
+shown in the figures. The preliminary productivity-SaaS estimate spans 38--380
+\tcoe/year, with 209 \tcoe/year shown in the figures. The CSCS scenario spans
+roughly 250--480 \tcoe/year once operational electricity, possible PUE overhead,
+and embodied server-equivalent emissions are included; the plotted midpoint is
+366 \tcoe/year. These categories should therefore be included in future UZH
+inventories even if they are not the dominant source in the baseline.
 
 \section{Recommendations}
 \label{sec:recommendations}
 
-Our recommendations for university policy makers can be summarized in four main points.
+Our recommendations for university policy makers can be summarized in four main
+points.
 
-First, treat device lifetimes as a powerful level for reducing the impact of IT. European circular-economy guidance emphasizes repair, reuse, procurement requirements, and delayed obsolescence as practical ways to reduce the impact of electronics~\cite{eea:longer:electronics,eea:product:lifespans}. In the model, starting with industry-standard lifetimes of 4 years for laptops and 3 years for mobile phones, then extending those to 6 and 4 years, respectively, reduces total campus IT emissions from 3.9~\ktcoe\ to 3.2~\ktcoe, an 18\% reduction. Practical policies include minimum 5-year warranty and repairability requirements in procurement, centrally supported repair services, reuse or buy-back programs for students and staff, and default redeployment of still-functional devices before new purchases.
+First, treat device lifetimes as a powerful level for reducing the impact of IT.
+European circular-economy guidance emphasizes repair, reuse, procurement
+requirements, and delayed obsolescence as practical ways to reduce the impact of
+electronics~\cite{eea:longer:electronics,eea:product:lifespans}. In the model,
+starting with industry-standard lifetimes of 4 years for laptops and 3 years for
+mobile phones, then extending those to 6 and 4 years, respectively, reduces
+total campus IT emissions from 3.9~\ktcoe\ to 3.2~\ktcoe, an 18\% reduction.
+Practical policies include minimum 5-year warranty and repairability
+requirements in procurement, centrally supported repair services, reuse or
+buy-back programs for students and staff, and default redeployment of
+still-functional devices before new purchases.
 
-Second, improve institutional data collection for categories that are currently outside standard campus inventories. Universities should not only keep good inventories of their own IT infrastructure and use, but also request tenant-level reports from cloud SaaS providers such as Microsoft and Google. This data is important for prioritizing interventions to improve overall IT efficiency.
+Second, improve institutional data collection for categories that are currently
+outside standard campus inventories. Universities should not only keep good
+inventories of their own IT infrastructure and use, but also request
+tenant-level reports from cloud SaaS providers such as Microsoft and Google.
+This data is important for prioritizing interventions to improve overall IT
+efficiency.
 
-Third, manage AI by workload intensity rather than treating all AI use as equivalent. Ordinary chatbot use has negligible energy impact, but agentic AI, if broadly adopted, could become a significant contributor to overall IT emissions. Universities procuring AI tools should ask providers for more transparency into agentic AI energy consumption, including energy per task by workload class, model-routing policies, context-caching behavior,  and whether routine steps can default to smaller models. Campus policy should encourage right-sizing models, avoiding unnecessary long-context or agent loops, and measuring aggregate use of coding and research agents where privacy permits.
+Third, manage AI by workload intensity rather than treating all AI use as
+equivalent. Ordinary chatbot use has negligible energy impact, but agentic AI,
+if broadly adopted, could become a significant contributor to overall IT
+emissions. Universities procuring AI tools should ask providers for more
+transparency into agentic AI energy consumption, including energy per task by
+workload class, model-routing policies, context-caching behavior,  and whether
+routine steps can default to smaller models. Campus policy should encourage
+right-sizing models, avoiding unnecessary long-context or agent loops, and
+measuring aggregate use of coding and research agents where privacy permits.
 
-Fourth, consider cloud migration via a structured decision framework rather than a generic assumption that cloud is greener. Migration is most compelling when it replaces inefficient local cooling without increasing the number or intensity of servers. Accurate accounting requires asking cloud providers for location-specific electricity carbon intensity, annual PUE, hardware lifetime, utilization, and tenant-level reporting. If cloud migration is more expensive than on-premise operation, the opportunity cost should be compared with higher-impact measures such as device-lifetime extension or building-energy projects.
+Fourth, consider cloud migration via a structured decision framework rather than
+a generic assumption that cloud is greener. Migration is most compelling when it
+replaces inefficient local cooling without increasing the number or intensity of
+servers. Accurate accounting requires asking cloud providers for
+location-specific electricity carbon intensity, annual PUE, hardware lifetime,
+utilization, and tenant-level reporting. If cloud migration is more expensive
+than on-premise operation, the opportunity cost should be compared with
+higher-impact measures such as device-lifetime extension or building-energy
+projects.
 
 \section{Related work}
 \label{sec:related:work}
 
-Emissions modeling of information technology at organizational scales remains underdeveloped. Universities seem to lack standardized frameworks for measuring IT-related carbon footprints, and our work is in part an effort to help close this gap.
+Emissions modeling of information technology at organizational scales remains
+underdeveloped. Universities seem to lack standardized frameworks for measuring
+IT-related carbon footprints, and our work is in part an effort to help close
+this gap.
 
-Studies such as \textcite{larsen:2013} assess the carbon footprint of a university but do not consider IT-related emissions specifically. For example, Larsen et al. lump IT with ``equipment'', including machinery and science and technology equipment.
+Studies such as \textcite{larsen:2013} assess the carbon footprint of a
+university but do not consider IT-related emissions specifically. For example,
+Larsen et al. lump IT with ``equipment'', including machinery and science and
+technology equipment.
 
-Many carbon footprint studies treat IT as a minor subcomponent, despite IT infrastructure representing 5-10\% of total institutional emissions. For example, \textcite{herth:quantifying:2022} make a comprehensive carbon assessment of TU Delft and find that ICT constitutes 8\% of emissions, but do not break that down further, making it difficult to know how to improve. \textcite{helmers:universities:2021} exclude IT impacts from their 20-university comparison study, claiming that ``almost all universities worldwide will be working with quite similar IT technology''. \textcite{kiehle:2023} include IT equipment in a carbon accounting of the University of Oulu but limit themselves to lifecycle analysis of equipment purchased in the last 3 years.
+Many carbon footprint studies treat IT as a minor subcomponent, despite IT
+infrastructure representing 5-10\% of total institutional emissions. For
+example, \textcite{herth:quantifying:2022} make a comprehensive carbon
+assessment of TU Delft and find that ICT constitutes 8\% of emissions, but do
+not break that down further, making it difficult to know how to improve.
+\textcite{helmers:universities:2021} exclude IT impacts from their 20-university
+comparison study, claiming that ``almost all universities worldwide will be
+working with quite similar IT technology''. \textcite{kiehle:2023} include IT
+equipment in a carbon accounting of the University of Oulu but limit themselves
+to lifecycle analysis of equipment purchased in the last 3 years.
 
-We are not alone in struggling with data availability problems, including incomplete asset inventories, sparse energy consumption data, etc. \textcite{jurgens:2023} writes that ``data availability is the main limiting factor for a holistic assessment'' of higher education institutions (not limited to IT).
+We are not alone in struggling with data availability problems, including
+incomplete asset inventories, sparse energy consumption data, etc.
+\textcite{jurgens:2023} writes that ``data availability is the main limiting
+factor for a holistic assessment'' of higher education institutions (not limited
+to IT).
 
-Efforts to standardize IT emissions measurement and reporting are advancing, \eg, through standards such as ITU-T L.1420, but they remain fragmented~\cite{wb:itu:ict}. Our own research on embodied and operational emissions revealed massive variability in carbon reporting among manufacturers and across studies: system boundaries range from cradle-to-gate through cradle-to-grave, functional units vary from per-device to per-computation, and values for the same parameter might vary by a factor of 2 or more.
+Efforts to standardize IT emissions measurement and reporting are advancing,
+\eg, through standards such as ITU-T L.1420, but they remain
+fragmented~\cite{wb:itu:ict}. Our own research on embodied and operational
+emissions revealed massive variability in carbon reporting among manufacturers
+and across studies: system boundaries range from cradle-to-gate through
+cradle-to-grave, functional units vary from per-device to per-computation, and
+values for the same parameter might vary by a factor of 2 or more.
 
-In this study, our analysis has been bottom up, building a model of the university's IT emissions from individual estimates of devices, queries, etc. Some other studies, including \textcite{larsen:2013} and \textcite{garciaalaminos:2022}, have used top-down approaches based on environmental input-output (EIO) models. For example, García-Alaminos et al. use a multi-regional input-output framework (EEMRIO) to estimate the categories (scopes 1, 2, and 3) of a university's carbon footprint based on analysis of expenditures and other financial data. There are important tradeoffs between bottom-up precision and top-down comprehensiveness~\cite{hilty:2009:lca}. Bottom-up approaches provide higher accuracy for specific sources and transparency through clear traceability. They also make it easier to identify specific improvement areas. However, they require extensive primary data collection, force up-front decisions about what components to include or not, and may miss system-wide effects. Conversely, top-down approaches offer efficiency and a broader system perspective, but sacrifice the precision and granularity necessary for operational decision-making.
+In this study, our analysis has been bottom up, building a model of the
+university's IT emissions from individual estimates of devices, queries, etc.
+Some other studies, including \textcite{larsen:2013} and
+\textcite{garciaalaminos:2022}, have used top-down approaches based on
+environmental input-output (EIO) models. For example, García-Alaminos et al. use
+a multi-regional input-output framework (EEMRIO) to estimate the categories
+(scopes 1, 2, and 3) of a university's carbon footprint based on analysis of
+expenditures and other financial data. There are important tradeoffs between
+bottom-up precision and top-down comprehensiveness~\cite{hilty:2009:lca}.
+Bottom-up approaches provide higher accuracy for specific sources and
+transparency through clear traceability. They also make it easier to identify
+specific improvement areas. However, they require extensive primary data
+collection, force up-front decisions about what components to include or not,
+and may miss system-wide effects. Conversely, top-down approaches offer
+efficiency and a broader system perspective, but sacrifice the precision and
+granularity necessary for operational decision-making.
 
-The field of AI is evolving rapidly and the main AI vendors are secretive about the architecture and scale of their models. This has led to many efforts to estimate the footprint of LLMs, from academic papers to blog posts~\cite{devries2023growing,heguerte2023estimate,luccioni2022estimating,ritchie:chatgpt,epoch2025howmuchenergydoeschatgptuse,ritchie:ai:electricity:2026}. More generally, the energy consumption of LLMs is being studied extensively~\cite{budennyy2022eco2ai,castano2023exploring,epoch2024optimallyallocatingcomputebetweeninferenceandtraining,gowda2024watt,harding2024watts,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring,jegham2025hungry}. \textcite{lacoste:mlco2} and \textcite{faiz2024llmcarbon} have developed more systematic approaches to estimate the footprint of models based on factors like electricity emissions intensity, hardware specifications, and network architecture. Agentic systems are newer and less well covered by peer-reviewed measurement; transparent case studies such as \textcite{couch:claude:code:energy} are useful primarily for scenario construction rather than as universal baselines.
+The field of AI is evolving rapidly and the main AI vendors are secretive about
+the architecture and scale of their models. This has led to many efforts to
+estimate the footprint of LLMs, from academic papers to blog
+posts~\cite{devries2023growing,heguerte2023estimate,luccioni2022estimating,ritchie:chatgpt,epoch2025howmuchenergydoeschatgptuse,ritchie:ai:electricity:2026}.
+More generally, the energy consumption of LLMs is being studied
+extensively~\cite{budennyy2022eco2ai,castano2023exploring,epoch2024optimallyallocatingcomputebetweeninferenceandtraining,gowda2024watt,harding2024watts,luccioni2023counting,patterson2021carbon,rodriguez2024evaluating,tripp2024measuring,jegham2025hungry}.
+\textcite{lacoste:mlco2} and \textcite{faiz2024llmcarbon} have developed more
+systematic approaches to estimate the footprint of models based on factors like
+electricity emissions intensity, hardware specifications, and network
+architecture. Agentic systems are newer and less well covered by peer-reviewed
+measurement; transparent case studies such as
+\textcite{couch:claude:code:energy} are useful primarily for scenario
+construction rather than as universal baselines.
 
-In a provocative and maybe dystopian paper, \textcite{tomlinson:2024:carbon} argue that AI has lower emissions than humans for various writing and illustrating tasks. Other indirect effects may be beneficial, such as optimized building operation, or harmful, such as rebound demand from cheaper content generation. These systemic effects are important for a cleaner-production strategy but fall outside the scope of this paper.
+In a provocative and maybe dystopian paper, \textcite{tomlinson:2024:carbon}
+argue that AI has lower emissions than humans for various writing and
+illustrating tasks. Other indirect effects may be beneficial, such as optimized
+building operation, or harmful, such as rebound demand from cheaper content
+generation. These systemic effects are important for a cleaner-production
+strategy but fall outside the scope of this paper.
 
 \section{Conclusion}
 
-We have presented a simple but powerful model to estimate the carbon footprint of IT infrastructure and IT-related activities at the University of Zürich. While the concrete parameter values we chose are specific to UZH, we have attempted to create a framework that can be applied to other universities (and maybe other large campus facilities) and can help provide a basis for evaluation and planning.
+We have presented a simple but powerful model to estimate the carbon footprint
+of IT infrastructure and IT-related activities at the University of Zürich.
+While the concrete parameter values we chose are specific to UZH, we have
+attempted to create a framework that can be applied to other universities (and
+maybe other large campus facilities) and can help provide a basis for evaluation
+and planning.
 
-Our model has broad system boundaries: it includes both university- and student-owned devices, cloud and supercomputing facilities, productivity SaaS, and generative-AI services. Whenever possible it accounts for both embodied and operational emissions. The model is bottom-up and exposes almost 100 configurable parameters to support different environments and enable exploration of different scenarios. A complete parameter inventory is provided in Appendix~\ref{app:parameters}. The model is available at \url{https://maxp.net/it-emissions} and can be freely modified under an MIT License.
+Our model has broad system boundaries: it includes both university- and
+student-owned devices, cloud and supercomputing facilities, productivity SaaS,
+and generative-AI services. Whenever possible it accounts for both embodied and
+operational emissions. The model is bottom-up and exposes almost 100
+configurable parameters to support different environments and enable exploration
+of different scenarios. A complete parameter inventory is provided in
+Appendix~\ref{app:parameters}. The model is available at
+\url{https://maxp.net/it-emissions} and can be freely modified under an MIT
+License.
 
-Within the context of UZH, our analysis shows that, at least on the Swiss grid, embodied emissions dominate the IT carbon footprint, while operational impacts are comparatively modest but not negligible. In particular:
+Within the context of UZH, our analysis shows that, at least on the Swiss grid,
+embodied emissions dominate the IT carbon footprint, while operational impacts
+are comparatively modest but not negligible. In particular:
 
 \begin{itemize}
 
-  \item Under the assumption that a large majority (80\%) of UZH students and staff have a laptop and smartphone, embodied emissions of end-user devices represent just over half of the broad university IT footprint. Operational emissions account for only about 15\% of total emissions of end-user devices (laptops, monitors, phones, etc.).
+  \item Under the assumption that a large majority (80\%) of UZH students and
+  staff have a laptop and smartphone, embodied emissions of end-user devices
+  represent just over half of the broad university IT footprint. Operational
+  emissions account for only about 15\% of total emissions of end-user devices
+  (laptops, monitors, phones, etc.).
 
-  \item Embodied emissions of end-user devices remain the largest category even when we consider only university-owned devices (equivalent to about $\frac{1}{4}$ of the population), although the share falls once SaaS and supercomputing are included in the broad boundary.
+  \item Embodied emissions of end-user devices remain the largest category even
+  when we consider only university-owned devices (equivalent to about
+  $\frac{1}{4}$ of the population), although the share falls once SaaS and
+  supercomputing are included in the broad boundary.
 
-  \item Data center cooling and efficiency represent a potential savings opportunity. Inefficient cooling in on-premise data centers causes 150--200 \tcoe/year of emissions that could be avoided by a migration to a commercial cloud facility. However, any such move requires in-depth analysis with the cloud vendor to ensure that it is still a net savings after accounting for the different server infrastructure and other changes.
+  \item Data center cooling and efficiency represent a potential savings
+  opportunity. Inefficient cooling in on-premise data centers causes 150--200
+  \tcoe/year of emissions that could be avoided by a migration to a commercial
+  cloud facility. However, any such move requires in-depth analysis with the
+  cloud vendor to ensure that it is still a net savings after accounting for the
+  different server infrastructure and other changes.
 
-  \item Ordinary chatbot use probably causes only 1--2\% of total IT emissions today, even when accounting for training overhead and embodied GPU emissions. Agentic AI is more usage-sensitive: heavy adoption by 10\% of the university population could add hundreds of \tcoe/year, so future AI impact depends on workload mix rather than query counts alone.
+  \item Ordinary chatbot use probably causes only 1--2\% of total IT emissions
+  today, even when accounting for training overhead and embodied GPU emissions.
+  Agentic AI is more usage-sensitive: heavy adoption by 10\% of the university
+  population could add hundreds of \tcoe/year, so future AI impact depends on
+  workload mix rather than query counts alone.
 
 \end{itemize}
 
-These results are robust under a broad range of assumptions in our sensitivity analysis. The corresponding policy recommendations in Section~\ref{sec:recommendations} emphasize lengthening device lifecycles, improving data collection and procurement processes, and implementing workload-aware AI governance.
+These results are robust under a broad range of assumptions in our sensitivity
+analysis. The corresponding policy recommendations in
+Section~\ref{sec:recommendations} emphasize lengthening device lifecycles,
+improving data collection and procurement processes, and implementing
+workload-aware AI governance.
 
 \appendix
 \include{supplement-parameters}
