@@ -1080,34 +1080,38 @@
         // Calculate LLM emissions
         function llmEmissionsKgCO2e() {
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
-            const nqueries = llms['Mean daily user queries'] * llms['User population'];
+            const dailyQueries = llms['Mean daily user queries'] * llms['User population'];
+            const annualQueries = dailyQueries * llms['Days per year'];
             // Divide by 1000 to convert Wh to kWh and by 1000 again to convert g CO2e to kg CO2e.
-            const u = nqueries * llms['Days per year'] * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
-            const m = u * llms['Training overhead %'] / 100 + nqueries * llms['Embodied emissions g CO2e / query'] / 1000;
+            const u = annualQueries * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
+            const m = u * llms['Training overhead %'] / 100 + annualQueries * llms['Embodied emissions g CO2e / query'] / 1000;
             return [u, m];
         }
 
         // Calculate LLM emissions projection over 5 years
         function llmEmissionsProjection() {
-            const baseUsage = llms['Mean daily user queries'] * llms['User population'];
+            const baseDailyQueries = llms['Mean daily user queries'] * llms['User population'];
             const baseEnergyPerQuery = llms['Mean query Wh'];
             const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
             const trainingOverhead = llms['Training overhead %'] / 100;
+            const embodiedPerQuery = llms['Embodied emissions g CO2e / query'];
             const usageGrowth = llms['Annual usage growth %'] / 100;
             const efficiencyGrowth = llms['Annual efficiency growth %'] / 100;
             const trainingGrowth = llms['Annual training growth %'] / 100;
 
-            let usage = baseUsage;
-            let embodiedEmissions = 0;
+            let dailyQueries = baseDailyQueries;
+            let trainingEmissions = 0;
             let energyPerQuery = baseEnergyPerQuery;
             const projection = [];
             for (let year = 0; year < 5; year++) {
-                const usageEmissions = usage * llms['Days per year'] * energyPerQuery * emissionsIntensity / (1000 * 1000);
+                const annualQueries = dailyQueries * llms['Days per year'];
+                const usageEmissions = annualQueries * energyPerQuery * emissionsIntensity / (1000 * 1000);
                 if (year === 0) {
-                    embodiedEmissions = usageEmissions * trainingOverhead;
+                    trainingEmissions = usageEmissions * trainingOverhead;
                 } else {
-                    embodiedEmissions = embodiedEmissions * (1 + trainingGrowth);
+                    trainingEmissions = trainingEmissions * (1 + trainingGrowth);
                 }
+                const embodiedEmissions = trainingEmissions + annualQueries * embodiedPerQuery / 1000;
                 const totalEmissions = usageEmissions + embodiedEmissions;
 
                 projection.push({
@@ -1117,7 +1121,7 @@
                     total: totalEmissions
                 });
 
-                usage *= 1 + usageGrowth;
+                dailyQueries *= 1 + usageGrowth;
                 energyPerQuery *= 1 - efficiencyGrowth;
             }
 
