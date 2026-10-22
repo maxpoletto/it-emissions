@@ -203,25 +203,33 @@ estimating ``queries per day''.
 
 \subsubsection*{Summary}
 
-This table summarizes what is in scope in the model. The entries indicate
-whether each category is included in the operational, lifecycle, and
-cooling/facility-overhead accounting; the precision and data sources vary by
-category and are discussed below.
+Table~\ref{tab:scopes} summarizes what is in scope in the model. The entries
+indicate whether each category includes operational and embodied emissions.
+Precision and data sources vary by category and are discussed below.
 
-\begin{center}
-\begin{tabular}{|l|c|c|c|l|}
+\begin{table}[htbp]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{|l|c|c|l|}
     \hline
-    \textbf{Device or service} & \textbf{Operation} & \textbf{Lifecycle} & \textbf{Cooling} & \textbf{Basis} \\ \hline
-    Student laptops \& phones & yes & yes & n/a & bottom-up estimates \\
-    University workstations, access points, etc. & yes & yes & n/a & inventory + estimates \\
-    University on-premise servers & yes & yes & yes & inventory + power data \\
-    Cloud servers & yes & yes & yes & function of on-premise \\
-    Cloud SaaS & yes & no & included & order-of-magnitude assumption \\
-    Supercomputing facilities & yes & yes & yes & power data \\
-    Chatbot and agentic AI & yes & yes & included & literature review \\ \hline
+    \textbf{Device or service} & \textbf{Operation} & \textbf{Embodied} & \textbf{Basis} \\ \hline
+    Personal laptops and phones & yes & yes & bottom-up estimates \\
+    University workstations & yes & yes & inventory + estimates \\
+    University-issued mobile phones & yes & yes & inventory + estimates \\
+    University on-premise servers & yes & yes & inventory + power data \\
+    Audiovisual equipment & yes & yes & inventory + estimates \\
+    Printers & yes & yes & inventory + estimates \\
+    Campus networking & yes & yes & bottom-up estimates \\
+    Data-center cooling & yes & no & power data \\
+    Cloud servers (including overhead) & yes & yes & function of on-premise \\
+    Cloud SaaS (including overhead) & yes & no & order-of-magnitude assumption \\
+    Supercomputing facilities (including overhead) & yes & yes & power allocation + hardware estimates \\
+    Chatbot and agentic AI & yes & yes & literature review \\ \hline
 \end{tabular}
+\caption{System boundaries of the model.}
 \label{tab:scopes}
-\end{center}
+\end{table}
 
 \subsection{Accounting approach}
 
@@ -678,22 +686,21 @@ analysis and exploration of alternate contexts.
 
 \subsection{Initial model validation}
 
-Using only the types of devices reported in the UZH 2024 Sustainability
-Report~\cite{uzh:sustainability:report}, and restricting embodied emissions and
-mean device lifetimes to the Ecoinvent~\cite{ecoinvent} model used by that
-report, our model estimates emissions of 1,460 \tcoe, within 1\% of the 1,454
-estimated in the UZH report, even though the methodology is somewhat different.
-Our model exposes average device power ratings and duty cycle, grid emissions
-intensity, etc., directly, whereas the approach used in the sustainability
-report relies on gross emissions factors (\kgcoe\ / device for embodied
-emissions, \kgcoe\ / device / day for operational emissions) provided by
-Ecoinvent.
-
-While this is admittedly just one data point, and the extreme proximity of the
-two values is likely a coincidence, it provides some confidence that our
-assumptions are reasonable and that the model can be used to make directional
-decisions and extrapolate trends beyond the immediate scope of the
-sustainability report.
+As a first-order sanity check, we  applied our modeling approach to only the
+types of devices reported in the UZH 2024 Sustainability
+Report~\cite{uzh:sustainability:report}, namely university-owned staff and
+classroom workstations, audio-visual equipment, servers in the central data
+center, and university-owned mobile phones. Also adopting the embodied emission
+assumptions and device lifetimes from the Ecoinvent~\cite{ecoinvent} database
+used by that report, our model estimates emissions of approximately 1,600 \tcoe,
+within 5\% of the 1,535 estimated in the UZH report, even though the
+methodology is  different. Our model exposes average device power ratings, duty
+cycle, and grid emissions intensity directly, whereas the approach used in the
+sustainability report relies on gross emissions factors (\kgcoe\ / device for
+embodied emissions, \kgcoe\ / device / day for operational emissions) provided
+by Ecoinvent. This result provides some confidence that our assumptions are
+reasonable and that the model can be used to make directional decisions for
+traditional types of IT infrastructure.
 
 \subsection{Key results}
 
@@ -745,7 +752,7 @@ in-depth engagement with the cloud provider. The results above assume a
 one-for-one swap of on-premise servers with cloud ones, as well as the same
 electricity emissions intensity for the two facilities. If the cloud footprint
 needed to be bigger, or if the data center were located in a region with dirtier
-electricity, those factors might outweight the improved cooling efficiency.
+electricity, those factors might outweigh the improved cooling efficiency.
 
 There is also a financial argument to consider: if migration to the cloud is
 more expensive than continued on-premise operation, the savings from not
