@@ -67,3 +67,18 @@ test('low-device sensitivity changes manufacturing assumptions without changing 
     for (const category of ['Supercomputing', 'AI (agents)', 'Campus networking'])
         assert.deepEqual(low.results.data.find(r => r.category === category), base.results.data.find(r => r.category === category));
 });
+
+test('agent curves use the annual model and comparable, paired intervention savings', async () => {
+    const {record, chart} = await prepareFigure('agentic-ai');
+    const analysis = record.adoptionAnalysis;
+    const central = analysis.curves.find(curve => curve.energyKwhPerDay === 1.3);
+    const atTenPercent = central.points.find(point => point.adoptionPercent === 10);
+    const annualAgents = record.results.data.find(row => row.category === 'AI (agents)');
+    assert.equal(atTenPercent.total, annualAgents.usage + annualAgents.embodied + annualAgents.training);
+    assert.equal(central.points[0].total, 0);
+    assert.ok(Math.abs(analysis.curves[2].points[10].total - 935940) < 1e-6);
+    const lifetime = analysis.benchmarks.find(b => b.after === 'lifecycle-after');
+    assert.ok(Math.abs(lifetime.comparison.savings.central - 625833.3333333333) < 1e-6);
+    assert.equal(chart.data.datasets.length, 5);
+    assert.ok(record.figure.sources.some(source => source.path.endsWith('lifecycle-before.json')));
+});

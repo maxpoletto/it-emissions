@@ -1,0 +1,1971 @@
+{
+  "figure": {
+    "name": "agentic-ai",
+    "description": "External agent emissions against adoption, at three fixed IT-energy allowances. Ordinary chat is excluded from the curves. Savings benchmarks are paired interventions, not emissions offsets assumed to occur.",
+    "sources": [
+      {
+        "path": "doc/scenarios/baseline.json",
+        "sha256": "3fc7dffd4d9056fcac7317f8be00a340f75d444f0d7a0da8f39c7f40f7a8d53e"
+      },
+      {
+        "path": "doc/scenarios/agentic-ai.json",
+        "sha256": "4d63ec99bfe138dcf8044bbdcd0effc452548c98777502337be5559a40449863"
+      },
+      {
+        "path": "doc/scenarios/cloud.json",
+        "sha256": "60b6e1827e440244a6a8ca89fe60ec7ce4147089b2cf7478512591cf2fd1df2a"
+      },
+      {
+        "path": "doc/scenarios/lifecycle-before.json",
+        "sha256": "5af39b706dbe9f9ac61e54ba5666c299c2a1292dd4f338905561d6a94cef0c02"
+      },
+      {
+        "path": "doc/scenarios/lifecycle-after.json",
+        "sha256": "a237e277865ddfc7a76a19227c48c149a5769784f96728dee8f7be3d3ecdacfa"
+      }
+    ],
+    "image": "fig-agentic-ai.png",
+    "dimensions": {
+      "width": 1600,
+      "height": 900
+    }
+  },
+  "metadata": {
+    "modelVersion": "2.0",
+    "description": "UZH IT Emissions Model",
+    "annotation": "UZH broad-boundary illustrative scenario; adoption and several service inputs are estimates, not measurements.",
+    "referenceYear": 2026
+  },
+  "parameters": {
+    "modelVersion": "2.0",
+    "referenceYear": 2026,
+    "annotation": "UZH broad-boundary illustrative scenario; adoption and several service inputs are estimates, not measurements.",
+    "percentage": false,
+    "rangeInputs": [],
+    "deviceInfo": {
+      "Laptops": {
+        "Lifetime": 6,
+        "Count": 32000,
+        "Days per year": 250
+      },
+      "Monitors": {
+        "Lifetime": 8,
+        "Count": 10440,
+        "Days per year": 250
+      },
+      "Desktops": {
+        "Lifetime": 8,
+        "Count": 0,
+        "Days per year": 250
+      },
+      "Servers": {
+        "Lifetime": 5,
+        "Count": 1121,
+        "Days per year": 365
+      },
+      "Mobile phones": {
+        "Lifetime": 3,
+        "Count": 35000,
+        "Days per year": 250
+      },
+      "A/V equipment": {
+        "Lifetime": 8,
+        "Count": 431,
+        "Days per year": 250
+      },
+      "Printers": {
+        "Lifetime": 8,
+        "Count": 333,
+        "Days per year": 250
+      }
+    },
+    "embodiedEmissionsKgCo2e": {
+      "Laptops": {
+        "Mean": 180,
+        "Stdev": 128,
+        "Min": 104,
+        "Max": 372
+      },
+      "Monitors": {
+        "Mean": 340,
+        "Stdev": 50,
+        "Min": 150,
+        "Max": 394
+      },
+      "Desktops": {
+        "Mean": 290,
+        "Stdev": 80,
+        "Min": 209,
+        "Max": 403
+      },
+      "Servers": {
+        "Mean": 1100,
+        "Stdev": 330,
+        "Min": 383,
+        "Max": 1582
+      },
+      "Mobile phones": {
+        "Mean": 50,
+        "Stdev": 10,
+        "Min": 30,
+        "Max": 70
+      },
+      "A/V equipment": {
+        "Mean": 700,
+        "Stdev": 109,
+        "Min": 644,
+        "Max": 862
+      },
+      "Printers": {
+        "Mean": 1100,
+        "Stdev": 200,
+        "Min": 967,
+        "Max": 1367
+      }
+    },
+    "powerW": {
+      "Laptops": {
+        "Mean": 50,
+        "Stdev": 20,
+        "Min": 20,
+        "Max": 100,
+        "Standby": 1
+      },
+      "Monitors": {
+        "Mean": 50,
+        "Stdev": 10,
+        "Min": 30,
+        "Max": 90,
+        "Standby": 1
+      },
+      "Desktops": {
+        "Mean": 100,
+        "Stdev": 20,
+        "Min": 60,
+        "Max": 200,
+        "Standby": 1
+      },
+      "Servers": {
+        "Mean": 400,
+        "Stdev": 100,
+        "Min": 200,
+        "Max": 600,
+        "Standby": 1
+      },
+      "Mobile phones": {
+        "Mean": 10,
+        "Stdev": 2,
+        "Min": 5,
+        "Max": 20,
+        "Standby": 0
+      },
+      "A/V equipment": {
+        "Mean": 250,
+        "Stdev": 50,
+        "Min": 150,
+        "Max": 350,
+        "Standby": 1
+      },
+      "Printers": {
+        "Mean": 1000,
+        "Stdev": 200,
+        "Min": 600,
+        "Max": 1400,
+        "Standby": 90
+      }
+    },
+    "compute": {},
+    "dutyCycle6h": {
+      "Laptops": [
+        0.1,
+        0.5,
+        1,
+        0.3
+      ],
+      "Desktops": [
+        0.1,
+        0.5,
+        1,
+        0.3
+      ],
+      "Servers": [
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "Mobile phones": [
+        0,
+        0,
+        0,
+        0.5
+      ],
+      "Monitors": [
+        0.1,
+        0.5,
+        1,
+        0.3
+      ],
+      "A/V equipment": [
+        0,
+        0.3,
+        0.6,
+        0.1
+      ],
+      "Printers": [
+        0,
+        0,
+        0.01,
+        0
+      ]
+    },
+    "environments": {
+      "saas": {
+        "enabled": true,
+        "users": 38000,
+        "kgPerUserYear": 5.5,
+        "bounds": {
+          "kgPerUserYear": [
+            1,
+            10
+          ]
+        },
+        "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+      },
+      "cloud": {
+        "enabled": true,
+        "migratedPercent": 0,
+        "instancesPer100Servers": 100,
+        "powerWatts": 300,
+        "embodiedKg": 700,
+        "lifetimeYears": 4,
+        "pue": 1.15,
+        "intensityGPerKwh": 53.75,
+        "energyBasis": "it",
+        "bounds": {},
+        "source": "Cloud VM proxy and selected serving-region electricity factor"
+      },
+      "local": {
+        "enabled": true,
+        "pue": 2,
+        "intensityGPerKwh": 53.75,
+        "useHourlyProfile": true,
+        "energyBasis": "it",
+        "bounds": {},
+        "source": "Campus electricity profile and local data-center PUE assumption"
+      },
+      "networking": {
+        "enabled": true,
+        "mode": "inventory",
+        "accessPoints": 4000,
+        "accessPointWatts": 15,
+        "accessPointEmbodiedKg": 50,
+        "switchesPerAccessPoint": 0.1,
+        "switchWatts": 250,
+        "switchEmbodiedKg": 290,
+        "lifetimeYears": 8,
+        "electricityScale": 1,
+        "legacyPercent": 10,
+        "bounds": {
+          "electricityScale": [
+            0.67,
+            1.33
+          ]
+        },
+        "source": "Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified"
+      },
+      "supercomputing": {
+        "enabled": true,
+        "mode": "allocation",
+        "electricityKwh": 3600000,
+        "energyBasis": "it",
+        "pue": 1.2,
+        "intensityGPerKwh": 50,
+        "serverEquivalentKw": 1.2,
+        "embodiedKgPerServer": 1100,
+        "lifetimeYears": 5,
+        "legacyPowerKw": 66,
+        "bounds": {
+          "pue": [
+            1.1,
+            1.3
+          ],
+          "serverEquivalentKw": [
+            0.4,
+            2
+          ]
+        },
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+      },
+      "ai": {
+        "enabled": true,
+        "population": 38000,
+        "intensityGPerKwh": 207,
+        "pue": 1.2,
+        "chatUsers": 38000,
+        "queriesPerUserDay": 15,
+        "chatDays": 250,
+        "whPerQuery": 1,
+        "chatEnergyBasis": "facility",
+        "chatHardwareGPerQuery": 0.1,
+        "agentUsers": 3800,
+        "agentDays": 250,
+        "kwhPerAgentDay": 1.3,
+        "agentEnergyBasis": "it",
+        "agentHardwareGPerKwh": 100,
+        "trainingPercent": 25,
+        "usageGrowthPercent": 50,
+        "efficiencyImprovementPercent": 30,
+        "trainingGrowthPercent": 50,
+        "bounds": {
+          "whPerQuery": [
+            0.3,
+            3
+          ],
+          "kwhPerAgentDay": [
+            0.1,
+            2.4
+          ],
+          "agentHardwareGPerKwh": [
+            50,
+            150
+          ]
+        },
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      }
+    },
+    "compatibility": null
+  },
+  "results": {
+    "data": [
+      {
+        "category": "Laptops",
+        "embodied": 960000,
+        "usage": 227679.99999999997,
+        "electricityKwh": 4560000,
+        "range": null
+      },
+      {
+        "category": "Monitors",
+        "embodied": 443700,
+        "usage": 74280.59999999999,
+        "electricityKwh": 1487700,
+        "range": null
+      },
+      {
+        "category": "Desktops",
+        "embodied": 0,
+        "usage": 0,
+        "electricityKwh": 0,
+        "range": null
+      },
+      {
+        "category": "Servers",
+        "embodied": 246620,
+        "usage": 168903.31200000003,
+        "electricityKwh": 3142387.2,
+        "range": null
+      },
+      {
+        "category": "Mobile phones",
+        "embodied": 583333.3333333334,
+        "usage": 15662.5,
+        "electricityKwh": 262500,
+        "range": null
+      },
+      {
+        "category": "A/V equipment",
+        "embodied": 37712.5,
+        "usage": 7849.587499999999,
+        "electricityKwh": 161624.99999999997,
+        "range": null
+      },
+      {
+        "category": "Printers",
+        "embodied": 45787.5,
+        "usage": 231.43500000000003,
+        "electricityKwh": 4995,
+        "range": null
+      },
+      {
+        "category": "Campus networking",
+        "embodied": 39500,
+        "usage": 75336,
+        "electricityKwh": 1401600,
+        "range": {
+          "low": 89975.12,
+          "high": 139696.88
+        }
+      },
+      {
+        "category": "DC cooling",
+        "embodied": null,
+        "usage": 168903.31200000003,
+        "electricityKwh": 3142387.2,
+        "range": null
+      },
+      {
+        "category": "Cloud",
+        "embodied": 0,
+        "usage": 0,
+        "electricityKwh": 0,
+        "range": null
+      },
+      {
+        "category": "Supercomputing",
+        "usage": 216000,
+        "embodied": 75342.46575342465,
+        "electricityKwh": 4320000,
+        "itElectricityKwh": 3600000,
+        "serverEquivalents": 342.4657534246575,
+        "range": {
+          "low": 243205.47945205483,
+          "high": 460027.3972602739
+        }
+      },
+      {
+        "category": "AI (chatbot)",
+        "usage": 29497.5,
+        "embodied": 14250,
+        "training": 7374.375,
+        "electricityKwh": 142500,
+        "range": {
+          "low": 25311.5625,
+          "high": 124865.625
+        }
+      },
+      {
+        "category": "AI (agents)",
+        "usage": 306774,
+        "embodied": 123500,
+        "training": 76693.5,
+        "electricityKwh": 1482000,
+        "itElectricityKwh": 1235000,
+        "range": {
+          "low": 34247.5,
+          "high": 1049940
+        }
+      },
+      {
+        "category": "Productivity SaaS",
+        "usage": 209000,
+        "embodied": null,
+        "range": {
+          "low": 38000,
+          "high": 380000
+        }
+      }
+    ],
+    "projection": [
+      {
+        "year": 2026,
+        "usage": 29497.5,
+        "embodied": 14250,
+        "training": 7374.375,
+        "total": 51121.875,
+        "range": {
+          "low": 25311.5625,
+          "high": 124865.625
+        }
+      },
+      {
+        "year": 2027,
+        "usage": 30972.374999999996,
+        "embodied": 21375,
+        "training": 11061.5625,
+        "total": 63408.9375,
+        "range": {
+          "low": 33985.18125,
+          "high": 147476.8125
+        }
+      },
+      {
+        "year": 2028,
+        "usage": 32520.993749999994,
+        "embodied": 32062.5,
+        "training": 16592.34375,
+        "total": 81175.8375,
+        "range": {
+          "low": 46796.50125,
+          "high": 179402.51249999998
+        }
+      },
+      {
+        "year": 2029,
+        "usage": 34147.04343749999,
+        "embodied": 48093.75,
+        "training": 24888.515625,
+        "total": 107129.30906249999,
+        "range": {
+          "low": 65804.41771874999,
+          "high": 225200.42718749997
+        }
+      },
+      {
+        "year": 2030,
+        "usage": 35854.395609374995,
+        "embodied": 72140.625,
+        "training": 37332.7734375,
+        "total": 145327.794046875,
+        "range": {
+          "low": 94096.7757140625,
+          "high": 291702.132140625
+        }
+      }
+    ],
+    "summary": {
+      "totalEmbodied": 2569745.799086758,
+      "totalUsage": 1500118.2465,
+      "totalTraining": 84067.875,
+      "totalCombined": 4153931.920586758,
+      "range": {
+        "low": 3411403.7417853884,
+        "high": 5135193.982093608
+      }
+    }
+  },
+  "units": {
+    "emissions": "kg CO2e/year",
+    "electricity": "kWh/year"
+  },
+  "rangeAnalysis": {
+    "method": "deterministic input bounds",
+    "interpretation": "Assumption ranges; not confidence intervals",
+    "caseCount": 129,
+    "inputs": [
+      {
+        "path": [
+          "environments",
+          "saas",
+          "kgPerUserYear"
+        ],
+        "low": 1,
+        "high": 10,
+        "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+      },
+      {
+        "path": [
+          "environments",
+          "networking",
+          "electricityScale"
+        ],
+        "low": 0.67,
+        "high": 1.33,
+        "source": "Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified"
+      },
+      {
+        "path": [
+          "environments",
+          "supercomputing",
+          "pue"
+        ],
+        "low": 1.1,
+        "high": 1.3,
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+      },
+      {
+        "path": [
+          "environments",
+          "supercomputing",
+          "serverEquivalentKw"
+        ],
+        "low": 0.4,
+        "high": 2,
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "whPerQuery"
+        ],
+        "low": 0.3,
+        "high": 3,
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "kwhPerAgentDay"
+        ],
+        "low": 0.1,
+        "high": 2.4,
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "agentHardwareGPerKwh"
+        ],
+        "low": 50,
+        "high": 150,
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      }
+    ]
+  },
+  "projectionScope": "ordinary chat only",
+  "adoptionAnalysis": {
+    "scope": "External agents only; hardware, training and facility electricity included",
+    "curves": [
+      {
+        "energyKwhPerDay": 0.1,
+        "points": [
+          {
+            "adoptionPercent": 0,
+            "agentUsers": 0,
+            "category": "AI (agents)",
+            "usage": 0,
+            "embodied": 0,
+            "training": 0,
+            "electricityKwh": 0,
+            "itElectricityKwh": 0,
+            "total": 0
+          },
+          {
+            "adoptionPercent": 1,
+            "agentUsers": 380,
+            "category": "AI (agents)",
+            "usage": 2359.8,
+            "embodied": 950,
+            "training": 589.95,
+            "electricityKwh": 11400,
+            "itElectricityKwh": 9500,
+            "total": 3899.75
+          },
+          {
+            "adoptionPercent": 2,
+            "agentUsers": 760,
+            "category": "AI (agents)",
+            "usage": 4719.6,
+            "embodied": 1900,
+            "training": 1179.9,
+            "electricityKwh": 22800,
+            "itElectricityKwh": 19000,
+            "total": 7799.5
+          },
+          {
+            "adoptionPercent": 3,
+            "agentUsers": 1140,
+            "category": "AI (agents)",
+            "usage": 7079.4,
+            "embodied": 2850,
+            "training": 1769.85,
+            "electricityKwh": 34200,
+            "itElectricityKwh": 28500,
+            "total": 11699.25
+          },
+          {
+            "adoptionPercent": 4,
+            "agentUsers": 1520,
+            "category": "AI (agents)",
+            "usage": 9439.2,
+            "embodied": 3800,
+            "training": 2359.8,
+            "electricityKwh": 45600,
+            "itElectricityKwh": 38000,
+            "total": 15599
+          },
+          {
+            "adoptionPercent": 5,
+            "agentUsers": 1900,
+            "category": "AI (agents)",
+            "usage": 11799,
+            "embodied": 4750,
+            "training": 2949.75,
+            "electricityKwh": 57000,
+            "itElectricityKwh": 47500,
+            "total": 19498.75
+          },
+          {
+            "adoptionPercent": 6,
+            "agentUsers": 2280,
+            "category": "AI (agents)",
+            "usage": 14158.8,
+            "embodied": 5700,
+            "training": 3539.7,
+            "electricityKwh": 68400,
+            "itElectricityKwh": 57000,
+            "total": 23398.5
+          },
+          {
+            "adoptionPercent": 7,
+            "agentUsers": 2660,
+            "category": "AI (agents)",
+            "usage": 16518.6,
+            "embodied": 6650,
+            "training": 4129.65,
+            "electricityKwh": 79800,
+            "itElectricityKwh": 66500,
+            "total": 27298.25
+          },
+          {
+            "adoptionPercent": 8,
+            "agentUsers": 3040,
+            "category": "AI (agents)",
+            "usage": 18878.4,
+            "embodied": 7600,
+            "training": 4719.6,
+            "electricityKwh": 91200,
+            "itElectricityKwh": 76000,
+            "total": 31198
+          },
+          {
+            "adoptionPercent": 9,
+            "agentUsers": 3420,
+            "category": "AI (agents)",
+            "usage": 21238.2,
+            "embodied": 8550,
+            "training": 5309.55,
+            "electricityKwh": 102600,
+            "itElectricityKwh": 85500,
+            "total": 35097.75
+          },
+          {
+            "adoptionPercent": 10,
+            "agentUsers": 3800,
+            "category": "AI (agents)",
+            "usage": 23598,
+            "embodied": 9500,
+            "training": 5899.5,
+            "electricityKwh": 114000,
+            "itElectricityKwh": 95000,
+            "total": 38997.5
+          },
+          {
+            "adoptionPercent": 11,
+            "agentUsers": 4180,
+            "category": "AI (agents)",
+            "usage": 25957.8,
+            "embodied": 10450,
+            "training": 6489.45,
+            "electricityKwh": 125400,
+            "itElectricityKwh": 104500,
+            "total": 42897.25
+          },
+          {
+            "adoptionPercent": 12,
+            "agentUsers": 4560,
+            "category": "AI (agents)",
+            "usage": 28317.6,
+            "embodied": 11400,
+            "training": 7079.4,
+            "electricityKwh": 136800,
+            "itElectricityKwh": 114000,
+            "total": 46797
+          },
+          {
+            "adoptionPercent": 13,
+            "agentUsers": 4940,
+            "category": "AI (agents)",
+            "usage": 30677.4,
+            "embodied": 12350,
+            "training": 7669.35,
+            "electricityKwh": 148200,
+            "itElectricityKwh": 123500,
+            "total": 50696.75
+          },
+          {
+            "adoptionPercent": 14,
+            "agentUsers": 5320,
+            "category": "AI (agents)",
+            "usage": 33037.2,
+            "embodied": 13300,
+            "training": 8259.3,
+            "electricityKwh": 159600,
+            "itElectricityKwh": 133000,
+            "total": 54596.5
+          },
+          {
+            "adoptionPercent": 15,
+            "agentUsers": 5700,
+            "category": "AI (agents)",
+            "usage": 35397,
+            "embodied": 14250,
+            "training": 8849.25,
+            "electricityKwh": 171000,
+            "itElectricityKwh": 142500,
+            "total": 58496.25
+          },
+          {
+            "adoptionPercent": 16,
+            "agentUsers": 6080,
+            "category": "AI (agents)",
+            "usage": 37756.8,
+            "embodied": 15200,
+            "training": 9439.2,
+            "electricityKwh": 182400,
+            "itElectricityKwh": 152000,
+            "total": 62396
+          },
+          {
+            "adoptionPercent": 17,
+            "agentUsers": 6460,
+            "category": "AI (agents)",
+            "usage": 40116.6,
+            "embodied": 16150,
+            "training": 10029.15,
+            "electricityKwh": 193800,
+            "itElectricityKwh": 161500,
+            "total": 66295.75
+          },
+          {
+            "adoptionPercent": 18,
+            "agentUsers": 6840,
+            "category": "AI (agents)",
+            "usage": 42476.4,
+            "embodied": 17100,
+            "training": 10619.1,
+            "electricityKwh": 205200,
+            "itElectricityKwh": 171000,
+            "total": 70195.5
+          },
+          {
+            "adoptionPercent": 19,
+            "agentUsers": 7220,
+            "category": "AI (agents)",
+            "usage": 44836.2,
+            "embodied": 18050,
+            "training": 11209.05,
+            "electricityKwh": 216600,
+            "itElectricityKwh": 180500,
+            "total": 74095.25
+          },
+          {
+            "adoptionPercent": 20,
+            "agentUsers": 7600,
+            "category": "AI (agents)",
+            "usage": 47196,
+            "embodied": 19000,
+            "training": 11799,
+            "electricityKwh": 228000,
+            "itElectricityKwh": 190000,
+            "total": 77995
+          }
+        ]
+      },
+      {
+        "energyKwhPerDay": 1.3,
+        "points": [
+          {
+            "adoptionPercent": 0,
+            "agentUsers": 0,
+            "category": "AI (agents)",
+            "usage": 0,
+            "embodied": 0,
+            "training": 0,
+            "electricityKwh": 0,
+            "itElectricityKwh": 0,
+            "total": 0
+          },
+          {
+            "adoptionPercent": 1,
+            "agentUsers": 380,
+            "category": "AI (agents)",
+            "usage": 30677.4,
+            "embodied": 12350,
+            "training": 7669.35,
+            "electricityKwh": 148200,
+            "itElectricityKwh": 123500,
+            "total": 50696.75
+          },
+          {
+            "adoptionPercent": 2,
+            "agentUsers": 760,
+            "category": "AI (agents)",
+            "usage": 61354.8,
+            "embodied": 24700,
+            "training": 15338.7,
+            "electricityKwh": 296400,
+            "itElectricityKwh": 247000,
+            "total": 101393.5
+          },
+          {
+            "adoptionPercent": 3,
+            "agentUsers": 1140,
+            "category": "AI (agents)",
+            "usage": 92032.2,
+            "embodied": 37050,
+            "training": 23008.05,
+            "electricityKwh": 444600,
+            "itElectricityKwh": 370500,
+            "total": 152090.25
+          },
+          {
+            "adoptionPercent": 4,
+            "agentUsers": 1520,
+            "category": "AI (agents)",
+            "usage": 122709.6,
+            "embodied": 49400,
+            "training": 30677.4,
+            "electricityKwh": 592800,
+            "itElectricityKwh": 494000,
+            "total": 202787
+          },
+          {
+            "adoptionPercent": 5,
+            "agentUsers": 1900,
+            "category": "AI (agents)",
+            "usage": 153387,
+            "embodied": 61750,
+            "training": 38346.75,
+            "electricityKwh": 741000,
+            "itElectricityKwh": 617500,
+            "total": 253483.75
+          },
+          {
+            "adoptionPercent": 6,
+            "agentUsers": 2280,
+            "category": "AI (agents)",
+            "usage": 184064.4,
+            "embodied": 74100,
+            "training": 46016.1,
+            "electricityKwh": 889200,
+            "itElectricityKwh": 741000,
+            "total": 304180.5
+          },
+          {
+            "adoptionPercent": 7,
+            "agentUsers": 2660,
+            "category": "AI (agents)",
+            "usage": 214741.8,
+            "embodied": 86450,
+            "training": 53685.45,
+            "electricityKwh": 1037400,
+            "itElectricityKwh": 864500,
+            "total": 354877.25
+          },
+          {
+            "adoptionPercent": 8,
+            "agentUsers": 3040,
+            "category": "AI (agents)",
+            "usage": 245419.2,
+            "embodied": 98800,
+            "training": 61354.8,
+            "electricityKwh": 1185600,
+            "itElectricityKwh": 988000,
+            "total": 405574
+          },
+          {
+            "adoptionPercent": 9,
+            "agentUsers": 3420,
+            "category": "AI (agents)",
+            "usage": 276096.6,
+            "embodied": 111150,
+            "training": 69024.15,
+            "electricityKwh": 1333800,
+            "itElectricityKwh": 1111500,
+            "total": 456270.75
+          },
+          {
+            "adoptionPercent": 10,
+            "agentUsers": 3800,
+            "category": "AI (agents)",
+            "usage": 306774,
+            "embodied": 123500,
+            "training": 76693.5,
+            "electricityKwh": 1482000,
+            "itElectricityKwh": 1235000,
+            "total": 506967.5
+          },
+          {
+            "adoptionPercent": 11,
+            "agentUsers": 4180,
+            "category": "AI (agents)",
+            "usage": 337451.4,
+            "embodied": 135850,
+            "training": 84362.85,
+            "electricityKwh": 1630200,
+            "itElectricityKwh": 1358500,
+            "total": 557664.25
+          },
+          {
+            "adoptionPercent": 12,
+            "agentUsers": 4560,
+            "category": "AI (agents)",
+            "usage": 368128.8,
+            "embodied": 148200,
+            "training": 92032.2,
+            "electricityKwh": 1778400,
+            "itElectricityKwh": 1482000,
+            "total": 608361
+          },
+          {
+            "adoptionPercent": 13,
+            "agentUsers": 4940,
+            "category": "AI (agents)",
+            "usage": 398806.2,
+            "embodied": 160550,
+            "training": 99701.55,
+            "electricityKwh": 1926600,
+            "itElectricityKwh": 1605500,
+            "total": 659057.75
+          },
+          {
+            "adoptionPercent": 14,
+            "agentUsers": 5320,
+            "category": "AI (agents)",
+            "usage": 429483.6,
+            "embodied": 172900,
+            "training": 107370.9,
+            "electricityKwh": 2074800,
+            "itElectricityKwh": 1729000,
+            "total": 709754.5
+          },
+          {
+            "adoptionPercent": 15,
+            "agentUsers": 5700,
+            "category": "AI (agents)",
+            "usage": 460161,
+            "embodied": 185250,
+            "training": 115040.25,
+            "electricityKwh": 2223000,
+            "itElectricityKwh": 1852500,
+            "total": 760451.25
+          },
+          {
+            "adoptionPercent": 16,
+            "agentUsers": 6080,
+            "category": "AI (agents)",
+            "usage": 490838.4,
+            "embodied": 197600,
+            "training": 122709.6,
+            "electricityKwh": 2371200,
+            "itElectricityKwh": 1976000,
+            "total": 811148
+          },
+          {
+            "adoptionPercent": 17,
+            "agentUsers": 6460,
+            "category": "AI (agents)",
+            "usage": 521515.8,
+            "embodied": 209950,
+            "training": 130378.95,
+            "electricityKwh": 2519400,
+            "itElectricityKwh": 2099500,
+            "total": 861844.75
+          },
+          {
+            "adoptionPercent": 18,
+            "agentUsers": 6840,
+            "category": "AI (agents)",
+            "usage": 552193.2,
+            "embodied": 222300,
+            "training": 138048.3,
+            "electricityKwh": 2667600,
+            "itElectricityKwh": 2223000,
+            "total": 912541.5
+          },
+          {
+            "adoptionPercent": 19,
+            "agentUsers": 7220,
+            "category": "AI (agents)",
+            "usage": 582870.6,
+            "embodied": 234650,
+            "training": 145717.65,
+            "electricityKwh": 2815800,
+            "itElectricityKwh": 2346500,
+            "total": 963238.25
+          },
+          {
+            "adoptionPercent": 20,
+            "agentUsers": 7600,
+            "category": "AI (agents)",
+            "usage": 613548,
+            "embodied": 247000,
+            "training": 153387,
+            "electricityKwh": 2964000,
+            "itElectricityKwh": 2470000,
+            "total": 1013935
+          }
+        ]
+      },
+      {
+        "energyKwhPerDay": 2.4,
+        "points": [
+          {
+            "adoptionPercent": 0,
+            "agentUsers": 0,
+            "category": "AI (agents)",
+            "usage": 0,
+            "embodied": 0,
+            "training": 0,
+            "electricityKwh": 0,
+            "itElectricityKwh": 0,
+            "total": 0
+          },
+          {
+            "adoptionPercent": 1,
+            "agentUsers": 380,
+            "category": "AI (agents)",
+            "usage": 56635.2,
+            "embodied": 22800,
+            "training": 14158.8,
+            "electricityKwh": 273600,
+            "itElectricityKwh": 228000,
+            "total": 93594
+          },
+          {
+            "adoptionPercent": 2,
+            "agentUsers": 760,
+            "category": "AI (agents)",
+            "usage": 113270.4,
+            "embodied": 45600,
+            "training": 28317.6,
+            "electricityKwh": 547200,
+            "itElectricityKwh": 456000,
+            "total": 187188
+          },
+          {
+            "adoptionPercent": 3,
+            "agentUsers": 1140,
+            "category": "AI (agents)",
+            "usage": 169905.6,
+            "embodied": 68400,
+            "training": 42476.4,
+            "electricityKwh": 820800,
+            "itElectricityKwh": 684000,
+            "total": 280782
+          },
+          {
+            "adoptionPercent": 4,
+            "agentUsers": 1520,
+            "category": "AI (agents)",
+            "usage": 226540.8,
+            "embodied": 91200,
+            "training": 56635.2,
+            "electricityKwh": 1094400,
+            "itElectricityKwh": 912000,
+            "total": 374376
+          },
+          {
+            "adoptionPercent": 5,
+            "agentUsers": 1900,
+            "category": "AI (agents)",
+            "usage": 283176,
+            "embodied": 114000,
+            "training": 70794,
+            "electricityKwh": 1368000,
+            "itElectricityKwh": 1140000,
+            "total": 467970
+          },
+          {
+            "adoptionPercent": 6,
+            "agentUsers": 2280,
+            "category": "AI (agents)",
+            "usage": 339811.2,
+            "embodied": 136800,
+            "training": 84952.8,
+            "electricityKwh": 1641600,
+            "itElectricityKwh": 1368000,
+            "total": 561564
+          },
+          {
+            "adoptionPercent": 7,
+            "agentUsers": 2660,
+            "category": "AI (agents)",
+            "usage": 396446.4,
+            "embodied": 159600,
+            "training": 99111.6,
+            "electricityKwh": 1915200,
+            "itElectricityKwh": 1596000,
+            "total": 655158
+          },
+          {
+            "adoptionPercent": 8,
+            "agentUsers": 3040,
+            "category": "AI (agents)",
+            "usage": 453081.6,
+            "embodied": 182400,
+            "training": 113270.4,
+            "electricityKwh": 2188800,
+            "itElectricityKwh": 1824000,
+            "total": 748752
+          },
+          {
+            "adoptionPercent": 9,
+            "agentUsers": 3420,
+            "category": "AI (agents)",
+            "usage": 509716.8,
+            "embodied": 205200,
+            "training": 127429.2,
+            "electricityKwh": 2462400,
+            "itElectricityKwh": 2052000,
+            "total": 842346
+          },
+          {
+            "adoptionPercent": 10,
+            "agentUsers": 3800,
+            "category": "AI (agents)",
+            "usage": 566352,
+            "embodied": 228000,
+            "training": 141588,
+            "electricityKwh": 2736000,
+            "itElectricityKwh": 2280000,
+            "total": 935940
+          },
+          {
+            "adoptionPercent": 11,
+            "agentUsers": 4180,
+            "category": "AI (agents)",
+            "usage": 622987.2,
+            "embodied": 250800,
+            "training": 155746.8,
+            "electricityKwh": 3009600,
+            "itElectricityKwh": 2508000,
+            "total": 1029534
+          },
+          {
+            "adoptionPercent": 12,
+            "agentUsers": 4560,
+            "category": "AI (agents)",
+            "usage": 679622.4,
+            "embodied": 273600,
+            "training": 169905.6,
+            "electricityKwh": 3283200,
+            "itElectricityKwh": 2736000,
+            "total": 1123128
+          },
+          {
+            "adoptionPercent": 13,
+            "agentUsers": 4940,
+            "category": "AI (agents)",
+            "usage": 736257.6,
+            "embodied": 296400,
+            "training": 184064.4,
+            "electricityKwh": 3556800,
+            "itElectricityKwh": 2964000,
+            "total": 1216722
+          },
+          {
+            "adoptionPercent": 14,
+            "agentUsers": 5320,
+            "category": "AI (agents)",
+            "usage": 792892.8,
+            "embodied": 319200,
+            "training": 198223.2,
+            "electricityKwh": 3830400,
+            "itElectricityKwh": 3192000,
+            "total": 1310316
+          },
+          {
+            "adoptionPercent": 15,
+            "agentUsers": 5700,
+            "category": "AI (agents)",
+            "usage": 849528,
+            "embodied": 342000,
+            "training": 212382,
+            "electricityKwh": 4104000,
+            "itElectricityKwh": 3420000,
+            "total": 1403910
+          },
+          {
+            "adoptionPercent": 16,
+            "agentUsers": 6080,
+            "category": "AI (agents)",
+            "usage": 906163.2,
+            "embodied": 364800,
+            "training": 226540.8,
+            "electricityKwh": 4377600,
+            "itElectricityKwh": 3648000,
+            "total": 1497504
+          },
+          {
+            "adoptionPercent": 17,
+            "agentUsers": 6460,
+            "category": "AI (agents)",
+            "usage": 962798.4,
+            "embodied": 387600,
+            "training": 240699.6,
+            "electricityKwh": 4651200,
+            "itElectricityKwh": 3876000,
+            "total": 1591098
+          },
+          {
+            "adoptionPercent": 18,
+            "agentUsers": 6840,
+            "category": "AI (agents)",
+            "usage": 1019433.6,
+            "embodied": 410400,
+            "training": 254858.4,
+            "electricityKwh": 4924800,
+            "itElectricityKwh": 4104000,
+            "total": 1684692
+          },
+          {
+            "adoptionPercent": 19,
+            "agentUsers": 7220,
+            "category": "AI (agents)",
+            "usage": 1076068.8,
+            "embodied": 433200,
+            "training": 269017.2,
+            "electricityKwh": 5198400,
+            "itElectricityKwh": 4332000,
+            "total": 1778286
+          },
+          {
+            "adoptionPercent": 20,
+            "agentUsers": 7600,
+            "category": "AI (agents)",
+            "usage": 1132704,
+            "embodied": 456000,
+            "training": 283176,
+            "electricityKwh": 5472000,
+            "itElectricityKwh": 4560000,
+            "total": 1871880
+          }
+        ]
+      }
+    ],
+    "benchmarks": [
+      {
+        "before": "baseline",
+        "after": "cloud",
+        "label": "Cloud migration savings",
+        "beforeConfiguration": {
+          "modelVersion": "2.0",
+          "referenceYear": 2026,
+          "annotation": "UZH broad-boundary illustrative scenario; adoption and several service inputs are estimates, not measurements.",
+          "percentage": false,
+          "rangeInputs": [],
+          "deviceInfo": {
+            "Laptops": {
+              "Lifetime": 6,
+              "Count": 32000,
+              "Days per year": 250
+            },
+            "Monitors": {
+              "Lifetime": 8,
+              "Count": 10440,
+              "Days per year": 250
+            },
+            "Desktops": {
+              "Lifetime": 8,
+              "Count": 0,
+              "Days per year": 250
+            },
+            "Servers": {
+              "Lifetime": 5,
+              "Count": 1121,
+              "Days per year": 365
+            },
+            "Mobile phones": {
+              "Lifetime": 3,
+              "Count": 35000,
+              "Days per year": 250
+            },
+            "A/V equipment": {
+              "Lifetime": 8,
+              "Count": 431,
+              "Days per year": 250
+            },
+            "Printers": {
+              "Lifetime": 8,
+              "Count": 333,
+              "Days per year": 250
+            }
+          },
+          "embodiedEmissionsKgCo2e": {
+            "Laptops": {
+              "Mean": 180,
+              "Stdev": 128,
+              "Min": 104,
+              "Max": 372
+            },
+            "Monitors": {
+              "Mean": 340,
+              "Stdev": 50,
+              "Min": 150,
+              "Max": 394
+            },
+            "Desktops": {
+              "Mean": 290,
+              "Stdev": 80,
+              "Min": 209,
+              "Max": 403
+            },
+            "Servers": {
+              "Mean": 1100,
+              "Stdev": 330,
+              "Min": 383,
+              "Max": 1582
+            },
+            "Mobile phones": {
+              "Mean": 50,
+              "Stdev": 10,
+              "Min": 30,
+              "Max": 70
+            },
+            "A/V equipment": {
+              "Mean": 700,
+              "Stdev": 109,
+              "Min": 644,
+              "Max": 862
+            },
+            "Printers": {
+              "Mean": 1100,
+              "Stdev": 200,
+              "Min": 967,
+              "Max": 1367
+            }
+          },
+          "powerW": {
+            "Laptops": {
+              "Mean": 50,
+              "Stdev": 20,
+              "Min": 20,
+              "Max": 100,
+              "Standby": 1
+            },
+            "Monitors": {
+              "Mean": 50,
+              "Stdev": 10,
+              "Min": 30,
+              "Max": 90,
+              "Standby": 1
+            },
+            "Desktops": {
+              "Mean": 100,
+              "Stdev": 20,
+              "Min": 60,
+              "Max": 200,
+              "Standby": 1
+            },
+            "Servers": {
+              "Mean": 400,
+              "Stdev": 100,
+              "Min": 200,
+              "Max": 600,
+              "Standby": 1
+            },
+            "Mobile phones": {
+              "Mean": 10,
+              "Stdev": 2,
+              "Min": 5,
+              "Max": 20,
+              "Standby": 0
+            },
+            "A/V equipment": {
+              "Mean": 250,
+              "Stdev": 50,
+              "Min": 150,
+              "Max": 350,
+              "Standby": 1
+            },
+            "Printers": {
+              "Mean": 1000,
+              "Stdev": 200,
+              "Min": 600,
+              "Max": 1400,
+              "Standby": 90
+            }
+          },
+          "compute": {},
+          "dutyCycle6h": {
+            "Laptops": [
+              0.1,
+              0.5,
+              1,
+              0.3
+            ],
+            "Desktops": [
+              0.1,
+              0.5,
+              1,
+              0.3
+            ],
+            "Servers": [
+              0.8,
+              0.8,
+              0.8,
+              0.8
+            ],
+            "Mobile phones": [
+              0,
+              0,
+              0,
+              0.5
+            ],
+            "Monitors": [
+              0.1,
+              0.5,
+              1,
+              0.3
+            ],
+            "A/V equipment": [
+              0,
+              0.3,
+              0.6,
+              0.1
+            ],
+            "Printers": [
+              0,
+              0,
+              0.01,
+              0
+            ]
+          },
+          "environments": {
+            "saas": {
+              "enabled": true,
+              "users": 38000,
+              "kgPerUserYear": 5.5,
+              "bounds": {
+                "kgPerUserYear": [
+                  1,
+                  10
+                ]
+              },
+              "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+            },
+            "cloud": {
+              "enabled": true,
+              "migratedPercent": 0,
+              "instancesPer100Servers": 100,
+              "powerWatts": 300,
+              "embodiedKg": 700,
+              "lifetimeYears": 4,
+              "pue": 1.15,
+              "intensityGPerKwh": 53.75,
+              "energyBasis": "it",
+              "bounds": {},
+              "source": "Cloud VM proxy and selected serving-region electricity factor"
+            },
+            "local": {
+              "enabled": true,
+              "pue": 2,
+              "intensityGPerKwh": 53.75,
+              "useHourlyProfile": true,
+              "energyBasis": "it",
+              "bounds": {},
+              "source": "Campus electricity profile and local data-center PUE assumption"
+            },
+            "networking": {
+              "enabled": true,
+              "mode": "inventory",
+              "accessPoints": 4000,
+              "accessPointWatts": 15,
+              "accessPointEmbodiedKg": 50,
+              "switchesPerAccessPoint": 0.1,
+              "switchWatts": 250,
+              "switchEmbodiedKg": 290,
+              "lifetimeYears": 8,
+              "electricityScale": 1,
+              "legacyPercent": 10,
+              "bounds": {
+                "electricityScale": [
+                  0.67,
+                  1.33
+                ]
+              },
+              "source": "Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified"
+            },
+            "supercomputing": {
+              "enabled": true,
+              "mode": "allocation",
+              "electricityKwh": 3600000,
+              "energyBasis": "it",
+              "pue": 1.2,
+              "intensityGPerKwh": 50,
+              "serverEquivalentKw": 1.2,
+              "embodiedKgPerServer": 1100,
+              "lifetimeYears": 5,
+              "legacyPowerKw": 66,
+              "bounds": {
+                "pue": [
+                  1.1,
+                  1.3
+                ],
+                "serverEquivalentKw": [
+                  0.4,
+                  2
+                ]
+              },
+              "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+            },
+            "ai": {
+              "enabled": true,
+              "population": 38000,
+              "intensityGPerKwh": 207,
+              "pue": 1.2,
+              "chatUsers": 38000,
+              "queriesPerUserDay": 15,
+              "chatDays": 250,
+              "whPerQuery": 1,
+              "chatEnergyBasis": "facility",
+              "chatHardwareGPerQuery": 0.1,
+              "agentUsers": 3800,
+              "agentDays": 250,
+              "kwhPerAgentDay": 1.3,
+              "agentEnergyBasis": "it",
+              "agentHardwareGPerKwh": 100,
+              "trainingPercent": 25,
+              "usageGrowthPercent": 50,
+              "efficiencyImprovementPercent": 30,
+              "trainingGrowthPercent": 50,
+              "bounds": {
+                "whPerQuery": [
+                  0.3,
+                  3
+                ],
+                "kwhPerAgentDay": [
+                  0.1,
+                  2.4
+                ],
+                "agentHardwareGPerKwh": [
+                  50,
+                  150
+                ]
+              },
+              "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            }
+          },
+          "compatibility": null
+        },
+        "change": {
+          "environments": {
+            "cloud": {
+              "migratedPercent": 100
+            }
+          }
+        },
+        "comparison": {
+          "baselineTotal": 4153931.920586758,
+          "savings": {
+            "central": 206152.74074999988,
+            "low": 206152.74074999988,
+            "high": 206152.7407500008
+          },
+          "units": "kg CO2e/year",
+          "method": "Paired whole-model evaluations with shared assumptions"
+        }
+      },
+      {
+        "before": "lifecycle-before",
+        "after": "lifecycle-after",
+        "label": "Device lifetime savings",
+        "beforeConfiguration": {
+          "modelVersion": "2.0",
+          "referenceYear": 2026,
+          "annotation": "UZH broad-boundary illustrative scenario; adoption and several service inputs are estimates, not measurements.",
+          "percentage": false,
+          "rangeInputs": [],
+          "deviceInfo": {
+            "Laptops": {
+              "Lifetime": 4,
+              "Count": 32000,
+              "Days per year": 250
+            },
+            "Monitors": {
+              "Lifetime": 8,
+              "Count": 10440,
+              "Days per year": 250
+            },
+            "Desktops": {
+              "Lifetime": 8,
+              "Count": 0,
+              "Days per year": 250
+            },
+            "Servers": {
+              "Lifetime": 5,
+              "Count": 1121,
+              "Days per year": 365
+            },
+            "Mobile phones": {
+              "Lifetime": 3,
+              "Count": 35000,
+              "Days per year": 250
+            },
+            "A/V equipment": {
+              "Lifetime": 8,
+              "Count": 431,
+              "Days per year": 250
+            },
+            "Printers": {
+              "Lifetime": 8,
+              "Count": 333,
+              "Days per year": 250
+            }
+          },
+          "embodiedEmissionsKgCo2e": {
+            "Laptops": {
+              "Mean": 180,
+              "Stdev": 128,
+              "Min": 104,
+              "Max": 372
+            },
+            "Monitors": {
+              "Mean": 340,
+              "Stdev": 50,
+              "Min": 150,
+              "Max": 394
+            },
+            "Desktops": {
+              "Mean": 290,
+              "Stdev": 80,
+              "Min": 209,
+              "Max": 403
+            },
+            "Servers": {
+              "Mean": 1100,
+              "Stdev": 330,
+              "Min": 383,
+              "Max": 1582
+            },
+            "Mobile phones": {
+              "Mean": 50,
+              "Stdev": 10,
+              "Min": 30,
+              "Max": 70
+            },
+            "A/V equipment": {
+              "Mean": 700,
+              "Stdev": 109,
+              "Min": 644,
+              "Max": 862
+            },
+            "Printers": {
+              "Mean": 1100,
+              "Stdev": 200,
+              "Min": 967,
+              "Max": 1367
+            }
+          },
+          "powerW": {
+            "Laptops": {
+              "Mean": 50,
+              "Stdev": 20,
+              "Min": 20,
+              "Max": 100,
+              "Standby": 1
+            },
+            "Monitors": {
+              "Mean": 50,
+              "Stdev": 10,
+              "Min": 30,
+              "Max": 90,
+              "Standby": 1
+            },
+            "Desktops": {
+              "Mean": 100,
+              "Stdev": 20,
+              "Min": 60,
+              "Max": 200,
+              "Standby": 1
+            },
+            "Servers": {
+              "Mean": 400,
+              "Stdev": 100,
+              "Min": 200,
+              "Max": 600,
+              "Standby": 1
+            },
+            "Mobile phones": {
+              "Mean": 10,
+              "Stdev": 2,
+              "Min": 5,
+              "Max": 20,
+              "Standby": 0
+            },
+            "A/V equipment": {
+              "Mean": 250,
+              "Stdev": 50,
+              "Min": 150,
+              "Max": 350,
+              "Standby": 1
+            },
+            "Printers": {
+              "Mean": 1000,
+              "Stdev": 200,
+              "Min": 600,
+              "Max": 1400,
+              "Standby": 90
+            }
+          },
+          "compute": {},
+          "dutyCycle6h": {
+            "Laptops": [
+              0.1,
+              0.5,
+              1,
+              0.3
+            ],
+            "Desktops": [
+              0.1,
+              0.5,
+              1,
+              0.3
+            ],
+            "Servers": [
+              0.8,
+              0.8,
+              0.8,
+              0.8
+            ],
+            "Mobile phones": [
+              0,
+              0,
+              0,
+              0.5
+            ],
+            "Monitors": [
+              0.1,
+              0.5,
+              1,
+              0.3
+            ],
+            "A/V equipment": [
+              0,
+              0.3,
+              0.6,
+              0.1
+            ],
+            "Printers": [
+              0,
+              0,
+              0.01,
+              0
+            ]
+          },
+          "environments": {
+            "saas": {
+              "enabled": true,
+              "users": 38000,
+              "kgPerUserYear": 5.5,
+              "bounds": {
+                "kgPerUserYear": [
+                  1,
+                  10
+                ]
+              },
+              "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+            },
+            "cloud": {
+              "enabled": true,
+              "migratedPercent": 0,
+              "instancesPer100Servers": 100,
+              "powerWatts": 300,
+              "embodiedKg": 700,
+              "lifetimeYears": 4,
+              "pue": 1.15,
+              "intensityGPerKwh": 53.75,
+              "energyBasis": "it",
+              "bounds": {},
+              "source": "Cloud VM proxy and selected serving-region electricity factor"
+            },
+            "local": {
+              "enabled": true,
+              "pue": 2,
+              "intensityGPerKwh": 53.75,
+              "useHourlyProfile": true,
+              "energyBasis": "it",
+              "bounds": {},
+              "source": "Campus electricity profile and local data-center PUE assumption"
+            },
+            "networking": {
+              "enabled": true,
+              "mode": "inventory",
+              "accessPoints": 4000,
+              "accessPointWatts": 15,
+              "accessPointEmbodiedKg": 50,
+              "switchesPerAccessPoint": 0.1,
+              "switchWatts": 250,
+              "switchEmbodiedKg": 290,
+              "lifetimeYears": 8,
+              "electricityScale": 1,
+              "legacyPercent": 10,
+              "bounds": {
+                "electricityScale": [
+                  0.67,
+                  1.33
+                ]
+              },
+              "source": "Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified"
+            },
+            "supercomputing": {
+              "enabled": true,
+              "mode": "allocation",
+              "electricityKwh": 3600000,
+              "energyBasis": "it",
+              "pue": 1.2,
+              "intensityGPerKwh": 50,
+              "serverEquivalentKw": 1.2,
+              "embodiedKgPerServer": 1100,
+              "lifetimeYears": 5,
+              "legacyPowerKw": 66,
+              "bounds": {
+                "pue": [
+                  1.1,
+                  1.3
+                ],
+                "serverEquivalentKw": [
+                  0.4,
+                  2
+                ]
+              },
+              "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+            },
+            "ai": {
+              "enabled": true,
+              "population": 38000,
+              "intensityGPerKwh": 207,
+              "pue": 1.2,
+              "chatUsers": 38000,
+              "queriesPerUserDay": 15,
+              "chatDays": 250,
+              "whPerQuery": 1,
+              "chatEnergyBasis": "facility",
+              "chatHardwareGPerQuery": 0.1,
+              "agentUsers": 3800,
+              "agentDays": 250,
+              "kwhPerAgentDay": 1.3,
+              "agentEnergyBasis": "it",
+              "agentHardwareGPerKwh": 100,
+              "trainingPercent": 25,
+              "usageGrowthPercent": 50,
+              "efficiencyImprovementPercent": 30,
+              "trainingGrowthPercent": 50,
+              "bounds": {
+                "whPerQuery": [
+                  0.3,
+                  3
+                ],
+                "kwhPerAgentDay": [
+                  0.1,
+                  2.4
+                ],
+                "agentHardwareGPerKwh": [
+                  50,
+                  150
+                ]
+              },
+              "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            }
+          },
+          "compatibility": null
+        },
+        "change": {
+          "deviceInfo": {
+            "Laptops": {
+              "Lifetime": 6
+            },
+            "Mobile phones": {
+              "Lifetime": 4
+            }
+          }
+        },
+        "comparison": {
+          "baselineTotal": 4633931.920586757,
+          "savings": {
+            "central": 625833.333333333,
+            "low": 625833.333333333,
+            "high": 625833.333333334
+          },
+          "units": "kg CO2e/year",
+          "method": "Paired whole-model evaluations with shared assumptions"
+        }
+      }
+    ]
+  }
+}

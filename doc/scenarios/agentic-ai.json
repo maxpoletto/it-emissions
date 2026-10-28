@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "extends": "baseline",
+  "description": "External agent emissions against adoption, at three fixed IT-energy allowances. Ordinary chat is excluded from the curves. Savings benchmarks are paired interventions, not emissions offsets assumed to occur.",
+  "kind": "agentAdoption",
+  "overrides": {},
+  "adoptionPercent": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+  "agentEnergyKwhPerDay": [0.1, 1.3, 2.4],
+  "benchmarks": [
+    {"before": "baseline", "after": "cloud", "label": "Cloud migration savings"},
+    {"before": "lifecycle-before", "after": "lifecycle-after", "label": "Device lifetime savings"}
+  ]
+}

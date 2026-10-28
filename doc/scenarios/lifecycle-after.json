@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "extends": "lifecycle-before",
+  "description": "Extend laptops from four to six years and phones from three to four years. Use the same assumptions before and after when calculating savings.",
+  "overrides": {"deviceInfo": {"Laptops": {"Lifetime": 6}, "Mobile phones": {"Lifetime": 4}}}
+}

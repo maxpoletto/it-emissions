@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "extends": "baseline",
+  "description": "Device-lifetime intervention starting point: four-year laptops and three-year phones; all other broad-boundary assumptions unchanged.",
+  "overrides": {"deviceInfo": {"Laptops": {"Lifetime": 4}, "Mobile phones": {"Lifetime": 3}}}
+}

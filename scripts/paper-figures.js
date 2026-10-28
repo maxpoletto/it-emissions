@@ -6,11 +6,12 @@ import path from 'node:path';
 import {merge, report, calculate, createConfig} from '../src/model.js';
 import {environmentRanges} from '../src/environments.js';
 import {compareRanges} from '../src/ranges.js';
-import {emissionsChart, projectionChart} from '../src/charts.js';
+import {emissionsChart, projectionChart, agentAdoptionChart} from '../src/charts.js';
+import {rowTotal} from '../src/components.js';
 import {renderChart} from './render.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const FIGURES = ['baseline', 'cloud', 'llm-growth', 'sens1', 'sens2'];
+export const FIGURES = ['baseline', 'cloud', 'llm-growth', 'sens1', 'sens2', 'agentic-ai'];
 const TITLES = {baseline: 'UZH IT emissions — illustrative baseline', cloud: 'All local servers migrated to cloud',
     sens1: 'Managed-device counts and high ordinary-chat use', sens2: 'Low local-device embodied footprints'};
 const ORDER = ['Mobile phones', 'Laptops', 'Monitors', 'Campus networking', 'A/V equipment',
@@ -50,6 +51,25 @@ export function interventionComparison(configuration, change) {
         units: 'kg CO2e/year', method: 'Paired whole-model evaluations with shared assumptions'};
 }
 
+async function agentAdoption(scenario) {
+    const curves = scenario.agentEnergyKwhPerDay.map(energyKwhPerDay => ({energyKwhPerDay,
+        points: scenario.adoptionPercent.map(adoptionPercent => {
+            const agentUsers = Math.round(scenario.configuration.environments.ai.population * adoptionPercent / 100);
+            const result = calculate(merge(scenario.configuration, {environments: {ai: {agentUsers, kwhPerAgentDay: energyKwhPerDay}}}));
+            const row = result.rows.find(r => r.category === 'AI (agents)');
+            return {adoptionPercent, agentUsers, ...row, total: rowTotal(row)};
+        })}));
+    const benchmarks = [];
+    for (const item of scenario.benchmarks) {
+        const before = await loadScenario(item.before), after = await loadScenario(item.after);
+        if (after.extends !== item.before) throw new Error('Savings scenario must extend its paired starting point');
+        benchmarks.push({...item, beforeConfiguration: before.configuration, change: after.overrides,
+            comparison: interventionComparison(before.configuration, after.overrides)});
+        scenario.sources.push(...before.sources, ...after.sources);
+    }
+    return {scope: 'External agents only; hardware, training and facility electricity included', curves, benchmarks};
+}
+
 export async function prepareFigure(name) {
     if (!FIGURES.includes(name)) throw new Error('Unknown paper figure: ' + name);
     const scenario = await loadScenario(name);
@@ -57,7 +77,12 @@ export async function prepareFigure(name) {
     const record = {figure: {name, description: scenario.description, sources: scenario.sources,
         image: `fig-${name}.png`, dimensions: {width: 1600, height: 900}}, ...results};
     if (name === 'cloud') record.comparison = interventionComparison((await loadScenario('baseline')).configuration, scenario.overrides);
-    const chart = scenario.kind === 'chatProjection' ? projectionChart(results.results.projection, {divisor: 1000})
+    if (scenario.kind === 'agentAdoption') {
+        record.adoptionAnalysis = await agentAdoption(scenario);
+        record.figure.sources = [...new Map(scenario.sources.map(source => [source.path, source])).values()];
+    }
+    const chart = scenario.kind === 'agentAdoption' ? agentAdoptionChart(record.adoptionAnalysis)
+        : scenario.kind === 'chatProjection' ? projectionChart(results.results.projection, {divisor: 1000})
         : emissionsChart(results.results.data, {divisor: 1000, order: ORDER, labels: LABELS,
         title: TITLES[name]});
     return {record, chart: paperPresentation(chart)};
