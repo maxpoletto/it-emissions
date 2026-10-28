@@ -18,6 +18,7 @@ model-results.tex: $(wildcard scenarios/*.json) $(MODEL_SOURCES)
 
 %.pdf: %.tex ref.bib
 	@latexmk -pdf -interaction=nonstopmode -halt-on-error $<
+	@touch $@
 
 clean:
 	rm -f *.aux *.bbl *.bcf *.blg *.dvi *.fdb_latexmk *.fls *.log *.out *.ps *.run.xml *.synctex.gz *.toc
