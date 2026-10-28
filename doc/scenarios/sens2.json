@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "extends": "baseline",
+  "description": "Use the literature minimum for each local-device embodied footprint. Lifetimes, operational inputs, and independent cloud, CSCS, network and AI hardware proxies remain fixed. These are alternative device assumptions, not uncertainty inferred from device population size.",
+  "kind": "annual",
+  "overrides": {
+    "embodiedEmissionsKgCo2e": {
+      "Laptops": {
+        "Mean": 104
+      },
+      "Monitors": {
+        "Mean": 150
+      },
+      "Desktops": {
+        "Mean": 209
+      },
+      "Servers": {
+        "Mean": 383
+      },
+      "Mobile phones": {
+        "Mean": 30
+      },
+      "A/V equipment": {
+        "Mean": 644
+      },
+      "Printers": {
+        "Mean": 967
+      }
+    }
+  }
+}

@@ -53,3 +53,17 @@ test('managed-device sensitivity changes counts and chat without dropping broad-
     assert.ok(Math.abs(chat.usage - 235980) < 1e-6);
     assert.ok(record.results.data.some(r => r.category === 'Productivity SaaS'));
 });
+
+test('low-device sensitivity changes manufacturing assumptions without changing operation', async () => {
+    const base = (await prepareFigure('baseline')).record;
+    const low = (await prepareFigure('sens2')).record;
+    for (const [device, stats] of Object.entries(low.parameters.embodiedEmissionsKgCo2e)) {
+        assert.equal(stats.Mean, stats.Min);
+        const before = base.results.data.find(r => r.category === device);
+        const after = low.results.data.find(r => r.category === device);
+        assert.equal(after.usage, before.usage);
+        assert.ok(after.embodied <= before.embodied);
+    }
+    for (const category of ['Supercomputing', 'AI (agents)', 'Campus networking'])
+        assert.deepEqual(low.results.data.find(r => r.category === category), base.results.data.find(r => r.category === category));
+});

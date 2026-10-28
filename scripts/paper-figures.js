@@ -10,9 +10,9 @@ import {emissionsChart, projectionChart} from '../src/charts.js';
 import {renderChart} from './render.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const FIGURES = ['baseline', 'cloud', 'llm-growth', 'sens1'];
+export const FIGURES = ['baseline', 'cloud', 'llm-growth', 'sens1', 'sens2'];
 const TITLES = {baseline: 'UZH IT emissions — illustrative baseline', cloud: 'All local servers migrated to cloud',
-    sens1: 'Managed-device counts and high ordinary-chat use'};
+    sens1: 'Managed-device counts and high ordinary-chat use', sens2: 'Low local-device embodied footprints'};
 const ORDER = ['Mobile phones', 'Laptops', 'Monitors', 'Campus networking', 'A/V equipment',
     'Printers', 'Servers', 'DC cooling', 'Supercomputing', 'Cloud', 'Productivity SaaS', 'AI (chatbot)', 'AI (agents)'];
 const LABELS = {'Campus networking': 'Networking', 'Productivity SaaS': 'SaaS', 'Supercomputing': 'CSCS'};
