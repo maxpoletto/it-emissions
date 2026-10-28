@@ -23,6 +23,8 @@ export function createConfig(input = {}) {
     const legacy = raw.compatibility === 'v1' || raw.modelVersion === '1.0';
     const environments = clone(ENVIRONMENT_DEFAULTS);
     if (legacy) environments.saas.enabled = false;
+    if (raw.compute?.['Campus data center PUE x100'] !== undefined)
+        environments.local.pue = raw.compute['Campus data center PUE x100'] / 100;
     for (const [old, key] of Object.entries(CLOUD_LEGACY_KEYS)) {
         if (raw.compute?.[old] !== undefined) environments.cloud[key] = raw.compute[old] / (old === 'Cloud PUE x100' ? 100 : 1);
     }
@@ -33,6 +35,7 @@ export function createConfig(input = {}) {
         environments,
     }, raw);
     for (const key of Object.keys(CLOUD_LEGACY_KEYS)) delete config.compute[key];
+    delete config.compute['Campus data center PUE x100'];
     config.modelVersion = MODEL_VERSION;
     config.compatibility = legacy ? 'v1' : null;
     return config;
@@ -41,6 +44,17 @@ export function createConfig(input = {}) {
 export function calculate(input = {}) {
     const config = createConfig(input);
     validateEnvironments(config.environments);
+    for (const [device, info] of Object.entries(config.deviceInfo)) {
+        if (!Number.isInteger(info.Count) || info.Count < 0 || !Number.isFinite(info.Lifetime) || info.Lifetime <= 0
+            || !Number.isFinite(info['Days per year']) || info['Days per year'] < 0 || info['Days per year'] > 366)
+            throw new Error('Invalid count, lifetime or operating days for ' + device);
+        if (!Number.isFinite(config.powerW[device]?.Mean) || config.powerW[device].Mean < 0
+            || !Number.isFinite(config.embodiedEmissionsKgCo2e[device]?.Mean) || config.embodiedEmissionsKgCo2e[device].Mean < 0)
+            throw new Error('Invalid power or embodied emissions for ' + device);
+        if (!Array.isArray(config.dutyCycle6h[device]) || config.dutyCycle6h[device].length !== 4
+            || config.dutyCycle6h[device].some(v => !Number.isFinite(v) || v < 0 || v > 1))
+            throw new Error('Duty cycles must contain four fractions from 0 to 1 for ' + device);
+    }
     const {deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, llms, dutyCycle6h, referenceYear} = config;
     const stochastic = false;
     let devices = {}, emissionsIntensity = {}, cloudInstances = 0, resultsEmissions, resultsLLMGrowth;
@@ -50,12 +64,14 @@ export function calculate(input = {}) {
                 };
 
                 static atHour(hour, country) {
-                    return this.gco2PerKwhByHours[country][Math.floor(hour / 2)];
+                    const local = config.environments.local;
+                const mean = GRID_PROFILE.reduce((a, b) => a + b, 0) / GRID_PROFILE.length;
+                return local.useHourlyProfile ? GRID_PROFILE[Math.floor(hour / 2)] * local.intensityGPerKwh / mean : local.intensityGPerKwh;
                 }
 
                 static mean(country) {
                     const values = this.gco2PerKwhByHours[country];
-                    return values.reduce((a, b) => a + b, 0) / values.length;
+                    return config.environments.local.intensityGPerKwh;
                 }
             }
     function truncatedNormal(mu, sigma, minValue, maxValue, n) {
@@ -126,7 +142,13 @@ export function calculate(input = {}) {
                 });
             }
 
-            // Calculate device emissions
+            function deviceElectricityKwh(device) {
+            const power = devices[device].power_w.reduce((a, b) => a + b, 0) / 1000;
+            const duty = dutyCycle6h[device];
+            return power * duty.reduce((a, b) => a + b, 0) * (24 / duty.length) * deviceInfo[device]['Days per year'];
+        }
+
+        // Calculate device emissions
             function deviceEmissionsKgCO2e(device) {
                 const intensitySum = emissionsIntensity[device].reduce((a, b) => a + b, 0); // g CO2e (for 24 h for 1 kW * duty cycle)
                 const powerSum = devices[device]['power_w'].reduce((a, b) => a + b, 0); // W for all devices
@@ -138,7 +160,7 @@ export function calculate(input = {}) {
             // Calculate data center cooling emissions
             function dataCenterCoolingEmissionsKgCO2e() {
                 const [serverU, _] = deviceEmissionsKgCO2e('Servers');
-                const dcCoolingU = serverU * (compute['Campus data center PUE x100'] - 100) / 100;
+                const dcCoolingU = serverU * (facilityMultiplier(config.environments.local) - 1);
                 return dcCoolingU;
             }
 
@@ -222,7 +244,8 @@ export function calculate(input = {}) {
                     data.push({
                         category: device,
                         embodied: m,
-                        usage: u
+                        usage: u,
+                        electricityKwh: deviceElectricityKwh(device)
                     });
                 });
 
@@ -246,7 +269,8 @@ export function calculate(input = {}) {
                 data.push({
                     category: 'DC cooling',
                     embodied: null,
-                    usage: dcCoolingU
+                    usage: dcCoolingU,
+                    electricityKwh: deviceElectricityKwh('Servers') * (facilityMultiplier(config.environments.local) - 1)
                 });
                 totalU += dcCoolingU;
 
@@ -255,7 +279,9 @@ export function calculate(input = {}) {
                 data.push({
                     category: 'Cloud',
                     embodied: cloudM,
-                    usage: cloudU
+                    usage: cloudU,
+                    electricityKwh: cloudInstances * config.environments.cloud.instancesPer100Servers / 100
+                        * config.environments.cloud.powerWatts / 1000 * 8760 * facilityMultiplier(config.environments.cloud)
                 });
                 totalU += cloudU;
                 totalM += cloudM;
@@ -298,7 +324,7 @@ export function calculate(input = {}) {
 
 
     runModel();
-    return {modelVersion: MODEL_VERSION, units: {emissions: 'kg CO2e/year'},
+    return {modelVersion: MODEL_VERSION, units: {emissions: 'kg CO2e/year', electricity: 'kWh/year'},
         config, rows: resultsEmissions, projection: resultsLLMGrowth};
 }
 

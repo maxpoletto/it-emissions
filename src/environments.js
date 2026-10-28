@@ -5,6 +5,8 @@ export const ENVIRONMENT_DEFAULTS = {
     cloud: {enabled: true, migratedPercent: 0, instancesPer100Servers: 100, powerWatts: 300,
         embodiedKg: 700, lifetimeYears: 4, pue: 1.15, intensityGPerKwh: 53.75,
         energyBasis: 'it', bounds: {}, source: 'Cloud VM proxy and selected serving-region electricity factor'},
+    local: {enabled: true, pue: 2, intensityGPerKwh: 53.75, useHourlyProfile: true,
+        energyBasis: 'it', bounds: {}, source: 'Campus electricity profile and local data-center PUE assumption'},
 };
 
 export const ENVIRONMENT_FIELDS = {
@@ -27,6 +29,14 @@ export const ENVIRONMENT_FIELDS = {
             {key: 'intensityGPerKwh', label: 'Electricity emissions intensity (g CO₂e/kWh)', min: 0},
             {key: 'embodiedKg', label: 'Embodied emissions per instance (kg CO₂e)', min: 0},
             {key: 'lifetimeYears', label: 'Hardware lifetime (years)', min: 0.01},
+        ]},
+    local: {title: 'Campus electricity and local data center',
+        note: 'The campus factor applies to local devices and servers. Server count, power and lifetime are in the device tables. PUE adds facility overhead to server electricity only.',
+        fields: [
+            {key: 'intensityGPerKwh', label: 'Mean campus electricity intensity (g CO₂e/kWh)', min: 0},
+            {key: 'useHourlyProfile', label: 'Preserve the Swiss hourly profile', type: 'boolean'},
+            {key: 'energyBasis', label: 'Server power estimate includes', type: 'select', options: {it: 'IT equipment only', facility: 'IT equipment and facility overhead'}},
+            {key: 'pue', label: 'Local data-center PUE', min: 1},
         ]},
 };
 

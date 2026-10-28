@@ -30,6 +30,12 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.locator('#cloud-intensityGPerKwh').dispatchEvent('change');
         const cloud = await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Cloud'));
         assert.equal(cloud.usage, 0); assert.ok(cloud.embodied > 0);
+        await page.locator('#local-pue').fill('0.5');
+        await page.locator('#local-pue').dispatchEvent('change');
+        assert.match(await page.locator('#model-error').textContent(), /PUE/);
+        await page.locator('#local-pue').fill('1');
+        await page.locator('#local-pue').dispatchEvent('change');
+        assert.equal(await page.locator('#model-error').textContent(), '');
         await page.evaluate(() => window.EmissionsApp.setConfig({referenceYear: 2026, annotation: 'Zürich + climate 🌍',
             compute: {'Cloud % servers in cloud': 100}, deviceInfo: {Laptops: {Lifetime: 8}},
             rangeInputs: [{path: ['deviceInfo', 'Laptops', 'Lifetime'], low: 4, high: 8,
