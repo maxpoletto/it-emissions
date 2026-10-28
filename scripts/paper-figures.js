@@ -3,12 +3,14 @@ import {createHash} from 'node:crypto';
 import {parseArgs} from 'node:util';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
-import {merge, report} from '../src/model.js';
+import {merge, report, calculate, createConfig} from '../src/model.js';
+import {environmentRanges} from '../src/environments.js';
+import {compareRanges} from '../src/ranges.js';
 import {emissionsChart} from '../src/charts.js';
 import {renderChart} from './render.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const FIGURES = ['baseline'];
+export const FIGURES = ['baseline', 'cloud'];
 const ORDER = ['Mobile phones', 'Laptops', 'Monitors', 'Campus networking', 'A/V equipment',
     'Printers', 'Servers', 'DC cooling', 'Supercomputing', 'Cloud', 'Productivity SaaS', 'AI (chatbot)', 'AI (agents)'];
 const LABELS = {'Campus networking': 'Networking', 'Productivity SaaS': 'SaaS', 'Supercomputing': 'CSCS'};
@@ -39,14 +41,22 @@ function paperPresentation(chart) {
     return chart;
 }
 
+export function interventionComparison(configuration, change) {
+    const base = createConfig(configuration);
+    return {baselineTotal: report(base).results.summary.totalCombined,
+        savings: compareRanges(base, change, calculate, merge, [...environmentRanges(base), ...base.rangeInputs]),
+        units: 'kg CO2e/year', method: 'Paired whole-model evaluations with shared assumptions'};
+}
+
 export async function prepareFigure(name) {
     if (!FIGURES.includes(name)) throw new Error('Unknown paper figure: ' + name);
     const scenario = await loadScenario(name);
     const results = report(scenario.configuration);
     const record = {figure: {name, description: scenario.description, sources: scenario.sources,
         image: `fig-${name}.png`, dimensions: {width: 1600, height: 900}}, ...results};
+    if (name === 'cloud') record.comparison = interventionComparison((await loadScenario('baseline')).configuration, scenario.overrides);
     const chart = emissionsChart(results.results.data, {divisor: 1000, order: ORDER, labels: LABELS,
-        title: 'UZH IT emissions — illustrative baseline'});
+        title: name === 'cloud' ? 'All local servers migrated to cloud' : 'UZH IT emissions — illustrative baseline'});
     return {record, chart: paperPresentation(chart)};
 }
 

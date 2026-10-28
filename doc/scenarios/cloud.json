@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "extends": "baseline",
+  "description": "Migrate all 1,121 local servers one-for-one to cloud instances; preserve campus networking and other services.",
+  "kind": "annual",
+  "overrides": {"environments": {"cloud": {"migratedPercent": 100}}}
+}

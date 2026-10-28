@@ -1,0 +1,607 @@
+{
+  "figure": {
+    "name": "cloud",
+    "description": "Migrate all 1,121 local servers one-for-one to cloud instances; preserve campus networking and other services.",
+    "sources": [
+      {
+        "path": "doc/scenarios/baseline.json",
+        "sha256": "3fc7dffd4d9056fcac7317f8be00a340f75d444f0d7a0da8f39c7f40f7a8d53e"
+      },
+      {
+        "path": "doc/scenarios/cloud.json",
+        "sha256": "60b6e1827e440244a6a8ca89fe60ec7ce4147089b2cf7478512591cf2fd1df2a"
+      }
+    ],
+    "image": "fig-cloud.png",
+    "dimensions": {
+      "width": 1600,
+      "height": 900
+    }
+  },
+  "metadata": {
+    "modelVersion": "2.0",
+    "description": "UZH IT Emissions Model",
+    "annotation": "UZH broad-boundary illustrative scenario; adoption and several service inputs are estimates, not measurements.",
+    "referenceYear": 2026
+  },
+  "parameters": {
+    "modelVersion": "2.0",
+    "referenceYear": 2026,
+    "annotation": "UZH broad-boundary illustrative scenario; adoption and several service inputs are estimates, not measurements.",
+    "percentage": false,
+    "rangeInputs": [],
+    "deviceInfo": {
+      "Laptops": {
+        "Lifetime": 6,
+        "Count": 32000,
+        "Days per year": 250
+      },
+      "Monitors": {
+        "Lifetime": 8,
+        "Count": 10440,
+        "Days per year": 250
+      },
+      "Desktops": {
+        "Lifetime": 8,
+        "Count": 0,
+        "Days per year": 250
+      },
+      "Servers": {
+        "Lifetime": 5,
+        "Count": 1121,
+        "Days per year": 365
+      },
+      "Mobile phones": {
+        "Lifetime": 3,
+        "Count": 35000,
+        "Days per year": 250
+      },
+      "A/V equipment": {
+        "Lifetime": 8,
+        "Count": 431,
+        "Days per year": 250
+      },
+      "Printers": {
+        "Lifetime": 8,
+        "Count": 333,
+        "Days per year": 250
+      }
+    },
+    "embodiedEmissionsKgCo2e": {
+      "Laptops": {
+        "Mean": 180,
+        "Stdev": 128,
+        "Min": 104,
+        "Max": 372
+      },
+      "Monitors": {
+        "Mean": 340,
+        "Stdev": 50,
+        "Min": 150,
+        "Max": 394
+      },
+      "Desktops": {
+        "Mean": 290,
+        "Stdev": 80,
+        "Min": 209,
+        "Max": 403
+      },
+      "Servers": {
+        "Mean": 1100,
+        "Stdev": 330,
+        "Min": 383,
+        "Max": 1582
+      },
+      "Mobile phones": {
+        "Mean": 50,
+        "Stdev": 10,
+        "Min": 30,
+        "Max": 70
+      },
+      "A/V equipment": {
+        "Mean": 700,
+        "Stdev": 109,
+        "Min": 644,
+        "Max": 862
+      },
+      "Printers": {
+        "Mean": 1100,
+        "Stdev": 200,
+        "Min": 967,
+        "Max": 1367
+      }
+    },
+    "powerW": {
+      "Laptops": {
+        "Mean": 50,
+        "Stdev": 20,
+        "Min": 20,
+        "Max": 100,
+        "Standby": 1
+      },
+      "Monitors": {
+        "Mean": 50,
+        "Stdev": 10,
+        "Min": 30,
+        "Max": 90,
+        "Standby": 1
+      },
+      "Desktops": {
+        "Mean": 100,
+        "Stdev": 20,
+        "Min": 60,
+        "Max": 200,
+        "Standby": 1
+      },
+      "Servers": {
+        "Mean": 400,
+        "Stdev": 100,
+        "Min": 200,
+        "Max": 600,
+        "Standby": 1
+      },
+      "Mobile phones": {
+        "Mean": 10,
+        "Stdev": 2,
+        "Min": 5,
+        "Max": 20,
+        "Standby": 0
+      },
+      "A/V equipment": {
+        "Mean": 250,
+        "Stdev": 50,
+        "Min": 150,
+        "Max": 350,
+        "Standby": 1
+      },
+      "Printers": {
+        "Mean": 1000,
+        "Stdev": 200,
+        "Min": 600,
+        "Max": 1400,
+        "Standby": 90
+      }
+    },
+    "compute": {},
+    "dutyCycle6h": {
+      "Laptops": [
+        0.1,
+        0.5,
+        1,
+        0.3
+      ],
+      "Desktops": [
+        0.1,
+        0.5,
+        1,
+        0.3
+      ],
+      "Servers": [
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "Mobile phones": [
+        0,
+        0,
+        0,
+        0.5
+      ],
+      "Monitors": [
+        0.1,
+        0.5,
+        1,
+        0.3
+      ],
+      "A/V equipment": [
+        0,
+        0.3,
+        0.6,
+        0.1
+      ],
+      "Printers": [
+        0,
+        0,
+        0.01,
+        0
+      ]
+    },
+    "environments": {
+      "saas": {
+        "enabled": true,
+        "users": 38000,
+        "kgPerUserYear": 5.5,
+        "bounds": {
+          "kgPerUserYear": [
+            1,
+            10
+          ]
+        },
+        "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+      },
+      "cloud": {
+        "enabled": true,
+        "migratedPercent": 100,
+        "instancesPer100Servers": 100,
+        "powerWatts": 300,
+        "embodiedKg": 700,
+        "lifetimeYears": 4,
+        "pue": 1.15,
+        "intensityGPerKwh": 53.75,
+        "energyBasis": "it",
+        "bounds": {},
+        "source": "Cloud VM proxy and selected serving-region electricity factor"
+      },
+      "local": {
+        "enabled": true,
+        "pue": 2,
+        "intensityGPerKwh": 53.75,
+        "useHourlyProfile": true,
+        "energyBasis": "it",
+        "bounds": {},
+        "source": "Campus electricity profile and local data-center PUE assumption"
+      },
+      "networking": {
+        "enabled": true,
+        "mode": "inventory",
+        "accessPoints": 4000,
+        "accessPointWatts": 15,
+        "accessPointEmbodiedKg": 50,
+        "switchesPerAccessPoint": 0.1,
+        "switchWatts": 250,
+        "switchEmbodiedKg": 290,
+        "lifetimeYears": 8,
+        "electricityScale": 1,
+        "legacyPercent": 10,
+        "bounds": {
+          "electricityScale": [
+            0.67,
+            1.33
+          ]
+        },
+        "source": "Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified"
+      },
+      "supercomputing": {
+        "enabled": true,
+        "mode": "allocation",
+        "electricityKwh": 3600000,
+        "energyBasis": "it",
+        "pue": 1.2,
+        "intensityGPerKwh": 50,
+        "serverEquivalentKw": 1.2,
+        "embodiedKgPerServer": 1100,
+        "lifetimeYears": 5,
+        "legacyPowerKw": 66,
+        "bounds": {
+          "pue": [
+            1.1,
+            1.3
+          ],
+          "serverEquivalentKw": [
+            0.4,
+            2
+          ]
+        },
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+      },
+      "ai": {
+        "enabled": true,
+        "population": 38000,
+        "intensityGPerKwh": 207,
+        "pue": 1.2,
+        "chatUsers": 38000,
+        "queriesPerUserDay": 15,
+        "chatDays": 250,
+        "whPerQuery": 1,
+        "chatEnergyBasis": "facility",
+        "chatHardwareGPerQuery": 0.1,
+        "agentUsers": 3800,
+        "agentDays": 250,
+        "kwhPerAgentDay": 1.3,
+        "agentEnergyBasis": "it",
+        "agentHardwareGPerKwh": 100,
+        "trainingPercent": 25,
+        "usageGrowthPercent": 50,
+        "efficiencyImprovementPercent": 30,
+        "trainingGrowthPercent": 50,
+        "bounds": {
+          "whPerQuery": [
+            0.3,
+            3
+          ],
+          "kwhPerAgentDay": [
+            0.1,
+            2.4
+          ],
+          "agentHardwareGPerKwh": [
+            50,
+            150
+          ]
+        },
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      }
+    },
+    "compatibility": null
+  },
+  "results": {
+    "data": [
+      {
+        "category": "Laptops",
+        "embodied": 960000,
+        "usage": 227679.99999999997,
+        "electricityKwh": 4560000,
+        "range": null
+      },
+      {
+        "category": "Monitors",
+        "embodied": 443700,
+        "usage": 74280.59999999999,
+        "electricityKwh": 1487700,
+        "range": null
+      },
+      {
+        "category": "Desktops",
+        "embodied": 0,
+        "usage": 0,
+        "electricityKwh": 0,
+        "range": null
+      },
+      {
+        "category": "Servers",
+        "embodied": 0,
+        "usage": 0,
+        "electricityKwh": 0,
+        "range": null
+      },
+      {
+        "category": "Mobile phones",
+        "embodied": 583333.3333333334,
+        "usage": 15662.5,
+        "electricityKwh": 262500,
+        "range": null
+      },
+      {
+        "category": "A/V equipment",
+        "embodied": 37712.5,
+        "usage": 7849.587499999999,
+        "electricityKwh": 161624.99999999997,
+        "range": null
+      },
+      {
+        "category": "Printers",
+        "embodied": 45787.5,
+        "usage": 231.43500000000003,
+        "electricityKwh": 4995,
+        "range": null
+      },
+      {
+        "category": "Campus networking",
+        "embodied": 39500,
+        "usage": 75336,
+        "electricityKwh": 1401600,
+        "range": {
+          "low": 89975.12,
+          "high": 139696.88
+        }
+      },
+      {
+        "category": "DC cooling",
+        "embodied": null,
+        "usage": 0,
+        "electricityKwh": 0,
+        "range": null
+      },
+      {
+        "category": "Cloud",
+        "embodied": 196175,
+        "usage": 182098.88325,
+        "electricityKwh": 3387886.1999999997,
+        "range": null
+      },
+      {
+        "category": "Supercomputing",
+        "usage": 216000,
+        "embodied": 75342.46575342465,
+        "electricityKwh": 4320000,
+        "itElectricityKwh": 3600000,
+        "serverEquivalents": 342.4657534246575,
+        "range": {
+          "low": 243205.47945205483,
+          "high": 460027.3972602739
+        }
+      },
+      {
+        "category": "AI (chatbot)",
+        "usage": 29497.5,
+        "embodied": 14250,
+        "training": 7374.375,
+        "electricityKwh": 142500,
+        "range": {
+          "low": 25311.5625,
+          "high": 124865.625
+        }
+      },
+      {
+        "category": "AI (agents)",
+        "usage": 306774,
+        "embodied": 123500,
+        "training": 76693.5,
+        "electricityKwh": 1482000,
+        "itElectricityKwh": 1235000,
+        "range": {
+          "low": 34247.5,
+          "high": 1049940
+        }
+      },
+      {
+        "category": "Productivity SaaS",
+        "usage": 209000,
+        "embodied": null,
+        "range": {
+          "low": 38000,
+          "high": 380000
+        }
+      }
+    ],
+    "projection": [
+      {
+        "year": 2026,
+        "usage": 29497.5,
+        "embodied": 14250,
+        "training": 7374.375,
+        "total": 51121.875,
+        "range": {
+          "low": 25311.5625,
+          "high": 124865.625
+        }
+      },
+      {
+        "year": 2027,
+        "usage": 30972.374999999996,
+        "embodied": 21375,
+        "training": 11061.5625,
+        "total": 63408.9375,
+        "range": {
+          "low": 33985.18125,
+          "high": 147476.8125
+        }
+      },
+      {
+        "year": 2028,
+        "usage": 32520.993749999994,
+        "embodied": 32062.5,
+        "training": 16592.34375,
+        "total": 81175.8375,
+        "range": {
+          "low": 46796.50125,
+          "high": 179402.51249999998
+        }
+      },
+      {
+        "year": 2029,
+        "usage": 34147.04343749999,
+        "embodied": 48093.75,
+        "training": 24888.515625,
+        "total": 107129.30906249999,
+        "range": {
+          "low": 65804.41771874999,
+          "high": 225200.42718749997
+        }
+      },
+      {
+        "year": 2030,
+        "usage": 35854.395609374995,
+        "embodied": 72140.625,
+        "training": 37332.7734375,
+        "total": 145327.794046875,
+        "range": {
+          "low": 94096.7757140625,
+          "high": 291702.132140625
+        }
+      }
+    ],
+    "summary": {
+      "totalEmbodied": 2519300.799086758,
+      "totalUsage": 1344410.50575,
+      "totalTraining": 84067.875,
+      "totalCombined": 3947779.179836758,
+      "range": {
+        "low": 3205251.0010353886,
+        "high": 4929041.241343607
+      }
+    }
+  },
+  "units": {
+    "emissions": "kg CO2e/year",
+    "electricity": "kWh/year"
+  },
+  "rangeAnalysis": {
+    "method": "deterministic input bounds",
+    "interpretation": "Assumption ranges; not confidence intervals",
+    "caseCount": 129,
+    "inputs": [
+      {
+        "path": [
+          "environments",
+          "saas",
+          "kgPerUserYear"
+        ],
+        "low": 1,
+        "high": 10,
+        "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+      },
+      {
+        "path": [
+          "environments",
+          "networking",
+          "electricityScale"
+        ],
+        "low": 0.67,
+        "high": 1.33,
+        "source": "Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified"
+      },
+      {
+        "path": [
+          "environments",
+          "supercomputing",
+          "pue"
+        ],
+        "low": 1.1,
+        "high": 1.3,
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+      },
+      {
+        "path": [
+          "environments",
+          "supercomputing",
+          "serverEquivalentKw"
+        ],
+        "low": 0.4,
+        "high": 2,
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "whPerQuery"
+        ],
+        "low": 0.3,
+        "high": 3,
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "kwhPerAgentDay"
+        ],
+        "low": 0.1,
+        "high": 2.4,
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "agentHardwareGPerKwh"
+        ],
+        "low": 50,
+        "high": 150,
+        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+      }
+    ]
+  },
+  "projectionScope": "ordinary chat only",
+  "comparison": {
+    "baselineTotal": 4153931.920586758,
+    "savings": {
+      "central": 206152.74074999988,
+      "low": 206152.74074999988,
+      "high": 206152.7407500008
+    },
+    "units": "kg CO2e/year",
+    "method": "Paired whole-model evaluations with shared assumptions"
+  }
+}
