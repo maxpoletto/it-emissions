@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "status": "incomplete",
+  "kind": "reportComparison",
+  "description": "Record of the historical sustainability-report comparison. It must not run with current defaults substituted for missing historical inputs.",
+  "report": {
+    "year": 2024,
+    "source": "UZH sustainability report, as reconciled by the author in paper.tex",
+    "totalExcludingAudiovisualT": 1454,
+    "audiovisualT": 81,
+    "totalIncludingAudiovisualT": 1535
+  },
+  "historicalModelEstimateT": 1600,
+  "configuration": null,
+  "missingInputs": [
+    "Exact saved parameter configuration producing the approximately 1600 t model result",
+    "Exact Ecoinvent embodied-emissions factors and lifetimes used in that calculation",
+    "Confirmed row mapping, including treatment of printers, networking and cooling"
+  ]
+}

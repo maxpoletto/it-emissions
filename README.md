@@ -28,7 +28,10 @@ definitions in `src/charts.js`, and browser interactions in `src/browser.js`.
 scenario in `doc/scenarios/` and a numerical record in `doc/figure-data/` containing
 the resolved inputs, units, model version, source hashes, results and bounds.
 Use `npm run figures -- --figure baseline` to regenerate one figure, or `--check`
-to check that the committed numerical records match the inputs and current model.
+to check numerical records, input and image hashes, image dimensions, and generated
+manuscript numbers. All six paper figures now use this pipeline; the separate
+Python implementations have been removed. See `doc/scenarios/README.md` for the
+scenario inheritance and the incomplete historical sustainability-report comparison.
 
 Configurations can declare `rangeInputs`, an array of objects containing a
 `path` array, numerical `low` and `high` bounds, and a `source` description.

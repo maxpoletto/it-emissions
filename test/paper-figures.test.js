@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {mkdtemp, readFile, writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
 import {prepareFigure, generateFigure, FIGURES} from '../scripts/paper-figures.js';
 import {report} from '../src/model.js';
 
@@ -14,6 +17,16 @@ test('paper baseline is an explicit, reproducible calculator configuration', asy
 
 test('committed figure records match the saved inputs and current model', async () => {
     for (const name of FIGURES) await generateFigure(name, undefined, {check: true});
+});
+
+test('figure integrity check detects an altered image as well as stale numerical inputs', async () => {
+    const output = await mkdtemp(path.join(tmpdir(), 'paper-figure-'));
+    await generateFigure('baseline', output);
+    await generateFigure('baseline', output, {check: true});
+    const target = path.join(output, 'fig-baseline.png');
+    const bytes = await readFile(target); bytes[bytes.length - 1] ^= 1;
+    await writeFile(target, bytes);
+    await assert.rejects(generateFigure('baseline', output, {check: true}), /Stale figure data or image/);
 });
 
 test('cloud paper figure preserves unaffected services and pairs its savings assumptions', async () => {
