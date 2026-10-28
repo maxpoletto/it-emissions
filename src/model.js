@@ -1,5 +1,6 @@
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
     computeDefault, llmsDefault, dutyCycle6hDefault, GRID_PROFILE} from './defaults.js';
+import {attachRanges} from './ranges.js';
 
 export const MODEL_VERSION = '1.0';
 export const MODEL_DESCRIPTION = 'UZH IT Emissions Model';
@@ -18,7 +19,7 @@ export function merge(base, patch) {
 
 export function createConfig(input = {}) {
     return merge({
-        modelVersion: MODEL_VERSION, referenceYear: 2026, annotation: '', percentage: false,
+        modelVersion: MODEL_VERSION, referenceYear: 2026, annotation: '', percentage: false, rangeInputs: [],
         deviceInfo: deviceInfoDefault, embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2eDefault,
         powerW: powerWDefault, compute: computeDefault, llms: llmsDefault, dutyCycle6h: dutyCycle6hDefault,
     }, input.parameters ? {...input.parameters, ...input.settings, annotation: input.metadata?.annotation ?? ''} : input);
@@ -105,7 +106,8 @@ export function calculate(input = {}) {
                         powerW[device]['Min'], powerW[device]['Max'], n
                     );
 
-                    devices[device]['standby_w'] = Array(n).fill(powerW[device]['Standby']);
+                    // Standby was not used by the original calculation. Avoid allocating
+                    // a device-sized unused array for every deterministic range case.
                     emissionsIntensity[device] = deviceEmissionsIntensity(device);
                 });
             }
@@ -280,7 +282,7 @@ export function calculate(input = {}) {
 }
 
 export function report(input = {}) {
-    const result = calculate(input);
+    const result = calculateWithRanges(input);
     const totals = result.rows.at(-1);
     return {
         metadata: {modelVersion: MODEL_VERSION, description: MODEL_DESCRIPTION,
@@ -288,7 +290,11 @@ export function report(input = {}) {
         parameters: result.config,
         results: {data: result.rows.slice(0, -1), projection: result.projection,
             summary: {totalEmbodied: totals.embodied, totalUsage: totals.usage,
-                totalCombined: totals.embodied + totals.usage}},
-        units: result.units,
+                totalCombined: totals.embodied + totals.usage, range: totals.range ?? null}},
+        units: result.units, rangeAnalysis: result.rangeAnalysis,
     };
+}
+
+export function calculateWithRanges(input = {}) {
+    return attachRanges(createConfig(input), calculate);
 }
