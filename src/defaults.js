@@ -135,7 +135,6 @@ export const deviceInfoDefault = {
         };
 
         export const computeDefault = {
-            'Campus networking overhead %': 10,
             'Supercomputing mean power kW': 66,
         };
 

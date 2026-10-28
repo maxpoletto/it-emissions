@@ -7,6 +7,11 @@ export const ENVIRONMENT_DEFAULTS = {
         energyBasis: 'it', bounds: {}, source: 'Cloud VM proxy and selected serving-region electricity factor'},
     local: {enabled: true, pue: 2, intensityGPerKwh: 53.75, useHourlyProfile: true,
         energyBasis: 'it', bounds: {}, source: 'Campus electricity profile and local data-center PUE assumption'},
+    networking: {enabled: true, mode: 'inventory', accessPoints: 4000, accessPointWatts: 15,
+        accessPointEmbodiedKg: 50, switchesPerAccessPoint: 0.1, switchWatts: 250,
+        switchEmbodiedKg: 290, lifetimeYears: 8, electricityScale: 1, legacyPercent: 10,
+        bounds: {electricityScale: [0.67, 1.33]},
+        source: 'Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified'},
 };
 
 export const ENVIRONMENT_FIELDS = {
@@ -37,6 +42,21 @@ export const ENVIRONMENT_FIELDS = {
             {key: 'useHourlyProfile', label: 'Preserve the Swiss hourly profile', type: 'boolean'},
             {key: 'energyBasis', label: 'Server power estimate includes', type: 'select', options: {it: 'IT equipment only', facility: 'IT equipment and facility overhead'}},
             {key: 'pue', label: 'Local data-center PUE', min: 1},
+        ]},
+    networking: {title: 'Campus networking',
+        note: 'The inventory estimate uses access points plus a switch/router allowance. The electricity range covers incomplete inventory; hardware uncertainty is not quantified.',
+        fields: [
+            {key: 'enabled', label: 'Include campus networking', type: 'boolean'},
+            {key: 'mode', label: 'Estimation method', type: 'select', options: {inventory: 'Inventory and power estimate', legacy: 'Original percentage allowance'}},
+            {key: 'accessPoints', label: 'Access points', min: 0, integer: true, when: {mode: 'inventory'}},
+            {key: 'accessPointWatts', label: 'Power per access point (W)', min: 0, when: {mode: 'inventory'}},
+            {key: 'accessPointEmbodiedKg', label: 'Embodied emissions per access point (kg CO₂e)', min: 0, when: {mode: 'inventory'}},
+            {key: 'switchesPerAccessPoint', label: 'Switch/router allowance per access point', min: 0, when: {mode: 'inventory'}},
+            {key: 'switchWatts', label: 'Power per switch/router (W)', min: 0, when: {mode: 'inventory'}},
+            {key: 'switchEmbodiedKg', label: 'Embodied emissions per switch/router (kg CO₂e)', min: 0, when: {mode: 'inventory'}},
+            {key: 'lifetimeYears', label: 'Equipment lifetime (years)', min: 0.01, when: {mode: 'inventory'}},
+            {key: 'electricityScale', label: 'Electricity allowance multiplier', min: 0, when: {mode: 'inventory'}},
+            {key: 'legacyPercent', label: 'Laptop, desktop and server emissions allowance (%)', min: 0, when: {mode: 'legacy'}},
         ]},
 };
 
@@ -69,7 +89,7 @@ export function validateEnvironments(environments) {
 
 export function environmentRanges(config) {
     return Object.entries(config.environments ?? {}).flatMap(([name, env]) => {
-        if (!env.enabled) return [];
+        if (!env.enabled || env.mode === 'legacy') return [];
         return Object.entries(env.bounds ?? {}).map(([key, bounds]) => {
             if (!Array.isArray(bounds) || bounds.length !== 2) throw new Error('Invalid bounds for ' + name + '.' + key);
             return {path: ['environments', name, key], low: bounds[0], high: bounds[1], source: env.source};

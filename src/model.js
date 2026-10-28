@@ -22,7 +22,14 @@ export function createConfig(input = {}) {
     const raw = input.parameters ? {...input.parameters, ...input.settings, annotation: input.metadata?.annotation ?? ''} : input;
     const legacy = raw.compatibility === 'v1' || raw.modelVersion === '1.0';
     const environments = clone(ENVIRONMENT_DEFAULTS);
-    if (legacy) environments.saas.enabled = false;
+    if (legacy) {
+        environments.saas.enabled = false;
+        environments.networking.mode = 'legacy';
+    }
+    if (raw.compute?.['Campus networking overhead %'] !== undefined) {
+        environments.networking.mode = 'legacy';
+        environments.networking.legacyPercent = raw.compute['Campus networking overhead %'];
+    }
     if (raw.compute?.['Campus data center PUE x100'] !== undefined)
         environments.local.pue = raw.compute['Campus data center PUE x100'] / 100;
     for (const [old, key] of Object.entries(CLOUD_LEGACY_KEYS)) {
@@ -36,6 +43,7 @@ export function createConfig(input = {}) {
     }, raw);
     for (const key of Object.keys(CLOUD_LEGACY_KEYS)) delete config.compute[key];
     delete config.compute['Campus data center PUE x100'];
+    delete config.compute['Campus networking overhead %'];
     config.modelVersion = MODEL_VERSION;
     config.compatibility = legacy ? 'v1' : null;
     return config;
@@ -249,20 +257,27 @@ export function calculate(input = {}) {
                     });
                 });
 
-                // Campus networking overhead
-                let nu = 0, nm = 0;
-                ['Laptops', 'Desktops', 'Servers'].forEach(device => {
-                    const [u, m] = deviceEmissionsKgCO2e(device);
-                    nu += u * compute['Campus networking overhead %'] / 100;
-                    nm += m * compute['Campus networking overhead %'] / 100;
-                });
-                totalU += nu;
-                totalM += nm;
-                data.push({
-                    category: 'Campus networking',
-                    embodied: nm,
-                    usage: nu
-                });
+                const network = config.environments.networking;
+                if (network.enabled) {
+                    let nu = 0, nm = 0, electricityKwh = 0;
+                    if (network.mode === 'legacy') {
+                        for (const device of ['Laptops', 'Desktops', 'Servers']) {
+                            const [u, m] = deviceEmissionsKgCO2e(device);
+                            nu += u * network.legacyPercent / 100;
+                            nm += m * network.legacyPercent / 100;
+                            electricityKwh += deviceElectricityKwh(device) * network.legacyPercent / 100;
+                        }
+                    } else {
+                        const switches = network.accessPoints * network.switchesPerAccessPoint;
+                        electricityKwh = (network.accessPoints * network.accessPointWatts + switches * network.switchWatts)
+                            / 1000 * 8760 * network.electricityScale;
+                        nu = electricityKwh * config.environments.local.intensityGPerKwh / 1000;
+                        nm = (network.accessPoints * network.accessPointEmbodiedKg + switches * network.switchEmbodiedKg)
+                            / network.lifetimeYears;
+                    }
+                    data.push({category: 'Campus networking', embodied: nm, usage: nu, electricityKwh});
+                    totalU += nu; totalM += nm;
+                }
 
                 // DC cooling
                 const dcCoolingU = dataCenterCoolingEmissionsKgCO2e();

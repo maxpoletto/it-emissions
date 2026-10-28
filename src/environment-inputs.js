@@ -13,6 +13,7 @@ export function renderEnvironments(environments, update) {
         table.innerHTML = '<thead><tr><th>Parameter</th><th>Value</th><th>Low assumption</th><th>High assumption</th></tr></thead>';
         const body = document.createElement('tbody');
         for (const field of schema.fields) {
+            if (field.when && Object.entries(field.when).some(([key, value]) => values[key] !== value)) continue;
             const row = document.createElement('tr');
             const label = document.createElement('td'); label.textContent = field.label; row.append(label);
             const cell = document.createElement('td');
@@ -34,6 +35,7 @@ export function renderEnvironments(environments, update) {
             input.addEventListener('change', () => {
                 values[field.key] = field.type === 'boolean' ? input.checked : field.type === 'select' ? input.value : Number(input.value);
                 update();
+                if (field.type === 'select') renderEnvironments(environments, update);
             });
             cell.append(input); row.append(cell);
             for (let i = 0; i < 2; i++) {

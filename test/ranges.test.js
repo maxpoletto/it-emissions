@@ -14,7 +14,7 @@ test('a shorter lifetime increases the upper bound and unchanged rows have no qu
 });
 test('totals use coherent whole-model cases and preserve shared dependencies', () => {
     const config = createConfig({modelVersion: '1.0', rangeInputs: [lifetime,
-        {path: ['compute', 'Campus networking overhead %'], low: 0, high: 20, source: 'Legacy network allowance'}]});
+        {path: ['environments', 'networking', 'legacyPercent'], low: 0, high: 20, source: 'Legacy network allowance'}]});
     const result = calculateWithRanges(config); const totals = result.rows.at(-1);
     const sums = rangeCases(config).map(c => {const r = calculate(c).rows.at(-1); return r.usage + r.embodied;});
     assert.equal(totals.range.low, Math.min(...sums)); assert.equal(totals.range.high, Math.max(...sums));
