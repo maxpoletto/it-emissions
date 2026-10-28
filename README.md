@@ -22,7 +22,8 @@ test uses Chrome on macOS, `BROWSER_EXECUTABLE` when set, or Playwright's Chromi
 original calculator's deterministic results from commit `2a07073`; those
 fixtures deliberately preserve its original scope and assumptions.
 
-Shared calculations are in `src/model.js`, defaults in `src/defaults.js`, chart
+Shared calculations are in `src/model.js`, device defaults in `src/defaults.js`,
+environment defaults and field definitions in `src/environments.js`, chart
 definitions in `src/charts.js`, and browser interactions in `src/browser.js`.
 `npm run figures` generates the migrated paper figures. Each has a versioned
 scenario in `doc/scenarios/` and a numerical record in `doc/figure-data/` containing
@@ -39,8 +40,9 @@ The calculator evaluates all declared endpoint combinations (up to 12 inputs),
 preserving shared dependencies. Exported ranges are deterministic assumption
 envelopes, not confidence intervals. Whiskers describe complete category totals;
 categories without quantified bounds have no whisker. Hiding one stack component
-also hides its total whisker. Defaults gain ranges as their environments are
-introduced; no statistical distribution is inferred from device populations.
+also hides its total whisker. Default environment bounds and their source
+descriptions are in `src/environments.js`; no statistical distribution is inferred
+from device populations.
 
 New configurations include productivity SaaS at 38,000 users and 5.5 kg
 CO₂e/user-year (209 t/year), with a declared 1–10 kg/user-year range. Imported

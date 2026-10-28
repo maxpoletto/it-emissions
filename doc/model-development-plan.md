@@ -125,6 +125,19 @@ Remove the duplicated Python calculation and plotting pipeline once the JavaScri
 
 Commit each figure separately. Finish with a review guide and validation results; do not push or submit.
 
+## Implementation status on 28 October 2026
+
+Steps 1–4 are implemented on branch `v2`, with separate commits for the original
+extraction, range representation and rendering, each environment, and each of the
+six figures. The Python generators have been replaced by the shared JavaScript
+pipeline. See [the review guide](model-review-guide.md) for the ordered commits,
+numerical changes, test commands, and remaining assumptions.
+
+The historical sustainability-report configuration remains incomplete because
+its exact Ecoinvent inputs have not been recovered. It is recorded explicitly
+and cannot silently run with replacement defaults. All current paper figures
+and generated model results have saved, reproducible scenarios.
+
 ## Technical references
 
 - [Chart.js rendering in Node](https://www.chartjs.org/docs/latest/getting-started/using-from-node-js.html)
