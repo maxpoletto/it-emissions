@@ -10,7 +10,8 @@
     "build": "node scripts/build-app.js",
     "test": "node --test test/*.test.js",
     "test:browser": "node --test test/browser/*.test.js",
-    "batch": "node scripts/batch.js"
+    "batch": "node scripts/batch.js",
+    "figures": "node scripts/paper-figures.js"
   },
   "dependencies": {
     "chart.js": "4.6.1",

@@ -24,8 +24,11 @@ fixtures deliberately preserve its original scope and assumptions.
 
 Shared calculations are in `src/model.js`, defaults in `src/defaults.js`, chart
 definitions in `src/charts.js`, and browser interactions in `src/browser.js`.
-The paper generation pipeline is migrated in the final stage of the development
-plan in `doc/model-development-plan.md`.
+`npm run figures` generates the migrated paper figures. Each has a versioned
+scenario in `doc/scenarios/` and a numerical record in `doc/figure-data/` containing
+the resolved inputs, units, model version, source hashes, results and bounds.
+Use `npm run figures -- --figure baseline` to regenerate one figure, or `--check`
+to check that the committed numerical records match the inputs and current model.
 
 Configurations can declare `rangeInputs`, an array of objects containing a
 `path` array, numerical `low` and `high` bounds, and a `source` description.
