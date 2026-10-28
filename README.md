@@ -35,3 +35,9 @@ envelopes, not confidence intervals. Whiskers describe complete category totals;
 categories without quantified bounds have no whisker. Hiding one stack component
 also hides its total whisker. Defaults gain ranges as their environments are
 introduced; no statistical distribution is inferred from device populations.
+
+New configurations include productivity SaaS at 38,000 users and 5.5 kg
+CO₂e/user-year (209 t/year), with a declared 1–10 kg/user-year range. Imported
+version 1 configurations retain the original service scope; new components are
+disabled unless explicitly enabled. Configuration exports retain that
+compatibility setting so old saved scenarios do not silently acquire new services.

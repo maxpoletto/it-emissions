@@ -1,8 +1,9 @@
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
     computeDefault, llmsDefault, dutyCycle6hDefault, GRID_PROFILE} from './defaults.js';
 import {attachRanges} from './ranges.js';
+import {ENVIRONMENT_DEFAULTS, validateEnvironments, environmentRanges} from './environments.js';
 
-export const MODEL_VERSION = '1.0';
+export const MODEL_VERSION = '2.0';
 export const MODEL_DESCRIPTION = 'UZH IT Emissions Model';
 export const clone = value => JSON.parse(JSON.stringify(value));
 
@@ -18,15 +19,24 @@ export function merge(base, patch) {
 }
 
 export function createConfig(input = {}) {
-    return merge({
+    const raw = input.parameters ? {...input.parameters, ...input.settings, annotation: input.metadata?.annotation ?? ''} : input;
+    const legacy = raw.compatibility === 'v1' || raw.modelVersion === '1.0';
+    const environments = clone(ENVIRONMENT_DEFAULTS);
+    if (legacy) environments.saas.enabled = false;
+    const config = merge({
         modelVersion: MODEL_VERSION, referenceYear: 2026, annotation: '', percentage: false, rangeInputs: [],
         deviceInfo: deviceInfoDefault, embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2eDefault,
         powerW: powerWDefault, compute: computeDefault, llms: llmsDefault, dutyCycle6h: dutyCycle6hDefault,
-    }, input.parameters ? {...input.parameters, ...input.settings, annotation: input.metadata?.annotation ?? ''} : input);
+        environments,
+    }, raw);
+    config.modelVersion = MODEL_VERSION;
+    config.compatibility = legacy ? 'v1' : null;
+    return config;
 }
 
 export function calculate(input = {}) {
     const config = createConfig(input);
+    validateEnvironments(config.environments);
     const {deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, llms, dutyCycle6h, referenceYear} = config;
     const stochastic = false;
     let devices = {}, emissionsIntensity = {}, cloudInstances = 0, resultsEmissions, resultsLLMGrowth;
@@ -265,7 +275,14 @@ export function calculate(input = {}) {
                 totalU += llmU;
                 totalM += llmM;
 
-                // Total
+                if (config.environments.saas.enabled) {
+                const service = config.environments.saas;
+                const usage = service.users * service.kgPerUserYear;
+                data.push({category: 'Productivity SaaS', usage, embodied: null});
+                totalU += usage;
+            }
+
+            // Total
                 data.push({
                     category: 'Totals',
                     embodied: totalM,
@@ -296,5 +313,6 @@ export function report(input = {}) {
 }
 
 export function calculateWithRanges(input = {}) {
-    return attachRanges(createConfig(input), calculate);
+    const config = createConfig(input);
+    return attachRanges(config, calculate, [...environmentRanges(config), ...config.rangeInputs]);
 }

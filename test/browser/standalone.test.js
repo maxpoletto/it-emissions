@@ -20,6 +20,10 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(initial, report(initial.parameters));
+        await page.locator('#saas-users').fill('100');
+        await page.locator('#saas-users').dispatchEvent('change');
+        assert.equal(await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Productivity SaaS').usage), 550);
+        assert.equal(await page.locator('#model-error').textContent(), '');
         await page.evaluate(() => window.EmissionsApp.setConfig({referenceYear: 2026, annotation: 'Zürich + climate 🌍',
             compute: {'Cloud % servers in cloud': 100}, deviceInfo: {Laptops: {Lifetime: 8}},
             rangeInputs: [{path: ['deviceInfo', 'Laptops', 'Lifetime'], low: 4, high: 8,

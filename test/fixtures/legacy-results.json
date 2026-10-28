@@ -2,7 +2,8 @@
   {
     "name": "default",
     "input": {
-      "referenceYear": 2026
+      "referenceYear": 2026,
+      "modelVersion": "1.0"
     },
     "rows": [
       {
@@ -110,7 +111,8 @@
       "compute": {
         "Cloud % servers in cloud": 100
       },
-      "referenceYear": 2026
+      "referenceYear": 2026,
+      "modelVersion": "1.0"
     },
     "rows": [
       {
@@ -223,7 +225,8 @@
           "Lifetime": 4
         }
       },
-      "referenceYear": 2026
+      "referenceYear": 2026,
+      "modelVersion": "1.0"
     },
     "rows": [
       {
@@ -331,7 +334,8 @@
       "llms": {
         "Mean daily user queries": 0
       },
-      "referenceYear": 2026
+      "referenceYear": 2026,
+      "modelVersion": "1.0"
     },
     "rows": [
       {

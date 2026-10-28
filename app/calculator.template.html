@@ -370,6 +370,8 @@
                     <table class="parameter-table" id="compute-table"></table>
                 </div>
 
+                <div id="environment-inputs"></div>
+
                 <!-- LLM Parameters - Full Width Row -->
                 <div class="input-section">
                     <h2 class="section-title">LLM Parameters</h2>
@@ -391,6 +393,8 @@
                 <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
                 <button class="run-btn" onclick="exportResults()">Export to JSON</button>
             </div>
+
+            <p id="model-error" role="alert" style="color: #a00000"></p>
 
             <!-- Results Section -->
             <h1 class="section-title">Results</h1>

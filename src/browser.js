@@ -3,7 +3,9 @@ import {calculateWithRanges, createConfig, report, MODEL_VERSION, MODEL_DESCRIPT
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
     computeDefault, llmsDefault, dutyCycle6hDefault} from './defaults.js';
 import {emissionsChart, projectionChart} from './charts.js';
+import {renderEnvironments} from './environment-inputs.js';
 const BUTTON_TIMEOUT = 1000;
+let modelInputs = createConfig();
 let rangeInputs = [];
 let referenceYear = new Date().getFullYear();
 let deviceInfo = {}, embodiedEmissionsKgCo2e = {}, powerW = {}, compute = {}, llms = {}, dutyCycle6h = {};
@@ -335,6 +337,7 @@ function renderLLMChart() {
         }
 
         function createInputTables() {
+            renderEnvironments(modelInputs.environments, updateModel);
             createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime', 'Days per year'], updateModel);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateModel);
             createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateModel);
@@ -384,23 +387,15 @@ function renderLLMChart() {
         }
 
         function resetParameters() {
-            deviceInfo = JSON.parse(JSON.stringify(deviceInfoDefault));
-            embodiedEmissionsKgCo2e = JSON.parse(JSON.stringify(embodiedEmissionsKgCo2eDefault));
-            powerW = JSON.parse(JSON.stringify(powerWDefault));
-            compute = JSON.parse(JSON.stringify(computeDefault));
-            llms = JSON.parse(JSON.stringify(llmsDefault));
-            dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
-            percentage = false;
-            rangeInputs = [];
-            annotation = '';
+    deserializeState({referenceYear});
+    document.getElementById('annotation-input').value = '';
+    createInputTables();
+    updateModel();
+}
 
-            document.getElementById('annotation-input').value = '';
-            createInputTables();
-            updateModel();
-        }
-
-        function serializeState() {
+function serializeState() {
             return {
+                ...modelInputs,
                 modelVersion: MODEL_VERSION, referenceYear, rangeInputs,
                 deviceInfo: deviceInfo,
                 embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2e,
@@ -415,6 +410,7 @@ function renderLLMChart() {
 
         function deserializeState(stateObj) {
     const loaded = createConfig(stateObj);
+    modelInputs = loaded;
     ({deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, llms, dutyCycle6h,
         referenceYear, rangeInputs, percentage, annotation} = loaded);
 }
@@ -451,12 +447,16 @@ function updateURL() {
         }
 
         function updateModel() {
-            runModel();
-            renderOutput();
-            updateURL();
-        }
+    const error = document.getElementById('model-error');
+    try {
+        runModel(); renderOutput(); updateURL();
+        error.textContent = '';
+    } catch (problem) {
+        error.textContent = problem.message + '. Results retain the last valid configuration.';
+    }
+}
 
-        window.onload = function() {
+window.onload = function() {
             deserializeState({referenceYear});
             parseURL();
         };
