@@ -2,7 +2,7 @@ TEXFILES=paper.tex it-emissions.tex
 PDFS=$(TEXFILES:.tex=.pdf)
 FIGURE_GENERATOR=generate-paper-figures.py
 FIGURES=fig-baseline.png fig-cloud.png fig-llm-growth.png fig-sens1.png fig-sens2.png fig-agentic-ai.png
-JS_FIGURES=fig-baseline.png fig-cloud.png fig-llm-growth.png
+JS_FIGURES=fig-baseline.png fig-cloud.png fig-llm-growth.png fig-sens1.png
 MODEL_SOURCES=$(wildcard ../src/*.js) ../scripts/paper-figures.js ../scripts/render.js ../package-lock.json
 PAPER_DEPS=supplement-parameters.tex
 

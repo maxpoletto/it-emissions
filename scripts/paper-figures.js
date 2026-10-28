@@ -10,7 +10,9 @@ import {emissionsChart, projectionChart} from '../src/charts.js';
 import {renderChart} from './render.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const FIGURES = ['baseline', 'cloud', 'llm-growth'];
+export const FIGURES = ['baseline', 'cloud', 'llm-growth', 'sens1'];
+const TITLES = {baseline: 'UZH IT emissions — illustrative baseline', cloud: 'All local servers migrated to cloud',
+    sens1: 'Managed-device counts and high ordinary-chat use'};
 const ORDER = ['Mobile phones', 'Laptops', 'Monitors', 'Campus networking', 'A/V equipment',
     'Printers', 'Servers', 'DC cooling', 'Supercomputing', 'Cloud', 'Productivity SaaS', 'AI (chatbot)', 'AI (agents)'];
 const LABELS = {'Campus networking': 'Networking', 'Productivity SaaS': 'SaaS', 'Supercomputing': 'CSCS'};
@@ -57,7 +59,7 @@ export async function prepareFigure(name) {
     if (name === 'cloud') record.comparison = interventionComparison((await loadScenario('baseline')).configuration, scenario.overrides);
     const chart = scenario.kind === 'chatProjection' ? projectionChart(results.results.projection, {divisor: 1000})
         : emissionsChart(results.results.data, {divisor: 1000, order: ORDER, labels: LABELS,
-        title: name === 'cloud' ? 'All local servers migrated to cloud' : 'UZH IT emissions — illustrative baseline'});
+        title: TITLES[name]});
     return {record, chart: paperPresentation(chart)};
 }
 

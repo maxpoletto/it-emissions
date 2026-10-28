@@ -41,3 +41,15 @@ test('chat growth figure starts with annual chat and excludes agents from its pr
     assert.equal(chart.data.labels.at(-1), '2030');
     assert.match(record.projectionScope, /ordinary chat only/);
 });
+
+test('managed-device sensitivity changes counts and chat without dropping broad-boundary services', async () => {
+    const {record} = await prepareFigure('sens1');
+    assert.equal(record.parameters.deviceInfo.Laptops.Count, 10440);
+    assert.equal(record.parameters.deviceInfo['Mobile phones'].Count, 2439);
+    const ai = record.parameters.environments.ai;
+    assert.equal(ai.whPerQuery, 3); assert.equal(ai.queriesPerUserDay, 40);
+    assert.equal(ai.agentUsers, 3800);
+    const chat = record.results.data.find(r => r.category === 'AI (chatbot)');
+    assert.ok(Math.abs(chat.usage - 235980) < 1e-6);
+    assert.ok(record.results.data.some(r => r.category === 'Productivity SaaS'));
+});

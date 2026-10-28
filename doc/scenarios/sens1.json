@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "extends": "baseline",
+  "description": "Restrict laptop and phone counts to university-managed devices and raise ordinary-chat use to 40 queries/day at 3 Wh/query. Other defaults, including six-year laptop lifetime and illustrative agent adoption, remain fixed. This is not the sustainability-report validation configuration.",
+  "kind": "annual",
+  "overrides": {
+    "deviceInfo": {"Laptops": {"Count": 10440}, "Mobile phones": {"Count": 2439}},
+    "environments": {"ai": {"queriesPerUserDay": 40, "whPerQuery": 3}}
+  }
+}
