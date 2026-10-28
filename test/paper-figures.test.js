@@ -28,3 +28,16 @@ test('cloud paper figure preserves unaffected services and pairs its savings ass
     assert.ok(Math.abs(cloud.comparison.savings.low - cloud.comparison.savings.high) < 1e-6,
         'uncertainty in unchanged services must cancel in matched savings');
 });
+
+test('chat growth figure starts with annual chat and excludes agents from its projection', async () => {
+    const {record, chart} = await prepareFigure('llm-growth');
+    const first = record.results.projection[0];
+    const chat = record.results.data.find(r => r.category === 'AI (chatbot)');
+    assert.equal(first.total, chat.usage + chat.embodied + chat.training);
+    const second = record.results.projection[1];
+    assert.ok(Math.abs(second.usage / first.usage - 1.05) < 1e-10);
+    assert.ok(Math.abs(second.training / first.training - 1.5) < 1e-10);
+    assert.ok(Math.abs(second.embodied / first.embodied - 1.5) < 1e-10);
+    assert.equal(chart.data.labels.at(-1), '2030');
+    assert.match(record.projectionScope, /ordinary chat only/);
+});

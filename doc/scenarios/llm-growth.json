@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "extends": "baseline",
+  "description": "Five-year ordinary-chat scenario only: 50% workload growth, 30% lower query energy and 50% growth in training emissions per year. Starting Wh/query bounds vary; growth rates stay fixed.",
+  "kind": "chatProjection",
+  "overrides": {}
+}

@@ -6,11 +6,11 @@ import path from 'node:path';
 import {merge, report, calculate, createConfig} from '../src/model.js';
 import {environmentRanges} from '../src/environments.js';
 import {compareRanges} from '../src/ranges.js';
-import {emissionsChart} from '../src/charts.js';
+import {emissionsChart, projectionChart} from '../src/charts.js';
 import {renderChart} from './render.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const FIGURES = ['baseline', 'cloud'];
+export const FIGURES = ['baseline', 'cloud', 'llm-growth'];
 const ORDER = ['Mobile phones', 'Laptops', 'Monitors', 'Campus networking', 'A/V equipment',
     'Printers', 'Servers', 'DC cooling', 'Supercomputing', 'Cloud', 'Productivity SaaS', 'AI (chatbot)', 'AI (agents)'];
 const LABELS = {'Campus networking': 'Networking', 'Productivity SaaS': 'SaaS', 'Supercomputing': 'CSCS'};
@@ -55,7 +55,8 @@ export async function prepareFigure(name) {
     const record = {figure: {name, description: scenario.description, sources: scenario.sources,
         image: `fig-${name}.png`, dimensions: {width: 1600, height: 900}}, ...results};
     if (name === 'cloud') record.comparison = interventionComparison((await loadScenario('baseline')).configuration, scenario.overrides);
-    const chart = emissionsChart(results.results.data, {divisor: 1000, order: ORDER, labels: LABELS,
+    const chart = scenario.kind === 'chatProjection' ? projectionChart(results.results.projection, {divisor: 1000})
+        : emissionsChart(results.results.data, {divisor: 1000, order: ORDER, labels: LABELS,
         title: name === 'cloud' ? 'All local servers migrated to cloud' : 'UZH IT emissions — illustrative baseline'});
     return {record, chart: paperPresentation(chart)};
 }
