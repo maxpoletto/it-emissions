@@ -27,3 +27,10 @@ test('projection ranges are drawn at the total rather than one component', () =>
     const config = projectionChart([{year: 2026, embodied: 20, usage: 80, total: 100, range: {low: 70, high: 140}}]);
     assert.deepEqual(config.options.plugins.assumptionRanges.bounds, [{low: 70, high: 140}]);
 });
+
+test('presentation order cannot silently discard a nonzero model category', () => {
+    const config = emissionsChart([{category: 'Desktops', usage: 500}, {category: 'Laptops', usage: 100}],
+        {order: ['Laptops']});
+    assert.deepEqual(config.data.labels, ['Laptops', 'Desktops']);
+    assert.deepEqual(config.data.datasets.at(-1).data, [100, 500]);
+});

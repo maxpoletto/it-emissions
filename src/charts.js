@@ -62,7 +62,10 @@ function stacked(labels, embodied, usage, {title, unit, embodiedLabel = 'Embodie
 
 export function emissionsChart(rows, {divisor = 1, title = 'CO2e Emissions Breakdown', order, labels = {}} = {}) {
     let data = rows.filter(row => row.category !== 'Totals');
-    if (order) data = order.map(category => data.find(r => r.category === category)).filter(Boolean);
+    if (order) {
+        const position = category => {const i = order.indexOf(category); return i === -1 ? order.length : i;};
+        data.sort((a, b) => position(a.category) - position(b.category));
+    }
     const unit = divisor === 1000 ? 't CO₂e/year' : 'kg CO₂e/year';
     const configuration = stacked(data.map(r => labels[r.category] ?? r.category),
         data.map(r => (r.embodied ?? 0) / divisor), data.map(r => (r.usage ?? 0) / divisor), {title, unit, training: data.map(r => (r.training ?? 0) / divisor),

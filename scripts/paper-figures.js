@@ -65,7 +65,8 @@ export async function prepareFigure(name) {
     }
     const chart = scenario.kind === 'agentAdoption' ? agentAdoptionChart(record.adoptionAnalysis)
         : scenario.kind === 'chatProjection' ? projectionChart(results.results.projection, {divisor: 1000})
-        : emissionsChart(results.results.data, {divisor: 1000, order: ORDER, labels: LABELS,
+        : emissionsChart(results.results.data.filter(row => row.category !== 'Desktops' || rowTotal(row) !== 0),
+            {divisor: 1000, order: ORDER, labels: LABELS,
         title: TITLES[name]});
     return {record, chart: paperPresentation(chart)};
 }
