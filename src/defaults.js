@@ -137,12 +137,6 @@ export const deviceInfoDefault = {
         export const computeDefault = {
             'Campus networking overhead %': 10,
             'Campus data center PUE x100': 200,
-            'Cloud PUE x100': 115,
-            'Cloud % servers in cloud': 0,
-            'Cloud instances per 100 local servers': 100,
-            'Cloud instance embodied kg': 700,
-            'Cloud instance power W': 300,
-            'Cloud instance lifetime y': 4,
             'Supercomputing mean power kW': 66,
         };
 

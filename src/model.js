@@ -1,7 +1,7 @@
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
     computeDefault, llmsDefault, dutyCycle6hDefault, GRID_PROFILE} from './defaults.js';
 import {attachRanges} from './ranges.js';
-import {ENVIRONMENT_DEFAULTS, validateEnvironments, environmentRanges} from './environments.js';
+import {ENVIRONMENT_DEFAULTS, validateEnvironments, environmentRanges, CLOUD_LEGACY_KEYS, facilityMultiplier} from './environments.js';
 
 export const MODEL_VERSION = '2.0';
 export const MODEL_DESCRIPTION = 'UZH IT Emissions Model';
@@ -23,12 +23,16 @@ export function createConfig(input = {}) {
     const legacy = raw.compatibility === 'v1' || raw.modelVersion === '1.0';
     const environments = clone(ENVIRONMENT_DEFAULTS);
     if (legacy) environments.saas.enabled = false;
+    for (const [old, key] of Object.entries(CLOUD_LEGACY_KEYS)) {
+        if (raw.compute?.[old] !== undefined) environments.cloud[key] = raw.compute[old] / (old === 'Cloud PUE x100' ? 100 : 1);
+    }
     const config = merge({
         modelVersion: MODEL_VERSION, referenceYear: 2026, annotation: '', percentage: false, rangeInputs: [],
         deviceInfo: deviceInfoDefault, embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2eDefault,
         powerW: powerWDefault, compute: computeDefault, llms: llmsDefault, dutyCycle6h: dutyCycle6hDefault,
         environments,
     }, raw);
+    for (const key of Object.keys(CLOUD_LEGACY_KEYS)) delete config.compute[key];
     config.modelVersion = MODEL_VERSION;
     config.compatibility = legacy ? 'v1' : null;
     return config;
@@ -102,7 +106,7 @@ export function calculate(input = {}) {
 
                     let n = deviceInfo[device]['Count'];
                     if (device === 'Servers') {
-                        cloudInstances = Math.floor(compute['Cloud % servers in cloud'] * n / 100);
+                        cloudInstances = Math.floor((config.environments.cloud.enabled ? config.environments.cloud.migratedPercent : 0) * n / 100);
                         n -= cloudInstances;
                     }
 
@@ -140,15 +144,15 @@ export function calculate(input = {}) {
 
             // Calculate cloud emissions
             function cloudEmissionsKgCO2e() {
-                const u = cloudInstances * compute['Cloud instances per 100 local servers'] / 100
-                    * averageEmissionsKgCO2ePerDay(compute['Cloud instance power W']) * 365
-                    * compute['Cloud PUE x100'] / 100;
-                const m = cloudInstances * compute['Cloud instances per 100 local servers'] / 100
-                    * compute['Cloud instance embodied kg'] / compute['Cloud instance lifetime y'];
-                return [u, m];
-            }
+            const cloud = config.environments.cloud;
+            const n = cloudInstances * cloud.instancesPer100Servers / 100;
+            const electricity = n * cloud.powerWatts / 1000 * 24 * 365 * facilityMultiplier(cloud);
+            const u = electricity * cloud.intensityGPerKwh / 1000;
+            const m = n * cloud.embodiedKg / cloud.lifetimeYears;
+            return [u, m];
+        }
 
-            // Calculate supercomputing emissions
+        // Calculate supercomputing emissions
             function supercomputingEmissionsKgCO2e() {
                 return averageEmissionsKgCO2ePerDay(compute['Supercomputing mean power kW'] * 1000) * 365;
             }

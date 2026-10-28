@@ -22,7 +22,8 @@ test('totals use coherent whole-model cases and preserve shared dependencies', (
 });
 test('paired intervention savings do not acquire uncertainty from unchanged devices', () => {
     const config = createConfig({modelVersion: '1.0', rangeInputs: [lifetime]});
-    const savings = compareRanges(config, {compute: {'Cloud PUE x100': 105, 'Cloud % servers in cloud': 100}}, calculate, merge);
+    const savings = compareRanges(config, {environments: {cloud: {pue: 1.05, migratedPercent: 100}}}, calculate, merge);
+    assert.ok(savings.central > 0);
     assert.ok(Math.abs(savings.high - savings.low) < 1e-8);
 });
 test('missing, invalid and zero-width bounds are handled explicitly', () => {
