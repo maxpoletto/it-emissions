@@ -9,6 +9,8 @@ test('manuscript numbers reproduce paired device-lifetime savings and share deno
     assert.ok(Math.abs(record.metrics.LifetimeSavingT - expected) < 1e-8);
     assert.ok(record.metrics.CombinedWithoutAgentsPercent > record.metrics.CombinedChatPercent);
     assert.ok(record.metrics.EndUserEmbodiedPercent < 50);
+    assert.ok(record.metrics.LowDeviceEmbodiedPercent > 48 && record.metrics.LowDeviceEmbodiedPercent < 50,
+        'the low-device case must not be described as hardware accounting for a majority');
     assert.ok(Math.abs(record.metrics.AgentCoefficient - 3899.75) < 1e-8);
 });
 

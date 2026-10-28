@@ -1,5 +1,7 @@
 node_modules/
 output/
+/doc/paper.pdf
+/doc/it-emissions.pdf
 *.aux
 *.bbl
 *.bcf

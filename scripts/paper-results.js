@@ -10,7 +10,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const percent = (part, total) => part / total * 100;
 
 export async function paperResults() {
-    const names = ['baseline', 'cloud', 'sens1', 'sens-combined', 'lifecycle-before', 'lifecycle-after'];
+    const names = ['baseline', 'cloud', 'sens1', 'sens2', 'sens-combined', 'lifecycle-before', 'lifecycle-after'];
     const scenarios = {}, sources = [];
     for (const name of names) {
         const scenario = await loadScenario(name);
@@ -19,6 +19,7 @@ export async function paperResults() {
     }
     const base = scenarios.baseline, cloud = scenarios.cloud;
     const total = base.results.summary.totalCombined;
+    const population = base.parameters.environments.ai.population;
     const row = (scenario, category) => scenario.results.data.find(r => r.category === category);
     const endUsers = base.results.data.filter(r => ['Laptops', 'Monitors', 'Desktops', 'Mobile phones', 'A/V equipment', 'Printers'].includes(r.category));
     const cscs = row(base, 'Supercomputing'), network = row(base, 'Campus networking');
@@ -36,13 +37,19 @@ export async function paperResults() {
         CscsHardwareT: cscs.embodied / 1000, CscsTotalT: rowTotal(cscs) / 1000,
         CscsLowT: cscs.range.low / 1000, CscsHighT: cscs.range.high / 1000,
         NetworkTotalT: rowTotal(network) / 1000,
+        NetworkOperationalT: network.usage / 1000, NetworkHardwareT: network.embodied / 1000,
+        LocalOverheadT: row(base, 'DC cooling').usage / 1000,
         ChatT: rowTotal(row(base, 'AI (chatbot)')) / 1000,
         ChatPercent: percent(rowTotal(row(base, 'AI (chatbot)')), total),
         ChatFinalT: base.results.projection.at(-1).total / 1000,
+        ChatFinalLowT: base.results.projection.at(-1).range.low / 1000,
+        ChatFinalHighT: base.results.projection.at(-1).range.high / 1000,
         AgentDefaultT: rowTotal(row(base, 'AI (agents)')) / 1000,
-        AgentFivePercentT: agentCase(1900, 1.3) / 1000, AgentHighT: agentCase(3800, 2.4) / 1000,
-        AgentCoefficient: agentCase(38000, 1) / 1000,
+        AgentFivePercentT: agentCase(Math.round(population * 0.05), 1.3) / 1000,
+        AgentHighT: agentCase(Math.round(population * 0.1), 2.4) / 1000,
+        AgentCoefficient: agentCase(population, 1) / 1000,
         SensOneChatPercent: percent(rowTotal(row(scenarios.sens1, 'AI (chatbot)')), scenarios.sens1.results.summary.totalCombined),
+        LowDeviceEmbodiedPercent: percent(scenarios.sens2.results.summary.totalEmbodied, scenarios.sens2.results.summary.totalCombined),
         CombinedChatPercent: percent(rowTotal(row(combined, 'AI (chatbot)')), combined.results.summary.totalCombined),
         CombinedWithoutAgentsPercent: percent(rowTotal(row(combined, 'AI (chatbot)')),
             combined.results.summary.totalCombined - rowTotal(row(combined, 'AI (agents)'))),
