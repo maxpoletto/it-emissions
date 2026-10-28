@@ -7,8 +7,9 @@ publication is part of this change.
 
 ## Commit order
 
-Use `git log --reverse --oneline 2a07073..v2` for the complete sequence. The final
-documentation commit adds this guide and the implementation status in the plan.
+Use `git log --reverse --oneline 2a07073..v2` for the complete sequence. Commit
+`3fac775` adds this guide and the implementation status in the plan; the final
+packaging commit preserves the repository's original ignore patterns.
 
 | Stage | Commit | Review focus |
 | --- | --- | --- |
@@ -33,6 +34,7 @@ documentation commit adds this guide and the implementation status in the plan.
 | Coverage | `9560fe9` | Prevent plotting order from discarding a nonzero category |
 | Layout | `b677919` | Keep figures in Results, improve line/URL wrapping and current-default tables |
 | Build | `2d2068f` | Mark a successful PDF check current when latexmk skips identical regenerated figures |
+| Packaging | after `3fac775` | Preserve ignored local files and older build artifacts |
 
 The manuscript reconciliation is isolated in `1c052ca`; individual figure
 captions are in their figure commits. The model commits can be reviewed before
