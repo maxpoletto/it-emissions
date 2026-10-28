@@ -26,3 +26,12 @@ Shared calculations are in `src/model.js`, defaults in `src/defaults.js`, chart
 definitions in `src/charts.js`, and browser interactions in `src/browser.js`.
 The paper generation pipeline is migrated in the final stage of the development
 plan in `doc/model-development-plan.md`.
+
+Configurations can declare `rangeInputs`, an array of objects containing a
+`path` array, numerical `low` and `high` bounds, and a `source` description.
+The calculator evaluates all declared endpoint combinations (up to 12 inputs),
+preserving shared dependencies. Exported ranges are deterministic assumption
+envelopes, not confidence intervals. Whiskers describe complete category totals;
+categories without quantified bounds have no whisker. Hiding one stack component
+also hides its total whisker. Defaults gain ranges as their environments are
+introduced; no statistical distribution is inferred from device populations.

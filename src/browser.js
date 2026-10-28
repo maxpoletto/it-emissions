@@ -1,9 +1,10 @@
 import Chart from 'chart.js/auto';
-import {calculate, createConfig, report, MODEL_VERSION, MODEL_DESCRIPTION} from './model.js';
+import {calculateWithRanges, createConfig, report, MODEL_VERSION, MODEL_DESCRIPTION} from './model.js';
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
     computeDefault, llmsDefault, dutyCycle6hDefault} from './defaults.js';
 import {emissionsChart, projectionChart} from './charts.js';
 const BUTTON_TIMEOUT = 1000;
+let rangeInputs = [];
 let referenceYear = new Date().getFullYear();
 let deviceInfo = {}, embodiedEmissionsKgCo2e = {}, powerW = {}, compute = {}, llms = {}, dutyCycle6h = {};
 // Globals
@@ -56,7 +57,7 @@ let deviceInfo = {}, embodiedEmissionsKgCo2e = {}, powerW = {}, compute = {}, ll
 
 
 function runModel() {
-    const result = calculate(serializeState());
+    const result = calculateWithRanges(serializeState());
     resultsEmissions = result.rows;
     resultsLLMGrowth = result.projection;
 }
@@ -390,6 +391,7 @@ function renderLLMChart() {
             llms = JSON.parse(JSON.stringify(llmsDefault));
             dutyCycle6h = JSON.parse(JSON.stringify(dutyCycle6hDefault));
             percentage = false;
+            rangeInputs = [];
             annotation = '';
 
             document.getElementById('annotation-input').value = '';
@@ -399,7 +401,7 @@ function renderLLMChart() {
 
         function serializeState() {
             return {
-                modelVersion: MODEL_VERSION, referenceYear,
+                modelVersion: MODEL_VERSION, referenceYear, rangeInputs,
                 deviceInfo: deviceInfo,
                 embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2e,
                 powerW: powerW,
@@ -414,7 +416,7 @@ function renderLLMChart() {
         function deserializeState(stateObj) {
     const loaded = createConfig(stateObj);
     ({deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, llms, dutyCycle6h,
-        referenceYear, percentage, annotation} = loaded);
+        referenceYear, rangeInputs, percentage, annotation} = loaded);
 }
 
 function updateURL() {

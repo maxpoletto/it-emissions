@@ -1,7 +1,7 @@
 import {parseArgs} from 'node:util';
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import path from 'node:path';
-import {calculate, report} from '../src/model.js';
+import {calculateWithRanges, report} from '../src/model.js';
 import {emissionsChart, projectionChart} from '../src/charts.js';
 import {renderChart} from './render.js';
 
@@ -18,7 +18,7 @@ if (values.help) {
         if (!Number.isInteger(year) || year < 1900 || year > 2200) throw new Error('Invalid reference year');
         (input.parameters ?? input).referenceYear = year;
     }
-    const result = calculate(input);
+    const result = calculateWithRanges(input);
     await mkdir(values.output, {recursive: true});
     await writeFile(path.join(values.output, 'results.json'), JSON.stringify(report(input), null, 2) + '\n');
     await renderChart(emissionsChart(result.rows), path.join(values.output, 'emissions.png'));

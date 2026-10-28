@@ -1,0 +1,10 @@
+{
+  "annotation": "Illustrative laptop lifetime sensitivity, not a statistical interval",
+  "referenceYear": 2026,
+  "rangeInputs": [{
+    "path": ["deviceInfo", "Laptops", "Lifetime"],
+    "low": 4,
+    "high": 8,
+    "source": "Explicit 4 to 8 year lifetime scenario, holding the other inputs fixed"
+  }]
+}

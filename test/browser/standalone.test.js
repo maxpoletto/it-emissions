@@ -21,7 +21,9 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(initial, report(initial.parameters));
         await page.evaluate(() => window.EmissionsApp.setConfig({referenceYear: 2026, annotation: 'Zürich + climate 🌍',
-            compute: {'Cloud % servers in cloud': 100}, deviceInfo: {Laptops: {Lifetime: 8}}}));
+            compute: {'Cloud % servers in cloud': 100}, deviceInfo: {Laptops: {Lifetime: 8}},
+            rangeInputs: [{path: ['deviceInfo', 'Laptops', 'Lifetime'], low: 4, high: 8,
+                source: 'Browser integration lifetime scenario'}]}));
         const updated = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(updated, report(updated.parameters));
         await page.reload();
