@@ -12,6 +12,10 @@ export const ENVIRONMENT_DEFAULTS = {
         switchEmbodiedKg: 290, lifetimeYears: 8, electricityScale: 1, legacyPercent: 10,
         bounds: {electricityScale: [0.67, 1.33]},
         source: 'Paper network inventory proxy; ±33% operational allowance for incomplete inventory; hardware bounds unquantified'},
+    supercomputing: {enabled: true, mode: 'allocation', electricityKwh: 3600000, energyBasis: 'it',
+        pue: 1.2, intensityGPerKwh: 50, serverEquivalentKw: 1.2, embodiedKgPerServer: 1100,
+        lifetimeYears: 5, legacyPowerKw: 66, bounds: {pue: [1.1, 1.3], serverEquivalentKw: [0.4, 2]},
+        source: 'CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified'},
 };
 
 export const ENVIRONMENT_FIELDS = {
@@ -58,6 +62,20 @@ export const ENVIRONMENT_FIELDS = {
             {key: 'electricityScale', label: 'Electricity allowance multiplier', min: 0, when: {mode: 'inventory'}},
             {key: 'legacyPercent', label: 'Laptop, desktop and server emissions allowance (%)', min: 0, when: {mode: 'legacy'}},
         ]},
+    supercomputing: {title: 'Supercomputing (CSCS)',
+        note: 'The UZH allocation is an estimate based on occupied space. Compute-only electricity is the working assumption. Hardware is a server-equivalent proxy, not a measured inventory.',
+        fields: [
+            {key: 'enabled', label: 'Include supercomputing', type: 'boolean'},
+            {key: 'mode', label: 'Estimation method', type: 'select', options: {allocation: 'Annual electricity allocation', legacyPower: 'Original power-only estimate'}},
+            {key: 'electricityKwh', label: 'UZH electricity allocation (kWh/year)', min: 0, when: {mode: 'allocation'}},
+            {key: 'energyBasis', label: 'Allocation includes', type: 'select', options: {it: 'IT equipment only', facility: 'IT equipment and facility overhead'}, when: {mode: 'allocation'}},
+            {key: 'pue', label: 'Supercomputing PUE', min: 1, when: {mode: 'allocation'}},
+            {key: 'intensityGPerKwh', label: 'Electricity emissions intensity (g CO₂e/kWh)', min: 0},
+            {key: 'serverEquivalentKw', label: 'Average power per server equivalent (kW IT)', min: 0.01, when: {mode: 'allocation'}},
+            {key: 'embodiedKgPerServer', label: 'Embodied emissions per server equivalent (kg CO₂e)', min: 0, when: {mode: 'allocation'}},
+            {key: 'lifetimeYears', label: 'Hardware lifetime (years)', min: 0.01, when: {mode: 'allocation'}},
+            {key: 'legacyPowerKw', label: 'Original average allocated power (kW)', min: 0, when: {mode: 'legacyPower'}},
+        ]},
 };
 
 export const CLOUD_LEGACY_KEYS = {
@@ -89,7 +107,7 @@ export function validateEnvironments(environments) {
 
 export function environmentRanges(config) {
     return Object.entries(config.environments ?? {}).flatMap(([name, env]) => {
-        if (!env.enabled || env.mode === 'legacy') return [];
+        if (!env.enabled || env.mode === 'legacy' || env.mode === 'legacyPower') return [];
         return Object.entries(env.bounds ?? {}).map(([key, bounds]) => {
             if (!Array.isArray(bounds) || bounds.length !== 2) throw new Error('Invalid bounds for ' + name + '.' + key);
             return {path: ['environments', name, key], low: bounds[0], high: bounds[1], source: env.source};

@@ -24,6 +24,10 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.locator('#saas-users').dispatchEvent('change');
         assert.equal(await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Productivity SaaS').usage), 550);
         assert.equal(await page.locator('#model-error').textContent(), '');
+        await page.locator('#supercomputing-electricityKwh').fill('0');
+        await page.locator('#supercomputing-electricityKwh').dispatchEvent('change');
+        const supercomputing = await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Supercomputing'));
+        assert.equal(supercomputing.usage, 0); assert.equal(supercomputing.embodied, 0);
         await page.locator('#cloud-migratedPercent').fill('100');
         await page.locator('#cloud-migratedPercent').dispatchEvent('change');
         await page.locator('#cloud-intensityGPerKwh').fill('0');

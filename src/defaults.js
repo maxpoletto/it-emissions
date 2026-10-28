@@ -135,7 +135,6 @@ export const deviceInfoDefault = {
         };
 
         export const computeDefault = {
-            'Supercomputing mean power kW': 66,
         };
 
         export const llmsDefault = {

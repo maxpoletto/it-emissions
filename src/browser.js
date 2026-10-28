@@ -342,6 +342,8 @@ function renderLLMChart() {
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateModel);
             createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateModel);
             createDutyCycleTable('duty-cycle-table', dutyCycle6h, updateModel);
+            const computePanel = document.getElementById('compute-table').closest('.input-section');
+            computePanel.hidden = Object.keys(compute).length === 0;
             createKeyValueTable('compute-table', compute, updateModel);
             createKeyValueTable('llm-table', llms, updateModel);
         }

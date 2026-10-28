@@ -25,6 +25,13 @@ export function createConfig(input = {}) {
     if (legacy) {
         environments.saas.enabled = false;
         environments.networking.mode = 'legacy';
+        environments.supercomputing.mode = 'legacyPower';
+        environments.supercomputing.intensityGPerKwh = 53.75;
+    }
+    if (raw.compute?.['Supercomputing mean power kW'] !== undefined) {
+        environments.supercomputing.mode = 'legacyPower';
+        environments.supercomputing.legacyPowerKw = raw.compute['Supercomputing mean power kW'];
+        environments.supercomputing.intensityGPerKwh = 53.75;
     }
     if (raw.compute?.['Campus networking overhead %'] !== undefined) {
         environments.networking.mode = 'legacy';
@@ -44,6 +51,7 @@ export function createConfig(input = {}) {
     for (const key of Object.keys(CLOUD_LEGACY_KEYS)) delete config.compute[key];
     delete config.compute['Campus data center PUE x100'];
     delete config.compute['Campus networking overhead %'];
+    delete config.compute['Supercomputing mean power kW'];
     config.modelVersion = MODEL_VERSION;
     config.compatibility = legacy ? 'v1' : null;
     return config;
@@ -182,12 +190,22 @@ export function calculate(input = {}) {
             return [u, m];
         }
 
-        // Calculate supercomputing emissions
-            function supercomputingEmissionsKgCO2e() {
-                return averageEmissionsKgCO2ePerDay(compute['Supercomputing mean power kW'] * 1000) * 365;
+        function supercomputingResult() {
+            const env = config.environments.supercomputing;
+            if (env.mode === 'legacyPower') {
+                const electricityKwh = env.legacyPowerKw * 8760;
+                return {category: 'Supercomputing', usage: electricityKwh * env.intensityGPerKwh / 1000,
+                    embodied: null, electricityKwh};
             }
+            const itElectricity = env.energyBasis === 'it' ? env.electricityKwh : env.electricityKwh / env.pue;
+            const electricityKwh = env.electricityKwh * facilityMultiplier(env);
+            const serverEquivalents = itElectricity / 8760 / env.serverEquivalentKw;
+            return {category: 'Supercomputing', usage: electricityKwh * env.intensityGPerKwh / 1000,
+                embodied: serverEquivalents * env.embodiedKgPerServer / env.lifetimeYears,
+                electricityKwh, itElectricityKwh: itElectricity, serverEquivalents};
+        }
 
-            // Calculate LLM emissions
+        // Calculate LLM emissions
             function llmEmissionsKgCO2e() {
                 const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
                 const dailyQueries = llms['Mean daily user queries'] * llms['User population'];
@@ -301,14 +319,11 @@ export function calculate(input = {}) {
                 totalU += cloudU;
                 totalM += cloudM;
 
-                // Supercomputing
-                const supercomputingU = supercomputingEmissionsKgCO2e();
-                data.push({
-                    category: 'Supercomputing',
-                    embodied: null,
-                    usage: supercomputingU
-                });
-                totalU += supercomputingU;
+                if (config.environments.supercomputing.enabled) {
+                    const result = supercomputingResult();
+                    data.push(result);
+                    totalU += result.usage; totalM += result.embodied ?? 0;
+                }
 
                 // LLM
                 const [llmU, llmM] = llmEmissionsKgCO2e();
