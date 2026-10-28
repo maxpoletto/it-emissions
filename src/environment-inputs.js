@@ -39,8 +39,8 @@ export function renderEnvironments(environments, update) {
             }
             input.addEventListener('change', () => {
                 values[field.key] = field.type === 'boolean' ? input.checked : field.type === 'select' ? input.value : Number(input.value);
-                update();
                 if (field.type === 'select') renderEnvironments(environments, update);
+                update();
             });
             cell.append(input); row.append(cell);
             for (let i = 0; i < 2; i++) {

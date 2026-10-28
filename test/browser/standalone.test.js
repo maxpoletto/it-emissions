@@ -5,6 +5,7 @@ import {existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 import {report} from '../../src/model.js';
+import {loadScenario} from '../../scripts/scenarios.js';
 
 test('standalone file works offline, recalculates, restores URLs and exports the shared model', async () => {
     const macChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -20,6 +21,10 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(initial, report(initial.parameters));
+        assert.equal(await page.locator('#power-table th').count(), 2, 'only operationally active power inputs are editable');
+        await page.locator('#cloud-energyBasis').selectOption('facility');
+        assert.match(await page.locator('#ai-summary').textContent(), /Chat: .*agents: .*AI:/,
+            'changing an environment selector preserves the refreshed summary');
         await page.locator('#saas-users').fill('100');
         await page.locator('#saas-users').dispatchEvent('change');
         assert.equal(await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Productivity SaaS').usage), 550);
@@ -59,6 +64,13 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         assert.match(download.suggestedFilename(), /\.json$/);
         const exported = JSON.parse(await readFile(await download.path(), 'utf8'));
         assert.deepEqual(exported, report(exported.parameters));
+        for (const name of ['baseline', 'cloud', 'sens1', 'sens2']) {
+            const {configuration} = await loadScenario(name);
+            await page.evaluate(configuration => window.EmissionsApp.setConfig(configuration), configuration);
+            assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), report(configuration),
+                'browser and paper scenario agree: ' + name);
+        }
+        await page.getByRole('button', {name: 'Reset Parameters', exact: true}).click();
         await mkdir(new URL('../../output/', import.meta.url), {recursive: true});
         await page.screenshot({path: fileURLToPath(new URL('../../output/standalone.png', import.meta.url)), fullPage: true});
         await page.locator('#environment-ai').screenshot({path: fileURLToPath(new URL('../../output/ai-controls.png', import.meta.url))});

@@ -340,8 +340,8 @@ function renderLLMChart() {
         function createInputTables() {
             renderEnvironments(modelInputs.environments, updateModel);
             createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime', 'Days per year'], updateModel);
-            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean', 'Stdev', 'Min', 'Max'], ['Mean'], updateModel);
-            createCollapsibleTable('power-table', powerW, ['Mean', 'Stdev', 'Min', 'Max', 'Standby'], ['Mean', 'Standby'], updateModel);
+            createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean'], ['Mean'], updateModel);
+            createCollapsibleTable('power-table', powerW, ['Mean'], ['Mean'], updateModel);
             createDutyCycleTable('duty-cycle-table', dutyCycle6h, updateModel);
             const computePanel = document.getElementById('compute-table').closest('.input-section');
             computePanel.hidden = Object.keys(compute).length === 0;
@@ -384,7 +384,10 @@ function renderOutput() {
             const hosted = resultsEmissions.filter(r => r.category.startsWith('AI') || r.category === 'LLM');
             const aiTotal = hosted.reduce((n, row) => n + rowTotal(row), 0) / 1000;
             const total = rowTotal(resultsEmissions.at(-1)) / 1000;
-            document.getElementById('ai-summary').textContent = 'Modelled hosted AI: '
+            const format = value => value.toLocaleString(undefined, {maximumFractionDigits: 1});
+            const activity = category => hosted.filter(row => row.category === category).reduce((n, row) => n + rowTotal(row), 0) / 1000;
+            document.getElementById('ai-summary').textContent = 'Chat: ' + format(activity(modelInputs.compatibility === 'v1' ? 'LLM' : 'AI (chatbot)'))
+                + ' t; agents: ' + format(activity('AI (agents)')) + ' t; modelled hosted AI: '
                 + aiTotal.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' t CO₂e/year; total IT: '
                 + total.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' t CO₂e/year.';
             document.getElementById('percentage-checkbox').checked = percentage;
