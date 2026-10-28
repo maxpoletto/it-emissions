@@ -137,19 +137,6 @@ export const deviceInfoDefault = {
         export const computeDefault = {
         };
 
-        export const llmsDefault = {
-            'User population': 38000,
-            'Mean daily user queries': 15,
-            'Days per year': 250,
-            'Mean query Wh': 1.0,
-            'Training overhead %': 25,
-            'Emissions intensity g CO2e / kWh': 207,
-            'Embodied emissions g CO2e / query': 0.1,
-            'Annual usage growth %': 50,
-            'Annual efficiency growth %': 30,
-            'Annual training growth %': 50,
-        };
-
         export const dutyCycle6hDefault = {
             // Fraction of time active during 0:00-5:59, 6:00-11:59, 12:00-17:59, 18:00-23:59.
             // Just a guess, but probably not unreasonable.

@@ -1,7 +1,10 @@
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
-    computeDefault, llmsDefault, dutyCycle6hDefault, GRID_PROFILE} from './defaults.js';
+    computeDefault, dutyCycle6hDefault, GRID_PROFILE} from './defaults.js';
 import {attachRanges} from './ranges.js';
-import {ENVIRONMENT_DEFAULTS, validateEnvironments, environmentRanges, CLOUD_LEGACY_KEYS, facilityMultiplier} from './environments.js';
+import {ENVIRONMENT_DEFAULTS, validateEnvironments, environmentRanges, CLOUD_LEGACY_KEYS, AI_LEGACY_KEYS, facilityMultiplier} from './environments.js';
+
+import {aiWorkloads, chatProjection} from './ai.js';
+import {rowTotal} from './components.js';
 
 export const MODEL_VERSION = '2.0';
 export const MODEL_DESCRIPTION = 'UZH IT Emissions Model';
@@ -20,14 +23,20 @@ export function merge(base, patch) {
 
 export function createConfig(input = {}) {
     const raw = input.parameters ? {...input.parameters, ...input.settings, annotation: input.metadata?.annotation ?? ''} : input;
-    const legacy = raw.compatibility === 'v1' || raw.modelVersion === '1.0';
+    const legacy = raw.compatibility === 'v1' || raw.modelVersion === '1.0' || (!raw.modelVersion && raw.llms && !raw.environments?.ai);
     const environments = clone(ENVIRONMENT_DEFAULTS);
     if (legacy) {
         environments.saas.enabled = false;
         environments.networking.mode = 'legacy';
         environments.supercomputing.mode = 'legacyPower';
         environments.supercomputing.intensityGPerKwh = 53.75;
+        environments.ai.agentUsers = 0;
+        environments.ai.bounds = {};
     }
+    for (const [old, key] of Object.entries(AI_LEGACY_KEYS)) {
+        if (raw.llms?.[old] !== undefined) environments.ai[key] = raw.llms[old];
+    }
+    if (raw.llms?.['User population'] !== undefined) environments.ai.population = raw.llms['User population'];
     if (raw.compute?.['Supercomputing mean power kW'] !== undefined) {
         environments.supercomputing.mode = 'legacyPower';
         environments.supercomputing.legacyPowerKw = raw.compute['Supercomputing mean power kW'];
@@ -45,13 +54,14 @@ export function createConfig(input = {}) {
     const config = merge({
         modelVersion: MODEL_VERSION, referenceYear: 2026, annotation: '', percentage: false, rangeInputs: [],
         deviceInfo: deviceInfoDefault, embodiedEmissionsKgCo2e: embodiedEmissionsKgCo2eDefault,
-        powerW: powerWDefault, compute: computeDefault, llms: llmsDefault, dutyCycle6h: dutyCycle6hDefault,
+        powerW: powerWDefault, compute: computeDefault, dutyCycle6h: dutyCycle6hDefault,
         environments,
     }, raw);
     for (const key of Object.keys(CLOUD_LEGACY_KEYS)) delete config.compute[key];
     delete config.compute['Campus data center PUE x100'];
     delete config.compute['Campus networking overhead %'];
     delete config.compute['Supercomputing mean power kW'];
+    delete config.llms;
     config.modelVersion = MODEL_VERSION;
     config.compatibility = legacy ? 'v1' : null;
     return config;
@@ -71,7 +81,7 @@ export function calculate(input = {}) {
             || config.dutyCycle6h[device].some(v => !Number.isFinite(v) || v < 0 || v > 1))
             throw new Error('Duty cycles must contain four fractions from 0 to 1 for ' + device);
     }
-    const {deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, llms, dutyCycle6h, referenceYear} = config;
+    const {deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, dutyCycle6h, referenceYear} = config;
     const stochastic = false;
     let devices = {}, emissionsIntensity = {}, cloudInstances = 0, resultsEmissions, resultsLLMGrowth;
     class Emissions {
@@ -205,61 +215,10 @@ export function calculate(input = {}) {
                 electricityKwh, itElectricityKwh: itElectricity, serverEquivalents};
         }
 
-        // Calculate LLM emissions
-            function llmEmissionsKgCO2e() {
-                const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
-                const dailyQueries = llms['Mean daily user queries'] * llms['User population'];
-                const annualQueries = dailyQueries * llms['Days per year'];
-                // Divide by 1000 to convert Wh to kWh and by 1000 again to convert g CO2e to kg CO2e.
-                const u = annualQueries * llms['Mean query Wh'] * emissionsIntensity / (1000 * 1000);
-                const m = u * llms['Training overhead %'] / 100 + annualQueries * llms['Embodied emissions g CO2e / query'] / 1000;
-                return [u, m];
-            }
-
-            // Calculate LLM emissions projection over 5 years
-            function llmEmissionsProjection() {
-                const baseDailyQueries = llms['Mean daily user queries'] * llms['User population'];
-                const baseEnergyPerQuery = llms['Mean query Wh'];
-                const emissionsIntensity = llms['Emissions intensity g CO2e / kWh'];
-                const trainingOverhead = llms['Training overhead %'] / 100;
-                const embodiedPerQuery = llms['Embodied emissions g CO2e / query'];
-                const usageGrowth = llms['Annual usage growth %'] / 100;
-                const efficiencyGrowth = llms['Annual efficiency growth %'] / 100;
-                const trainingGrowth = llms['Annual training growth %'] / 100;
-
-                let dailyQueries = baseDailyQueries;
-                let trainingEmissions = 0;
-                let energyPerQuery = baseEnergyPerQuery;
-                const projection = [];
-                for (let year = 0; year < 5; year++) {
-                    const annualQueries = dailyQueries * llms['Days per year'];
-                    const usageEmissions = annualQueries * energyPerQuery * emissionsIntensity / (1000 * 1000);
-                    if (year === 0) {
-                        trainingEmissions = usageEmissions * trainingOverhead;
-                    } else {
-                        trainingEmissions = trainingEmissions * (1 + trainingGrowth);
-                    }
-                    const embodiedEmissions = trainingEmissions + annualQueries * embodiedPerQuery / 1000;
-                    const totalEmissions = usageEmissions + embodiedEmissions;
-
-                    projection.push({
-                        year: referenceYear + year,
-                        usage: usageEmissions,
-                        embodied: embodiedEmissions,
-                        total: totalEmissions
-                    });
-
-                    dailyQueries *= 1 + usageGrowth;
-                    energyPerQuery *= 1 - efficiencyGrowth;
-                }
-
-                return projection;
-            }
-
-            function runModel() {
+        function runModel() {
                 generateDevices();
 
-                let totalU = 0, totalM = 0;
+                let totalU = 0, totalM = 0, totalTraining = 0;
                 const data = [];
 
                 // Device emissions
@@ -325,15 +284,20 @@ export function calculate(input = {}) {
                     totalU += result.usage; totalM += result.embodied ?? 0;
                 }
 
-                // LLM
-                const [llmU, llmM] = llmEmissionsKgCO2e();
-                data.push({
-                    category: 'LLM',
-                    embodied: llmM,
-                    usage: llmU
-                });
-                totalU += llmU;
-                totalM += llmM;
+                const ai = aiWorkloads(config.environments.ai);
+                if (config.compatibility === 'v1') {
+                    const legacyChat = {...ai.chat, category: 'LLM',
+                        embodied: ai.chat.embodied + ai.chat.training, training: 0};
+                    data.push(legacyChat); totalU += legacyChat.usage; totalM += legacyChat.embodied;
+                    if (config.environments.ai.agentUsers > 0) {
+                        data.push(ai.agents); totalU += ai.agents.usage; totalM += ai.agents.embodied;
+                        totalTraining += ai.agents.training;
+                    }
+                } else {
+                    for (const row of [ai.chat, ai.agents]) {
+                        data.push(row); totalU += row.usage; totalM += row.embodied; totalTraining += row.training;
+                    }
+                }
 
                 if (config.environments.saas.enabled) {
                 const service = config.environments.saas;
@@ -346,10 +310,11 @@ export function calculate(input = {}) {
                 data.push({
                     category: 'Totals',
                     embodied: totalM,
-                    usage: totalU
+                    usage: totalU,
+                    training: totalTraining
                 });
                 resultsEmissions = data;
-                resultsLLMGrowth = llmEmissionsProjection();
+                resultsLLMGrowth = chatProjection(config.environments.ai, referenceYear, config.compatibility === 'v1');
             }
 
 
@@ -367,8 +332,9 @@ export function report(input = {}) {
         parameters: result.config,
         results: {data: result.rows.slice(0, -1), projection: result.projection,
             summary: {totalEmbodied: totals.embodied, totalUsage: totals.usage,
-                totalCombined: totals.embodied + totals.usage, range: totals.range ?? null}},
-        units: result.units, rangeAnalysis: result.rangeAnalysis,
+                totalTraining: totals.training ?? 0,
+                totalCombined: rowTotal(totals), range: totals.range ?? null}},
+        units: result.units, rangeAnalysis: result.rangeAnalysis, projectionScope: 'ordinary chat only',
     };
 }
 

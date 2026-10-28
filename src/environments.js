@@ -16,6 +16,13 @@ export const ENVIRONMENT_DEFAULTS = {
         pue: 1.2, intensityGPerKwh: 50, serverEquivalentKw: 1.2, embodiedKgPerServer: 1100,
         lifetimeYears: 5, legacyPowerKw: 66, bounds: {pue: [1.1, 1.3], serverEquivalentKw: [0.4, 2]},
         source: 'CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified'},
+    ai: {enabled: true, population: 38000, intensityGPerKwh: 207, pue: 1.2,
+        chatUsers: 38000, queriesPerUserDay: 15, chatDays: 250, whPerQuery: 1,
+        chatEnergyBasis: 'facility', chatHardwareGPerQuery: 0.1,
+        agentUsers: 3800, agentDays: 250, kwhPerAgentDay: 1.3, agentEnergyBasis: 'it', agentHardwareGPerKwh: 100,
+        trainingPercent: 25, usageGrowthPercent: 50, efficiencyImprovementPercent: 30, trainingGrowthPercent: 50,
+        bounds: {whPerQuery: [0.3, 3], kwhPerAgentDay: [0.1, 2.4], agentHardwareGPerKwh: [50, 150]},
+        source: 'Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured'},
 };
 
 export const ENVIRONMENT_FIELDS = {
@@ -76,6 +83,37 @@ export const ENVIRONMENT_FIELDS = {
             {key: 'lifetimeYears', label: 'Hardware lifetime (years)', min: 0.01, when: {mode: 'allocation'}},
             {key: 'legacyPowerKw', label: 'Original average allocated power (kW)', min: 0, when: {mode: 'legacyPower'}},
         ]},
+    ai: {title: 'Hosted AI',
+        note: 'User counts are illustrative, not measured adoption. Chat and agent users may overlap. Count agent-generated requests only in the agent workload. AI already covered by campus or CSCS electricity is not added here.',
+        fields: [
+            {key: 'enabled', label: 'Include hosted AI', type: 'boolean', group: 'Environment'},
+            {key: 'population', label: 'Reference campus population', min: 0, integer: true},
+            {key: 'intensityGPerKwh', label: 'AI electricity intensity (g CO₂e/kWh)', min: 0},
+            {key: 'pue', label: 'AI data-center PUE', min: 1},
+            {key: 'trainingPercent', label: 'Training allocation (% of inference emissions)', min: 0},
+            {key: 'chatUsers', label: 'People using ordinary chat', min: 0, integer: true, group: 'Ordinary chat'},
+            {key: 'queriesPerUserDay', label: 'Queries per active user-day', min: 0},
+            {key: 'chatDays', label: 'Active chat days per year', min: 0, max: 366},
+            {key: 'whPerQuery', label: 'Energy per ordinary query (Wh)', min: 0},
+            {key: 'chatEnergyBasis', label: 'Query energy includes', type: 'select', options: {it: 'IT equipment only', facility: 'IT equipment and facility overhead'}},
+            {key: 'chatHardwareGPerQuery', label: 'Hardware allocation (g CO₂e/query)', min: 0},
+            {key: 'agentUsers', label: 'People using agents', min: 0, integer: true, group: 'Agents'},
+            {key: 'agentDays', label: 'Active agent days per year', min: 0, max: 366},
+            {key: 'kwhPerAgentDay', label: 'Energy per active agent user-day (kWh)', min: 0},
+            {key: 'agentEnergyBasis', label: 'Agent energy includes', type: 'select', options: {it: 'IT equipment only', facility: 'IT equipment and facility overhead'}},
+            {key: 'agentHardwareGPerKwh', label: 'Hardware allocation (g CO₂e/kWh of IT electricity)', min: 0},
+            {key: 'usageGrowthPercent', label: 'Annual chat workload growth (%)', min: -100, group: 'Ordinary chat growth scenario'},
+            {key: 'efficiencyImprovementPercent', label: 'Annual reduction in query energy (%)', min: 0, max: 100},
+            {key: 'trainingGrowthPercent', label: 'Annual growth in training emissions (%)', min: -100},
+        ]},
+};
+
+export const AI_LEGACY_KEYS = {
+    'User population': 'chatUsers', 'Mean daily user queries': 'queriesPerUserDay', 'Days per year': 'chatDays',
+    'Mean query Wh': 'whPerQuery', 'Training overhead %': 'trainingPercent',
+    'Emissions intensity g CO2e / kWh': 'intensityGPerKwh', 'Embodied emissions g CO2e / query': 'chatHardwareGPerQuery',
+    'Annual usage growth %': 'usageGrowthPercent', 'Annual efficiency growth %': 'efficiencyImprovementPercent',
+    'Annual training growth %': 'trainingGrowthPercent',
 };
 
 export const CLOUD_LEGACY_KEYS = {
@@ -102,6 +140,8 @@ export function validateEnvironments(environments) {
                 || value < (field.min ?? 0) || (field.max !== undefined && value > field.max)
                 || (field.integer && !Number.isInteger(value))) throw new Error('Invalid ' + field.label);
         }
+        if (name === 'ai' && (values.chatUsers > values.population || values.agentUsers > values.population))
+            throw new Error('Each AI user group must fit within the reference campus population; the groups may overlap');
     }
 }
 

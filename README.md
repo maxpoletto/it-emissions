@@ -41,3 +41,10 @@ CO₂e/user-year (209 t/year), with a declared 1–10 kg/user-year range. Import
 version 1 configurations retain the original service scope; new components are
 disabled unless explicitly enabled. Configuration exports retain that
 compatibility setting so old saved scenarios do not silently acquire new services.
+
+Hosted AI separates ordinary chat from agent workloads. The illustrative default
+uses 38,000 chat users and 3,800 agent users; these are scenarios, not measured
+adoption. Groups may overlap. Chat energy defaults to a facility-wide Wh/query
+estimate; agent energy defaults to IT kWh/user-day, with PUE applied once. Hardware
+and training allocations remain separate. The five-year projection covers ordinary
+chat only. See the input labels and exported parameters for each energy boundary.

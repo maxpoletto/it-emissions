@@ -3,6 +3,7 @@ import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {calculateWithRanges, report} from '../src/model.js';
 import {emissionsChart, projectionChart} from '../src/charts.js';
+import {rowTotal} from '../src/components.js';
 import {renderChart} from './render.js';
 
 const {values} = parseArgs({options: {
@@ -23,5 +24,5 @@ if (values.help) {
     await writeFile(path.join(values.output, 'results.json'), JSON.stringify(report(input), null, 2) + '\n');
     await renderChart(emissionsChart(result.rows), path.join(values.output, 'emissions.png'));
     await renderChart(projectionChart(result.projection), path.join(values.output, 'projection.png'));
-    console.log(`${result.rows.at(-1).usage + result.rows.at(-1).embodied} kg CO2e/year`);
+    console.log(`${rowTotal(result.rows.at(-1))} kg CO2e/year`);
 }

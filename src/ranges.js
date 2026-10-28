@@ -1,3 +1,5 @@
+import {rowTotal} from './components.js';
+
 // Deterministic envelopes over declared input bounds, not statistical intervals.
 // Whole-model evaluations retain dependencies (e.g. one grid affects several rows).
 export function rangeCases(config, definitions = config.rangeInputs ?? []) {
@@ -38,7 +40,7 @@ export function attachRanges(config, calculate, definitions = config.rangeInputs
     }
     return {...central,
         rows: central.rows.map((row, i) => ({...row,
-            range: envelope(results.map(r => (r.rows[i].usage ?? 0) + (r.rows[i].embodied ?? 0)))})),
+            range: envelope(results.map(r => rowTotal(r.rows[i])))})),
         projection: central.projection.map((row, i) => ({...row,
             range: envelope(results.map(r => r.projection[i].total))})),
         rangeAnalysis: {method: 'deterministic input bounds', interpretation: 'Assumption ranges; not confidence intervals',
@@ -50,7 +52,7 @@ export function compareRanges(base, change, calculate, merge, definitions = base
     const inputs = [base, ...rangeCases(base, definitions)];
     const savings = inputs.map(input => {
         const before = calculate(input).rows.at(-1), after = calculate(merge(input, change)).rows.at(-1);
-        return before.usage + before.embodied - after.usage - after.embodied;
+        return rowTotal(before) - rowTotal(after);
     });
     return {central: savings[0], low: Math.min(...savings), high: Math.max(...savings)};
 }

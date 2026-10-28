@@ -14,6 +14,11 @@ export function renderEnvironments(environments, update) {
         const body = document.createElement('tbody');
         for (const field of schema.fields) {
             if (field.when && Object.entries(field.when).some(([key, value]) => values[key] !== value)) continue;
+            if (field.group) {
+                const group = document.createElement('tr'); const heading = document.createElement('th');
+                heading.colSpan = 4; heading.textContent = field.group; heading.style.textAlign = 'left';
+                group.append(heading); body.append(group);
+            }
             const row = document.createElement('tr');
             const label = document.createElement('td'); label.textContent = field.label; row.append(label);
             const cell = document.createElement('td');
@@ -51,6 +56,11 @@ export function renderEnvironments(environments, update) {
             }
             body.append(row);
         }
-        table.append(body); section.append(title, note, table); region.append(section);
+        table.append(body); section.append(title, note, table);
+        if (name === 'ai') {
+            const summary = document.createElement('p'); summary.id = 'ai-summary';
+            summary.className = 'section-note'; summary.setAttribute('aria-live', 'polite'); section.append(summary);
+        }
+        region.append(section);
     }
 }

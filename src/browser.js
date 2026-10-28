@@ -1,8 +1,9 @@
 import Chart from 'chart.js/auto';
 import {calculateWithRanges, createConfig, report, MODEL_VERSION, MODEL_DESCRIPTION} from './model.js';
 import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
-    computeDefault, llmsDefault, dutyCycle6hDefault} from './defaults.js';
+    computeDefault, dutyCycle6hDefault} from './defaults.js';
 import {emissionsChart, projectionChart} from './charts.js';
+import {rowTotal} from './components.js';
 import {renderEnvironments} from './environment-inputs.js';
 const BUTTON_TIMEOUT = 1000;
 let modelInputs = createConfig();
@@ -345,43 +346,47 @@ function renderLLMChart() {
             const computePanel = document.getElementById('compute-table').closest('.input-section');
             computePanel.hidden = Object.keys(compute).length === 0;
             createKeyValueTable('compute-table', compute, updateModel);
-            createKeyValueTable('llm-table', llms, updateModel);
+
         }
 
         function renderEmissionsTable() {
-            const data = resultsEmissions;
-            const thead = document.getElementById('results-thead');
-            thead.innerHTML = '';
-            thead.innerHTML = `
-                <tr>
-                    <th>Category</th>
-                    <th>Embodied<br>(${percentage ? '%' : 'kg CO2e'})</th>
-                    <th>Usage<br>(${percentage ? '%' : 'kg CO2e'})</th>
-                </tr>
-            `;
-
-            const totalsRow = data[data.length - 1];
-            const combined = Math.round(totalsRow.embodied + totalsRow.usage);
-
-            const tbody = document.getElementById('results-tbody');
-            tbody.innerHTML = '';
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row.category}</td>
-                    <td>${row.embodied !== null ? (percentage ? Math.round(row.embodied / combined * 100) : Math.round(row.embodied)) : ''}</td>
-                    <td>${percentage ? Math.round(row.usage / combined * 100) : Math.round(row.usage)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            const tfoot = document.getElementById('results-tfoot');
-            tfoot.innerHTML = `
-                <tr><td>Combined total</td><td colspan="2">${percentage ? Math.round(combined / combined * 100) : Math.round(combined)}</td></tr>
-            `;
+    const data = resultsEmissions;
+    const combined = rowTotal(data.at(-1));
+    const unit = percentage ? '% of central total' : 'kg CO₂e/year';
+    const headers = ['Category', modelInputs.compatibility === 'v1' ? 'Embodied / legacy allocation' : 'Embodied',
+        'Operational', 'Training', 'Total and assumption range'];
+    const thead = document.getElementById('results-thead'); thead.replaceChildren();
+    const heading = document.createElement('tr');
+    for (const text of headers) {const th = document.createElement('th'); th.textContent = text; heading.append(th);}
+    thead.append(heading);
+    const tbody = document.getElementById('results-tbody'); tbody.replaceChildren();
+    const format = value => Math.round(percentage ? (combined ? value / combined * 100 : 0) : value).toLocaleString();
+    for (const row of data) {
+        const tr = document.createElement('tr');
+        for (const value of [row.category, row.embodied === null ? '—' : format(row.embodied ?? 0),
+            format(row.usage ?? 0), format(row.training ?? 0), format(rowTotal(row))]) {
+            const cell = document.createElement('td'); cell.textContent = value; tr.append(cell);
         }
+        if (row.range) {
+            const range = document.createElement('small');
+            range.style.display = 'block'; range.textContent = '(' + format(row.range.low) + '–' + format(row.range.high) + ')';
+            tr.lastElementChild.append(range);
+        }
+        tbody.append(tr);
+    }
+    const foot = document.getElementById('results-tfoot'); foot.replaceChildren();
+    const tr = document.createElement('tr'), td = document.createElement('td');
+    td.colSpan = 5; td.textContent = 'Annual emissions (' + unit + '). Ranges describe only the stated assumptions.';
+    tr.append(td); foot.append(tr);
+}
 
-        function renderOutput() {
+function renderOutput() {
+            const hosted = resultsEmissions.filter(r => r.category.startsWith('AI') || r.category === 'LLM');
+            const aiTotal = hosted.reduce((n, row) => n + rowTotal(row), 0) / 1000;
+            const total = rowTotal(resultsEmissions.at(-1)) / 1000;
+            document.getElementById('ai-summary').textContent = 'Modelled hosted AI: '
+                + aiTotal.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' t CO₂e/year; total IT: '
+                + total.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' t CO₂e/year.';
             document.getElementById('percentage-checkbox').checked = percentage;
             renderEmissionsTable();
             renderEmissionsChart();
@@ -404,7 +409,6 @@ function serializeState() {
                 powerW: powerW,
                 dutyCycle6h: dutyCycle6h,
                 compute: compute,
-                llms: llms,
                 percentage: percentage,
                 annotation: annotation
             };
@@ -413,7 +417,7 @@ function serializeState() {
         function deserializeState(stateObj) {
     const loaded = createConfig(stateObj);
     modelInputs = loaded;
-    ({deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, llms, dutyCycle6h,
+    ({deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, dutyCycle6h,
         referenceYear, rangeInputs, percentage, annotation} = loaded);
 }
 
@@ -453,7 +457,9 @@ function updateURL() {
     try {
         runModel(); renderOutput(); updateURL();
         error.textContent = '';
+        document.getElementById('export-button').disabled = false;
     } catch (problem) {
+        document.getElementById('export-button').disabled = true;
         error.textContent = problem.message + '. Results retain the last valid configuration.';
     }
 }

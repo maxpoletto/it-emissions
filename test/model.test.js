@@ -23,8 +23,8 @@ test('calculation does not mutate inputs or share mutable defaults', () => {
 });
 test('exported configurations round trip and projection starts at the annual calculation', () => {
     const input = createConfig({referenceYear: 2030, annotation: 'Zürich + climate 🌍'});
-    const result = calculate(input); const llm = result.rows.find(r => r.category === 'LLM');
-    close(result.projection[0].usage, llm.usage); close(result.projection[0].embodied, llm.embodied);
+    const result = calculate(input); const llm = result.rows.find(r => r.category === 'AI (chatbot)');
+    close(result.projection[0].usage, llm.usage); close(result.projection[0].embodied, llm.embodied); close(result.projection[0].training, llm.training);
     assert.equal(result.projection[0].year, 2030);
     close(calculate(report(input)).rows, result.rows);
 });

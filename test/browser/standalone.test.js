@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdir} from 'node:fs/promises';
+import {mkdir, readFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
@@ -34,6 +34,11 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.locator('#cloud-intensityGPerKwh').dispatchEvent('change');
         const cloud = await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Cloud'));
         assert.equal(cloud.usage, 0); assert.ok(cloud.embodied > 0);
+        for (const field of ['chatUsers', 'agentUsers']) {
+            await page.locator('#ai-' + field).fill('0');
+            await page.locator('#ai-' + field).dispatchEvent('change');
+        }
+        assert.match(await page.locator('#ai-summary').textContent(), /AI: 0 t/);
         await page.locator('#local-pue').fill('0.5');
         await page.locator('#local-pue').dispatchEvent('change');
         assert.match(await page.locator('#model-error').textContent(), /PUE/);
@@ -52,8 +57,17 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         assert.equal(await page.evaluate(() => window.EmissionsApp.getConfig().deviceInfo.Laptops.Lifetime), 6);
         const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', {name: 'Export to JSON'}).click()]);
         assert.match(download.suggestedFilename(), /\.json$/);
+        const exported = JSON.parse(await readFile(await download.path(), 'utf8'));
+        assert.deepEqual(exported, report(exported.parameters));
         await mkdir(new URL('../../output/', import.meta.url), {recursive: true});
         await page.screenshot({path: fileURLToPath(new URL('../../output/standalone.png', import.meta.url)), fullPage: true});
+        await page.locator('#environment-ai').screenshot({path: fileURLToPath(new URL('../../output/ai-controls.png', import.meta.url))});
+        const old = {modelVersion: '1.0', llms: {'User population': 100, 'Mean daily user queries': 3}, annotation: 'Legacy'};
+        await page.goto(url + '?' + new URLSearchParams({config: Buffer.from(JSON.stringify(old)).toString('base64')}));
+        assert.equal(await page.evaluate(() => window.EmissionsApp.getConfig().compatibility), 'v1');
+        assert.equal(await page.locator('#saas-enabled').isChecked(), false);
+        assert.equal(await page.locator('#supercomputing-mode').inputValue(), 'legacyPower');
+        assert.equal(await page.locator('#ai-agentUsers').inputValue(), '0');
         assert.deepEqual(errors, []);
     } finally {await browser.close();}
 });
