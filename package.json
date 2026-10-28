@@ -1,0 +1,21 @@
+{
+  "name": "uzh-it-emissions",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build-app.js",
+    "test": "node --test test/*.test.js",
+    "test:browser": "node --test test/browser/*.test.js",
+    "batch": "node scripts/batch.js"
+  },
+  "dependencies": {
+    "chart.js": "4.6.1",
+    "esbuild": "0.28.2",
+    "playwright": "1.64.1",
+    "skia-canvas": "4.0.0"
+  }
+}

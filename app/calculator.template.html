@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Emissions Calculator</title>
+    <!-- BASE_STYLE -->
+    <style>
+        .emissions-calculator {
+            max-width: 820px !important;
+            margin: 0px auto;
+        }
+
+        .intro-text {
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            border-radius: 8px;
+            background: rgba(var(--c-white), 1);
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: rgba(var(--c-black), 1);
+            margin-bottom: 1rem;
+        }
+        h2.section-title {
+            font-size: 1.2rem;
+            line-height: 1.2;
+        }
+        h1.section-title {
+            font-size: 2rem;
+            line-height: 1.5;
+            background-color: rgba(var(--c-grey-light), 0.5);
+        }
+
+        #annotation-title {
+            margin-bottom: 0.25rem;
+        }
+        #annotation-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
+         #copy-url-button {
+             width: 100px;
+         }
+         #copy-url-button::before {
+             content: "Copy URL";
+         }
+         #copy-url-button.copied {
+             background-color: rgba(var(--c-green), 1);
+             color: rgba(var(--c-white), 1);
+         }
+         #copy-url-button.copied::before {
+             content: "Copied!";
+         }
+
+        .section-note {
+            font-size: 0.8rem;
+            font-style: italic;
+            color: rgba(var(--c-grey), 0.8);
+            margin-bottom: 0.25rem;
+        }
+
+        .HTML table th:first-child, .HTML table td:first-child {
+            border-left: 1px solid rgba(var(--c-grey), 0.2) !important;
+        }
+        .HTML table th:last-child, .HTML table td:last-child {
+            border-right: 1px solid rgba(var(--c-grey), 0.2) !important;
+        }
+        .HTML table {
+            overflow: auto !important;
+        }
+
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .parameter-table th,
+        .parameter-table td {
+            border: 1px solid rgba(var(--c-grey), 0.2) !important;
+            padding: 0.5rem !important;
+            vertical-align: middle !important;
+        }
+        .parameter-table th:first-child,
+        .parameter-table td:first-child {
+            border: 1px solid rgba(var(--c-grey), 0.2) !important;
+            padding: 0.5rem !important;
+            vertical-align: middle !important;
+            text-align: left;
+            width: 40%;
+            min-width: 100px;
+            text-wrap: wrap;
+        }
+        .parameter-table th:not(:first-child),
+        .parameter-table td:not(:first-child) {
+            text-align: right;
+            width: auto;
+        }
+        .parameter-table th {
+            background-color: rgba(var(--c-grey-light), 0.5);
+            font-weight: 600;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        .parameter-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background-color: rgba(var(--c-grey-light), 0.5);
+        }
+        /* Hide the up/down arrows in numeric input fields */
+        .parameter-table input::-webkit-outer-spin-button,
+        .parameter-table input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* Do the same for Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        .parameter-table input {
+            width: 100%;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            padding: 0.10rem 0.25rem;
+            text-align: right;
+            background: transparent;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        .parameter-table input:focus {
+            background-color: rgba(var(--c-grey-light), 0.5);
+            outline: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background-color: rgba(var(--c-grey-light), 0.5);
+            border-radius: 8px;
+        }
+
+        #percentage-checkbox {
+            margin-right: 0.25rem;
+        }
+
+        .results-section {
+            margin-top: 20px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .results-table th,
+        .results-table td {
+            border: 1px solid rgba(var(--c-grey), 0.2) !important;
+            padding: 0.75rem !important;
+        }
+        .results-table th:first-child,
+        .results-table td:first-child {
+            border: 1px solid rgba(var(--c-grey), 0.2) !important;
+            padding: 0.75rem !important;
+            text-align: left;
+            width: 40%;
+        }
+        .results-table th:not(:first-child),
+        .results-table td:not(:first-child) {
+            text-align: right;
+            width: 30%; /* Two columns with values, 30% each */
+        }
+        .results-table th {
+            background-color: rgba(var(--c-grey-light), 0.5);
+            font-weight: 600;
+        }
+        .results-table tr:last-child td {
+            font-weight: 600;
+            background-color: rgba(var(--c-blue), 0.05);
+        }
+
+        .chart-container {
+            width: 100%;
+            min-width: 450px;
+            height: 500px;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            padding: 1.5rem;
+            background: rgba(var(--c-white), 1);
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            border-radius: 0.5rem;
+        }
+        .one-column {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media(max-width: 550px) {
+            .two-column {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Use site's button styles */
+        .run-btn {
+            background-color: rgba(var(--c-blue), 1);
+            color: rgba(var(--c-white), 1);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            cursor: pointer;
+            line-height: 1.5;
+            font-weight: 400;
+            transition: background-color 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+
+        .run-btn:hover {
+            background-color: rgba(var(--c-blue), 0.8);
+        }
+
+        .run-btn:active {
+            background-color: rgba(var(--c-blue), 0.6);
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Collapsible table functionality */
+        .expand-toggle {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: rgba(var(--c-blue), 1);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+
+        .expand-toggle:hover {
+            background-color: rgba(var(--c-blue), 0.1);
+        }
+
+        .expand-toggle:focus {
+            outline: 2px solid rgba(var(--c-blue), 0.5);
+        }
+
+        .additional-columns {
+            display: none;
+        }
+        .additional-columns.visible {
+            display: table-cell;
+        }
+        .additional-headers {
+            display: none;
+        }
+        .additional-headers.visible {
+            display: table-cell;
+        }
+
+        /* Tooltip system */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted rgba(var(--c-grey), 0.5);
+        }
+
+        [data-tooltip]:not([data-tooltip=""]):hover::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 10%;
+            background-color: rgba(var(--c-black), 0.9);
+            color: rgba(var(--c-white), 1);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            line-height: 1.2;
+            white-space: normal;
+            width: 90%;
+            font-size: 0.9rem;
+            text-align: left;
+            text-wrap: wrap;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        [data-tooltip]:not([data-tooltip=""]):hover::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 55%;
+            transform: translateX(-50%) translateY(100%);
+            border: 4px solid transparent;
+            border-top-color: rgba(var(--c-black), 0.9);
+            z-index: 1001;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="emissions-calculator">
+            <div class="intro-text">
+                <p>
+                    This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.
+                </p>
+                <p>
+                    The model should be generally applicable to other similar campuses. Edit any of the parameters below to explore different scenarios.</p>
+                <p>
+                    For more details, see <a href="https://github.com/maxpoletto/it-emissions">https://github.com/maxpoletto/it-emissions</a>.
+                </p>
+            </div>
+            <!-- Annotation - Full Width Row -->
+            <div class="one-column">
+                <div class="input-section">
+                    <h2 id="annotation-title" class="section-title">Scenario Notes</h2>
+                    <p class="section-note">Add text here to describe your scenario. This note and all parameters are automatically saved in the URL so you can easily archive or share your configuration. (Below you can also export the model as a JSON file.)</p>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="text" id="annotation-input" placeholder="Enter description..." onchange="updateAnnotation()">
+                        <button id="copy-url-button" class="run-btn" onclick="copyToClipboard(this)"></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Device Population - Full Width Row -->
+            <div class="one-column">
+                <div class="input-section">
+                    <h2 class="section-title">Device Population</h2>
+                    <table class="parameter-table" id="device-table"></table>
+                </div>
+            </div>
+
+            <!-- Two column layout for Embodied Emissions and Power Consumption -->
+            <div class="two-column">
+                <div class="input-section">
+                    <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
+                    <table class="parameter-table" id="embodied-table"></table>
+                </div>
+
+                <div class="input-section">
+                    <h2 class="section-title">Power Consumption (W)</h2>
+                    <table class="parameter-table" id="power-table"></table>
+                </div>
+            </div>
+
+            <div class="one-column">
+                <!-- Compute Parameters - Full Width Row -->
+                <div class="input-section">
+                    <h2 class="section-title">Compute Parameters</h2>
+                    <table class="parameter-table" id="compute-table"></table>
+                </div>
+
+                <!-- LLM Parameters - Full Width Row -->
+                <div class="input-section">
+                    <h2 class="section-title">LLM Parameters</h2>
+                    <table class="parameter-table" id="llm-table"></table>
+                </div>
+
+                <!-- Duty Cycles -->
+                <div class="input-section">
+                    <h2 class="section-title">Device Duty Cycles (fraction of time active)
+                        <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
+                    </h2>
+                    <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="run-btn" onclick="updateModel()">Rerun Calculation</button>
+                <button class="run-btn" onclick="resetParameters()">Reset Parameters</button>
+                <button class="run-btn" onclick="exportResults()">Export to JSON</button>
+            </div>
+
+            <!-- Results Section -->
+            <h1 class="section-title">Results</h1>
+            <div class="results-controls">
+                <input type="checkbox" id="percentage-checkbox" onchange="togglePercentage()">
+                <label for="percentage-checkbox">Show as percentages</label>
+            </div>
+            <!-- Results Table - Full Width -->
+            <div class="results-section">
+                <table class="results-table" id="results-table">
+                    <thead id="results-thead">
+                    </thead>
+                    <tbody id="results-tbody">
+                    </tbody>
+                    <tfoot id="results-tfoot">
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Charts - Stacked Vertically -->
+            <div class="results-section">
+                <div class="chart-container">
+                    <canvas id="emissions-chart"></canvas>
+                </div>
+            </div>
+            <div class="results-section">
+                <div class="chart-container">
+                    <canvas id="llm-projection-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- APP_SCRIPT -->
+</body>
+</html>

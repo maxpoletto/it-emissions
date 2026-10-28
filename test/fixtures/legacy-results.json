@@ -1,0 +1,436 @@
+[
+  {
+    "name": "default",
+    "input": {
+      "referenceYear": 2026
+    },
+    "rows": [
+      {
+        "category": "Laptops",
+        "embodied": 960000,
+        "usage": 227679.99999999997
+      },
+      {
+        "category": "Monitors",
+        "embodied": 443700,
+        "usage": 74280.59999999999
+      },
+      {
+        "category": "Desktops",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Servers",
+        "embodied": 246620,
+        "usage": 168903.31200000003
+      },
+      {
+        "category": "Mobile phones",
+        "embodied": 583333.3333333334,
+        "usage": 15662.5
+      },
+      {
+        "category": "A/V equipment",
+        "embodied": 37712.5,
+        "usage": 7849.587499999999
+      },
+      {
+        "category": "Printers",
+        "embodied": 45787.5,
+        "usage": 231.43500000000003
+      },
+      {
+        "category": "Campus networking",
+        "embodied": 120662,
+        "usage": 39658.3312
+      },
+      {
+        "category": "DC cooling",
+        "embodied": null,
+        "usage": 168903.31200000003
+      },
+      {
+        "category": "Cloud",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Supercomputing",
+        "embodied": null,
+        "usage": 31076.1
+      },
+      {
+        "category": "LLM",
+        "embodied": 21624.375,
+        "usage": 29497.5
+      },
+      {
+        "category": "Totals",
+        "embodied": 2459439.7083333335,
+        "usage": 763742.6777
+      }
+    ],
+    "projection": [
+      {
+        "year": 2026,
+        "usage": 29497.5,
+        "embodied": 21624.375,
+        "total": 51121.875
+      },
+      {
+        "year": 2027,
+        "usage": 30972.375,
+        "embodied": 32436.5625,
+        "total": 63408.9375
+      },
+      {
+        "year": 2028,
+        "usage": 32520.993749999994,
+        "embodied": 48654.84375,
+        "total": 81175.8375
+      },
+      {
+        "year": 2029,
+        "usage": 34147.04343749999,
+        "embodied": 72982.265625,
+        "total": 107129.30906249999
+      },
+      {
+        "year": 2030,
+        "usage": 35854.39560937499,
+        "embodied": 109473.3984375,
+        "total": 145327.79404687497
+      }
+    ]
+  },
+  {
+    "name": "cloud",
+    "input": {
+      "compute": {
+        "Cloud % servers in cloud": 100
+      },
+      "referenceYear": 2026
+    },
+    "rows": [
+      {
+        "category": "Laptops",
+        "embodied": 960000,
+        "usage": 227679.99999999997
+      },
+      {
+        "category": "Monitors",
+        "embodied": 443700,
+        "usage": 74280.59999999999
+      },
+      {
+        "category": "Desktops",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Servers",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Mobile phones",
+        "embodied": 583333.3333333334,
+        "usage": 15662.5
+      },
+      {
+        "category": "A/V equipment",
+        "embodied": 37712.5,
+        "usage": 7849.587499999999
+      },
+      {
+        "category": "Printers",
+        "embodied": 45787.5,
+        "usage": 231.43500000000003
+      },
+      {
+        "category": "Campus networking",
+        "embodied": 96000,
+        "usage": 22767.999999999996
+      },
+      {
+        "category": "DC cooling",
+        "embodied": null,
+        "usage": 0
+      },
+      {
+        "category": "Cloud",
+        "embodied": 196175,
+        "usage": 182098.88325000004
+      },
+      {
+        "category": "Supercomputing",
+        "embodied": null,
+        "usage": 31076.1
+      },
+      {
+        "category": "LLM",
+        "embodied": 21624.375,
+        "usage": 29497.5
+      },
+      {
+        "category": "Totals",
+        "embodied": 2384332.7083333335,
+        "usage": 591144.60575
+      }
+    ],
+    "projection": [
+      {
+        "year": 2026,
+        "usage": 29497.5,
+        "embodied": 21624.375,
+        "total": 51121.875
+      },
+      {
+        "year": 2027,
+        "usage": 30972.375,
+        "embodied": 32436.5625,
+        "total": 63408.9375
+      },
+      {
+        "year": 2028,
+        "usage": 32520.993749999994,
+        "embodied": 48654.84375,
+        "total": 81175.8375
+      },
+      {
+        "year": 2029,
+        "usage": 34147.04343749999,
+        "embodied": 72982.265625,
+        "total": 107129.30906249999
+      },
+      {
+        "year": 2030,
+        "usage": 35854.39560937499,
+        "embodied": 109473.3984375,
+        "total": 145327.79404687497
+      }
+    ]
+  },
+  {
+    "name": "longer device life",
+    "input": {
+      "deviceInfo": {
+        "Laptops": {
+          "Lifetime": 8
+        },
+        "Mobile phones": {
+          "Lifetime": 4
+        }
+      },
+      "referenceYear": 2026
+    },
+    "rows": [
+      {
+        "category": "Laptops",
+        "embodied": 720000,
+        "usage": 227679.99999999997
+      },
+      {
+        "category": "Monitors",
+        "embodied": 443700,
+        "usage": 74280.59999999999
+      },
+      {
+        "category": "Desktops",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Servers",
+        "embodied": 246620,
+        "usage": 168903.31200000003
+      },
+      {
+        "category": "Mobile phones",
+        "embodied": 437500,
+        "usage": 15662.5
+      },
+      {
+        "category": "A/V equipment",
+        "embodied": 37712.5,
+        "usage": 7849.587499999999
+      },
+      {
+        "category": "Printers",
+        "embodied": 45787.5,
+        "usage": 231.43500000000003
+      },
+      {
+        "category": "Campus networking",
+        "embodied": 96662,
+        "usage": 39658.3312
+      },
+      {
+        "category": "DC cooling",
+        "embodied": null,
+        "usage": 168903.31200000003
+      },
+      {
+        "category": "Cloud",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Supercomputing",
+        "embodied": null,
+        "usage": 31076.1
+      },
+      {
+        "category": "LLM",
+        "embodied": 21624.375,
+        "usage": 29497.5
+      },
+      {
+        "category": "Totals",
+        "embodied": 2049606.375,
+        "usage": 763742.6777
+      }
+    ],
+    "projection": [
+      {
+        "year": 2026,
+        "usage": 29497.5,
+        "embodied": 21624.375,
+        "total": 51121.875
+      },
+      {
+        "year": 2027,
+        "usage": 30972.375,
+        "embodied": 32436.5625,
+        "total": 63408.9375
+      },
+      {
+        "year": 2028,
+        "usage": 32520.993749999994,
+        "embodied": 48654.84375,
+        "total": 81175.8375
+      },
+      {
+        "year": 2029,
+        "usage": 34147.04343749999,
+        "embodied": 72982.265625,
+        "total": 107129.30906249999
+      },
+      {
+        "year": 2030,
+        "usage": 35854.39560937499,
+        "embodied": 109473.3984375,
+        "total": 145327.79404687497
+      }
+    ]
+  },
+  {
+    "name": "no AI",
+    "input": {
+      "llms": {
+        "Mean daily user queries": 0
+      },
+      "referenceYear": 2026
+    },
+    "rows": [
+      {
+        "category": "Laptops",
+        "embodied": 960000,
+        "usage": 227679.99999999997
+      },
+      {
+        "category": "Monitors",
+        "embodied": 443700,
+        "usage": 74280.59999999999
+      },
+      {
+        "category": "Desktops",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Servers",
+        "embodied": 246620,
+        "usage": 168903.31200000003
+      },
+      {
+        "category": "Mobile phones",
+        "embodied": 583333.3333333334,
+        "usage": 15662.5
+      },
+      {
+        "category": "A/V equipment",
+        "embodied": 37712.5,
+        "usage": 7849.587499999999
+      },
+      {
+        "category": "Printers",
+        "embodied": 45787.5,
+        "usage": 231.43500000000003
+      },
+      {
+        "category": "Campus networking",
+        "embodied": 120662,
+        "usage": 39658.3312
+      },
+      {
+        "category": "DC cooling",
+        "embodied": null,
+        "usage": 168903.31200000003
+      },
+      {
+        "category": "Cloud",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Supercomputing",
+        "embodied": null,
+        "usage": 31076.1
+      },
+      {
+        "category": "LLM",
+        "embodied": 0,
+        "usage": 0
+      },
+      {
+        "category": "Totals",
+        "embodied": 2437815.3333333335,
+        "usage": 734245.1777
+      }
+    ],
+    "projection": [
+      {
+        "year": 2026,
+        "usage": 0,
+        "embodied": 0,
+        "total": 0
+      },
+      {
+        "year": 2027,
+        "usage": 0,
+        "embodied": 0,
+        "total": 0
+      },
+      {
+        "year": 2028,
+        "usage": 0,
+        "embodied": 0,
+        "total": 0
+      },
+      {
+        "year": 2029,
+        "usage": 0,
+        "embodied": 0,
+        "total": 0
+      },
+      {
+        "year": 2030,
+        "usage": 0,
+        "embodied": 0,
+        "total": 0
+      }
+    ]
+  }
+]
