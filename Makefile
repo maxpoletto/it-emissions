@@ -1,11 +1,11 @@
-.PHONY: all app docs clean
+.PHONY: all app doc clean
 
-all: app docs
+all: app doc
 
 app:
 	$(MAKE) -C src all
 
-docs:
+doc:
 	$(MAKE) -C doc all
 
 clean:
