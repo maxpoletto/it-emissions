@@ -857,14 +857,17 @@ high-intensity agentic AI.
 For example, if we (1) massively reduce the set of end-user devices in scope to
 just those owned and managed by the university (about 10,000 laptops and
 monitors, 2,400 mobile phones), (2) triple the ordinary LLM per-query energy use
-to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a
-GPT-4o-class LLM 30 times per day, then emissions from ordinary chat are about
+to 3 Wh, and (3) assume that each of the 38,000 people at UZH queries a chatbot
+30 times per day, then emissions from ordinary chat are still only about
 \ModelSensOneChatPercent{}\% of total (Figure~\ref{fig:sens1}).
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-sens1.png}
-  \caption{Sensitivity scenario with university-managed laptop and phone counts, and high ordinary-chat use (30 queries/user/day at 3 Wh/query). Other assumptions, including the six-year laptop lifetime and illustrative agent use, are retained. Whiskers vary the same inputs as in Figure~\ref{fig:baseline}; this is separate from the sustainability-report comparison.}
+  \caption{Sensitivity scenario with only university-managed laptop and phone
+  counts, and high ordinary-chat use (30 queries/user/day at 3 Wh/query). Other
+  assumptions, including the six-year laptop lifetime and illustrative agent
+  use, are retained.}
   \label{fig:sens1}
 \end{figure}
 
@@ -879,7 +882,9 @@ Figure~\ref{fig:sens2}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-sens2.png}
-  \caption{Sensitivity scenario using the literature minimum for each local-device embodied footprint. Operational inputs and independent network, cloud, CSCS, and AI hardware proxies remain fixed. Whiskers vary the same inputs as in Figure~\ref{fig:baseline}; they do not describe a statistical distribution of device footprints.}
+  \caption{Sensitivity scenario using the literature minimum for each
+  local-device embodied footprint. Operational inputs and independent network,
+  cloud, CSCS, and AI hardware proxies remain fixed.}
   \label{fig:sens2}
 \end{figure}
 
