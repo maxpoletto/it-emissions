@@ -7,6 +7,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
+import {gzipSync} from 'node:zlib';
 import {buildApp} from '../scripts/build-app.js';
 
 test('deployment builds differ in presentation and contain identical application code', async () => {
@@ -63,6 +64,10 @@ test('all four UZH Source Sans faces retain their original WOFF2 font data', asy
     const output = path.join(directory, 'index.html');
     await buildApp({output});
     const html = await readFile(output, 'utf8');
+    const css = await readFile(new URL('../src/assets/css/main.css', import.meta.url));
+    assert.ok(css.length < 16000, 'the standalone page uses the calculator subset, not the complete site framework');
+    assert.ok(gzipSync(html, {level: 9}).length < 750000, 'retain the reduced single-file download size');
+    assert.equal((html.match(/data:font\/woff2;base64,/g) ?? []).length, 4);
     const faces = [...html.matchAll(/@font-face\s*\{[^}]*\}/g)]
         .map(match => match[0]).filter(face => face.includes('Source Sans Pro'));
     assert.equal(faces.length, 4);

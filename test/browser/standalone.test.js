@@ -105,6 +105,29 @@ test('both deployments work offline, agree numerically, and preserve their site 
             await page.route(/^https?:/, route => {externalRequests.push(route.request().url()); return route.abort();});
             await page.goto(pathToFileURL(output).href);
             await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
+            const fontFaces = await page.evaluate(async () => {
+                for (const face of ['16px', 'italic 16px', '700 16px', 'italic 700 16px']) {
+                    const loaded = await document.fonts.load(face + ' "Source Sans Pro"');
+                    if (!loaded.length) throw new Error('Missing Source Sans face: ' + face);
+                }
+                return [...document.fonts].filter(face => face.family.includes('Source Sans Pro')).map(face => face.status);
+            });
+            assert.deepEqual(fontFaces, ['loaded', 'loaded', 'loaded', 'loaded']);
+            for (const width of [1280, 500]) {
+                await page.setViewportSize({width, height: 900});
+                const typography = await page.locator('body').evaluate(element => {
+                    const style = getComputedStyle(element);
+                    return {family: style.fontFamily, size: style.fontSize};
+                });
+                assert.match(typography.family, /Source Sans Pro/);
+                assert.equal(typography.size, width > 700 ? '18px' : '16px');
+            }
+            await page.setViewportSize({width: 1280, height: 900});
+            await page.locator('#copy-url-button').evaluate(element => element.classList.add('copied'));
+            // The existing button changes color through a 200 ms transition.
+            await page.waitForFunction(() => getComputedStyle(document.getElementById('copy-url-button')).backgroundColor === 'rgb(40, 150, 12)');
+            assert.equal(await page.locator('#copy-url-button').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(40, 150, 12)');
+            await page.locator('#copy-url-button').evaluate(element => element.classList.remove('copied'));
             await page.evaluate(configuration => window.EmissionsApp.setConfig(configuration), configuration);
             reports[deploymentEnvironment] = await page.evaluate(() => window.EmissionsApp.getReport());
             const margin = await page.locator('.emissions-calculator').evaluate(element => getComputedStyle(element).marginTop);

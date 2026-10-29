@@ -35,6 +35,12 @@ too. Deployment flags select presentation only: application code, model defaults
 saved configurations and calculations are identical. Deploy either directory as
 it stands; its `index.html` is an ordinary file and needs no external assets.
 
+`src/assets/css/main.css` contains the UZH rules used by the calculator: resets,
+brand colors, typography, controls and CMS content styles. Unrelated site
+navigation, carousel and gallery styles are excluded. All four original Source
+Sans font faces are embedded as WOFF2, with no duplicated WOFF fallbacks or font
+subsetting. Keep this CSS subset in step with new interface elements and states.
+
 Use `--output path/to/index.html` with a single environment to select another
 output file, and repeat both options with `--check` to verify it. For example:
 
