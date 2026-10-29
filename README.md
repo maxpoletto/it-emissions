@@ -36,9 +36,10 @@ npm run build -- --deployment-environment maxp --output output/maxp/index.html
 ```
 
 The equivalent Make command is
-`make -C app build DEPLOYMENT_ENVIRONMENT=maxp` (or `uzh`). The default
-`make -C app all` also creates the existing UZH `app/index.html` symlink; the
-personal-site target writes only its separate output. Edit shared markup in
+`make -C app build DEPLOYMENT_ENVIRONMENT=maxp` (or `uzh`). Use
+`make -C app all DEPLOYMENT_ENVIRONMENT=maxp` to also point `app/index.html` at
+the personal-site output; `uzh` points it at the UZH output. The link is refreshed
+on every `all` build, so switching environments needs no clean step. Edit shared markup in
 `app/calculator.template.html` and site-specific styles/header markup in
 `app/deployments/`. `npm test` checks the tracked UZH artifact, and the browser
 tests exercise both environments offline, including simulated UZH CMS overrides.
