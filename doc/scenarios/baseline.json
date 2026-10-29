@@ -283,7 +283,7 @@
         "trainingPercent": 20,
         "usageGrowthPercent": 50,
         "efficiencyImprovementPercent": 30,
-        "trainingGrowthPercent": 50,
+        "trainingGrowthPercent": 30,
         "bounds": {
           "whPerQuery": [
             0.3,

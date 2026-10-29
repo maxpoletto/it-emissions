@@ -5,7 +5,7 @@
     "sources": [
       {
         "path": "doc/scenarios/baseline.json",
-        "sha256": "b920afcb08c5aaaed5c4045b16fc7a8957e0c80d89a65da55f73f4decb4a47db"
+        "sha256": "08c48c61526a6a1f693af44a7286778bde0b66f367761b3fc8501e7805949a28"
       },
       {
         "path": "doc/scenarios/sens2.json",
@@ -17,7 +17,7 @@
       "width": 1600,
       "height": 900
     },
-    "sha256": "04de3c10fb14031f5c60c5739ac0c114b0a92fd7c68cd98ff96afa8f3ee729c0"
+    "sha256": "28a0232a733ff6d7dd70e4ec6a73a29801de30f28ef62c46144ba551f21ffcbd"
   },
   "metadata": {
     "modelVersion": "2.0",
@@ -306,7 +306,7 @@
         "trainingPercent": 20,
         "usageGrowthPercent": 50,
         "efficiencyImprovementPercent": 30,
-        "trainingGrowthPercent": 50,
+        "trainingGrowthPercent": 30,
         "bounds": {
           "whPerQuery": [
             0.3,
@@ -470,44 +470,44 @@
         "year": 2027,
         "usage": 30972.374999999996,
         "embodied": 21375,
-        "training": 8849.25,
-        "total": 61196.625,
+        "training": 7669.35,
+        "total": 60016.725,
         "range": {
-          "low": 22214.324999999997,
-          "high": 281679.75
+          "low": 21978.344999999998,
+          "high": 274600.35
         }
       },
       {
         "year": 2028,
         "usage": 32520.993749999994,
         "embodied": 32062.5,
-        "training": 13273.875,
-        "total": 77857.36875,
+        "training": 9970.155,
+        "total": 74553.64875,
         "range": {
-          "low": 30533.97375,
-          "high": 338894.21249999997
+          "low": 29873.22975,
+          "high": 319071.89249999996
         }
       },
       {
         "year": 2029,
         "usage": 34147.04343749999,
         "embodied": 48093.75,
-        "training": 19910.8125,
-        "total": 102151.60593749999,
+        "training": 12961.201500000001,
+        "total": 95201.99493749999,
         "range": {
-          "low": 42874.0711875,
-          "high": 420534.63562499994
+          "low": 41484.1489875,
+          "high": 378836.9696249999
         }
       },
       {
         "year": 2030,
         "usage": 35854.395609374995,
         "embodied": 72140.625,
-        "training": 29866.21875,
-        "total": 137861.239359375,
+        "training": 16849.561950000003,
+        "total": 124844.582559375,
         "range": {
-          "low": 61237.872871875,
-          "high": 538604.93615625
+          "low": 58634.541511874995,
+          "high": 460504.99535625
         }
       }
     ],

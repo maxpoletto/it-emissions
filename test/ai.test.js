@@ -5,8 +5,12 @@ import {rowTotal} from '../src/components.js';
 const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-7, `${a} != ${b}`);
 const rows = input => calculate(input).rows.filter(r => r.category.startsWith('AI'));
 
-test('new scenarios default to 20% training and saved allocations remain explicit', () => {
+test('new scenarios default to 20% training and 30% growth while saved assumptions remain explicit', () => {
     assert.equal(createConfig().environments.ai.trainingPercent, 20);
+    assert.equal(createConfig().environments.ai.trainingGrowthPercent, 30);
+    assert.equal(createConfig({environments: {ai: {trainingGrowthPercent: 50}}}).environments.ai.trainingGrowthPercent, 50);
+    assert.equal(createConfig({modelVersion: '1.0'}).environments.ai.trainingGrowthPercent, 50);
+    assert.equal(createConfig({modelVersion: '1.0', llms: {'Annual training growth %': 30}}).environments.ai.trainingGrowthPercent, 30);
     assert.equal(createConfig({environments: {ai: {trainingPercent: 25}}}).environments.ai.trainingPercent, 25);
     assert.equal(createConfig({modelVersion: '1.0'}).environments.ai.trainingPercent, 25);
     assert.equal(createConfig({modelVersion: '1.0', llms: {'Training overhead %': 20}}).environments.ai.trainingPercent, 20);

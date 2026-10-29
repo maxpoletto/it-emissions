@@ -135,6 +135,7 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         const queryHigh = page.getByRole('spinbutton', {name: 'Hosted AI: Queries per active user-day high assumption', exact: true});
         assert.equal(await queryLow.inputValue(), '10');
         assert.equal(await queryHigh.inputValue(), '30');
+        assert.equal(await page.locator('#ai-trainingGrowthPercent').inputValue(), '30');
         assert.equal(await page.locator('#ai-kwhPerAgentDay').inputValue(), '1.5');
         assert.equal(await page.locator('#ai-agentEnergyBasis').inputValue(), 'facility');
         assert.equal(await page.locator('#ai-agentHardwareGPerKwh').inputValue(), '30');

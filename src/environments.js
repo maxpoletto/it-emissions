@@ -21,7 +21,7 @@ export const ENVIRONMENT_DEFAULTS = {
         chatEnergyBasis: 'facility', chatHardwareGPerQuery: 0.1,
         agentUsers: 3800, agentDays: 250, kwhPerAgentDay: 1.5, agentEnergyBasis: 'facility',
         agentHardwareGPerKwh: 30, agentHardwareEnergyBasis: 'facility',
-        trainingPercent: 20, usageGrowthPercent: 50, efficiencyImprovementPercent: 30, trainingGrowthPercent: 50,
+        trainingPercent: 20, usageGrowthPercent: 50, efficiencyImprovementPercent: 30, trainingGrowthPercent: 30,
         bounds: {whPerQuery: [0.3, 3], queriesPerUserDay: [10, 30], agentUsers: [1900, 7600],
             kwhPerAgentDay: [1, 3], agentHardwareGPerKwh: [10, 50]},
         source: 'Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured'},

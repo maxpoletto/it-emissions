@@ -31,8 +31,9 @@ export function createConfig(input = {}) {
         environments.supercomputing.mode = 'legacyPower';
         environments.supercomputing.intensityGPerKwh = 53.75;
         environments.ai.agentUsers = 0;
-        // Version-1 bookmarks can omit this field; retain their original default.
+        // Version-1 bookmarks can omit these fields; retain their original defaults.
         environments.ai.trainingPercent = 25;
+        environments.ai.trainingGrowthPercent = 50;
         environments.ai.kwhPerAgentDay = 1.3;
         environments.ai.agentEnergyBasis = 'it';
         environments.ai.agentHardwareGPerKwh = 100;

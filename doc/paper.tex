@@ -713,12 +713,13 @@ exploration of alternate contexts.
 \subsection{Comparison with UZH Sustainability Report}
 
 The UZH 2024 Sustainability Report~\cite{uzh:sustainability:report} provides a
-data point for university-owned devices. It cites total IT emissions of 1,535
-\tcoe. A like-for-like comparison also requires the report's
-Ecoinvent~\cite{ecoinvent} footprint factors and device lifetimes. Using those
-factors and limiting our model to university-owned devices, we obtain a similar
-number of approximately 1,600 \tcoe. This similarity does not validate our
-model, but it does provide a useful sanity check.
+data point for university-owned devices: it cites  IT emissions of 1,535 \tcoe,
+including university audiovisual devices. A like-for-like comparison also
+requires the report's Ecoinvent~\cite{ecoinvent} footprint factors and device
+lifetimes. Using those factors and limiting our model to university-owned
+devices, we obtain a similar number of approximately 1,600 \tcoe. This
+similarity does not validate our model, but it does provide a useful sanity
+check.
 
 \subsection{Key results}
 
@@ -736,7 +737,10 @@ emissions. See Figure~\ref{fig:baseline}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-baseline.png}
-  \caption{Baseline scenario from the shared calculator. Bars separate embodied hardware, training allocations, and operational emissions (including the composite SaaS factor). Whiskers show assumption ranges for network electricity, SaaS emissions per user, CSCS server-equivalent power, chatbot query energy and volume, and agent adoption, daily energy and hardware allocations; other uncertainty is not quantified. Central agent use is illustrative: 10\% adoption at 1.5 kWh of facility inference electricity per active user-day.}
+  \caption{Baseline scenario for our model. Stacked bars separate operational
+  emissions, embodied emissions, and (for AI) training emissions. Whiskers
+  denote assumption ranges for uncertain parameters such as AI adoption
+  and AI model energy intensity.}
   \label{fig:baseline}
 \end{figure}
 
@@ -761,7 +765,10 @@ assumptions. See Figure~\ref{fig:cloud}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-cloud.png}
-  \caption{All local servers migrated one-for-one to cloud instances at PUE 1.15 and 53.75 \gcoekwh. Campus networking and other services remain in the boundary. Whiskers have the same meaning as in Figure~\ref{fig:baseline}; the paired savings calculation holds shared assumptions fixed.}
+  \caption{All local servers migrated one-for-one to cloud instances at PUE 1.15
+  and approximately 50 \gcoekwh. Campus networking and other services remain in the
+  boundary. Whiskers have the same meaning as in Figure~\ref{fig:baseline}; the
+  paired savings calculation holds shared assumptions fixed.}
   \label{fig:cloud}
 \end{figure}
 
@@ -776,7 +783,7 @@ electricity, those factors might outweigh the improved cooling efficiency.
 
 There is also a financial argument to consider: if migration to the cloud is
 more expensive than continued on-premise operation, the savings from not
-migrating might be invested in more cost effective emissions improvements
+migrating might be invested in more cost-effective emissions improvements
 (including ones not related to IT).
 
 \subsubsection*{Impact of generative and agentic AI}
@@ -784,7 +791,13 @@ migrating might be invested in more cost effective emissions improvements
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-llm-growth.png}
-  \caption{Ordinary chatbot growth scenario, excluding agents. Central values assume 15 queries/user/day, initially 1 Wh/query, 250 active days/year, 50\% annual usage growth, 30\% annual reduction in query energy, 50\% annual growth in training emissions, 20\% initial training allocation, and 0.1 \gcoe/query hardware allocation. Whiskers vary initial query energy from 0.3 to 3 Wh and initial query volume from 10 to 30 queries/user/day while holding growth rates and user counts fixed.}
+  \caption{Ordinary chatbot growth scenario, excluding agents. Central values
+  assume 15 queries/user/day, initially 1 Wh/query, 250 active days/year, 50\%
+  annual usage growth, 30\% annual reduction in query energy, 30\% annual growth
+  in training emissions, 20\% initial training allocation, and 0.1 \gcoe/query
+  embodied emissions. Whiskers vary initial query energy from 0.3 to 3 Wh and
+  initial query volume from 10 to 30 queries/user/day while holding growth rates
+  and user counts fixed.}
   \label{fig:llm:growth}
 \end{figure}
 
@@ -798,32 +811,40 @@ IT emissions, after including training overhead and amortized hardware
 emissions.
 
 Moreover, under aggressive ordinary-chat growth projections (50\% YoY usage
-growth, 50\% YoY growth in training-overhead emissions, and a moderate 30\% YoY
-improvement in inference efficiency), the central ordinary-chat scenario reaches
+growth, 30\% YoY growth in training-overhead emissions, and a moderate 30\% YoY
+improvement in inference efficiency), the central chat scenario reaches
 \ModelChatFinalT{} \tcoe/year in 2030, the fifth plotted year, or about 3--4\%
-of the baseline broad IT footprint. Varying initial query energy from 0.3 to 3 Wh and initial volume from 10 to
-30 queries/user/day gives \ModelChatFinalLowT{}--\ModelChatFinalHighT{}
-\tcoe/year in that year;
-growth rates remain fixed. See Figure~\ref{fig:llm:growth}. This result is consistent with other
-analyses that put simple LLM use in the context of other computer
+of the baseline broad IT footprint. Varying initial query energy from 0.3 to 3
+Wh and initial volume from 10 to 30 queries/user/day gives
+\ModelChatFinalLowT{}--\ModelChatFinalHighT{} \tcoe/year in that year; growth
+rates remain fixed. See Figure~\ref{fig:llm:growth}. This result is consistent
+with other analyses that put simple LLM use in the context of other computer
 activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt,ritchie:ai:electricity:2026}.
 
-Agentic AI is different. The main result figures therefore split AI into ``AI
+Agentic AI is different. The main result graphs therefore split AI into ``AI
 (chatbot)'' and ``AI (agents)''. The agent bar represents an illustrative
 scenario in which 10\% of the UZH population uses coding or research agents
-heavily on workdays at 1.5 facility kWh/user-day, yielding \ModelAgentDefaultT{} \tcoe/year
-once facility overhead, training and amortized hardware are included. If 10\% used such
-systems at 3 facility kWh/user-day, emissions would be \ModelAgentHighT{} \tcoe/year,
-comparable to major existing operational IT categories.
-Figure~\ref{fig:agentic:ai} shows the sensitivity of annual emissions to both
-adoption and intensity. The conclusion is therefore not that all AI use is
-negligible, but that emissions depend strongly on whether usage remains
-dominated by simple chat or shifts toward high-intensity agentic work.
+heavily on workdays at 1.5 kWh/user-day, yielding \ModelAgentDefaultT{}
+\tcoe/year once facility overhead, training and amortized hardware are included.
+This is about half of current embodied emissions from laptops, and about 10\% of
+total IT emissions. However, if 20\% of the population adopted such intense
+agent use, emissions would be \ModelAgentHighT{} \tcoe/year, comparable to major
+existing operational IT categories. Figure~\ref{fig:agentic:ai} shows the
+sensitivity of annual emissions to both adoption and intensity. While normal
+chatbot interactions have low emissions, overall emissions from AI depend
+strongly on whether usage remains dominated by simple chat or shifts toward
+high-intensity agentic work.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-agentic-ai.png}
-  \caption{Annual agent emissions against 5--20\% adoption at three fixed facility-inference energy allowances: 1, 1.5 and 3 kWh per active user-day. All curves add a separate 20\% training allocation and 30 \gcoe/kWh of facility electricity for hardware, with 250 active days/year, 38,000 potential users, and 207 \gcoekwh. No additional PUE multiplier is applied. Reference lines show modeled annual savings from cloud migration and from extending laptop/phone lifetimes from 4/3 to 6/4 years. These are scenarios, not measured adoption or statistical bounds; ordinary chat is excluded from the curves.}
+  \caption{Annual agent emissions scenarios based on 5--20\% adoption at three
+  fixed energy allowances: 1, 1.5 and 3 kWh per active user-day. All curves add
+  a separate 20\% training allocation and 30 \gcoe/kWh  for hardware, with 250
+  active days/year, 38,000 potential users, and grid emissions intensity of 207
+  \gcoekwh. No additional PUE multiplier is applied. Reference lines show
+  modeled annual savings from cloud migration and from extending laptop/phone
+  lifetimes from 4/3 to 6/4 years. Ordinary chat is excluded from the curves.}
   \label{fig:agentic:ai}
 \end{figure}
 
@@ -869,7 +890,7 @@ contributing \ModelCombinedChatPercent{}\% of total emissions, or
 agentic-AI bar is excluded from the denominator.
 
 Regional context matters as expected. Moving from the Swiss electricity
-intensity of 53.75 \gcoekwh\ to 207 or 400 \gcoekwh\ increases local operational
+intensity of approximately 50 \gcoekwh\ to 207 or 400 \gcoekwh\ increases local operational
 emissions by factors of about 3.9 or 7.4. This change affects campus devices,
 servers, and networking; external services retain their separate factors.
 Embodied emissions remain important for end-user devices, while operation

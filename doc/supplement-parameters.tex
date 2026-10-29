@@ -1,7 +1,7 @@
 \section{Model Parameters and Review Scenarios}
 \label{app:parameters}
 
-This appendix inventories the configurable defaults used by the UZH IT emissions model and the additional scenario parameters introduced for the revision. Values are grouped by the model objects in the emissions calculator.
+This appendix inventories the configurable defaults used by the UZH IT emissions model and the additional scenario parameters introduced for the revision. Values are grouped by the model objects in the emissions calculator. Displayed values may be rounded; exact inputs are retained in the saved scenario files.
 
 Device means drive the deterministic calculation. SD, minimum, and maximum
 values below are product-reference metadata, not sampled population
@@ -93,9 +93,9 @@ Printers & 0.0 & 0.0 & 0.01 & 0.0 & Short active-use window; no separate standby
 Campus networking operation & \ModelNetworkOperationalT & \tcoe/year & 4,000 APs at 15 W plus 400 switches at 250 W & Electricity multiplier 0.67--1.33 \\ \hline
 Campus networking hardware & \ModelNetworkHardwareT & \tcoe/year & AP 50 kg, switch 290 kg, 8-year lifetime & Unquantified \\ \hline
 Campus data center PUE & 2.0 & ratio & UZH historical power estimate & 1.5--2.5 \\ \hline
-Campus electricity intensity & 53.75 & g \coe/kWh & Mean of the Swiss consumption profile & Independently configurable \\ \hline
+Campus electricity intensity & $\approx 50$ & g \coe/kWh & Mean of the Swiss consumption profile & Independently configurable \\ \hline
 Cloud PUE & 1.15 & ratio & Microsoft/Google regional PUE disclosures & 1.09--1.56 \\ \hline
-Cloud electricity intensity & 53.75 & g \coe/kWh & Swiss serving-region assumption & Independent of campus factor \\ \hline
+Cloud electricity intensity & $\approx 50$ & g \coe/kWh & Swiss serving-region assumption & Independent of campus factor \\ \hline
 Cloud servers in cloud & 0 & \% & Scenario parameter & 0--100\% \\ \hline
 Cloud instances per 100 local servers & 100 & count & One-to-one replacement default & 50--200 \\ \hline
 Cloud instance embodied emissions & 700 & kg \coe & Boavizta Azure instance estimate, rounded & 500--1,500 kg \\ \hline
@@ -131,7 +131,7 @@ Agent energy boundary & Facility & scope & Inference electricity includes data-c
 Agent hardware basis & Facility & scope & Hardware footprint allocated per facility kWh & IT electricity basis also supported \\ \hline
 Annual usage growth & 50 & \% & Aggressive growth scenario & 0--100\% \\ \hline
 Annual efficiency growth & 30 & \% & Hardware/software improvement scenario & 0--50\% \\ \hline
-Annual training growth & 50 & \% & Frontier-model training growth scenario & 0--100\% \\ \hline
+Annual training growth & 30 & \% & Frontier-model training growth scenario & 0--100\% \\ \hline
 Agentic AI adoption & 10 (3,800) & \% (users) & Illustrative central scenario, no campus survey & 5--20\% (1,900--7,600 users) \\ \hline
 Agentic AI energy & 1.5 & Facility kWh/active user-day & Ritchie and Claude Code case study & 1--3; inference only \\ \hline
 \end{longtable}
