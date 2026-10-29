@@ -1,4 +1,4 @@
-TEXFILES=paper.tex it-emissions.tex
+TEXFILES=paper.tex
 PDFS=$(TEXFILES:.tex=.pdf)
 FIGURES=fig-baseline.png fig-cloud.png fig-llm-growth.png fig-sens1.png fig-sens2.png fig-agentic-ai.png
 MODEL_SOURCES=$(wildcard ../src/*.js) $(wildcard ../scripts/*.js) ../package-lock.json
