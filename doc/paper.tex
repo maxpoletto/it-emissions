@@ -560,12 +560,13 @@ power (1--2 kW) assumptions.
 
 As mentioned earlier, we have found no reliable vendor data for
 application-level cloud services such as Microsoft 365 and Google Workspace.
-Internet sources such as~\textcite{ecoflow:2025} cite an upper bound of approximately
-70~kWh per TB per year for cloud storage. Using our previous carbon intensity assumption of
-207 \gcoekwh, and conservatively assuming that every user stores 200~GB in the
-cloud, we obtain $\approx 3$~\kgcoe/user/year. We use a range of 1--5
-\kgcoe/user/year. For a population of 38,000 users, this corresponds to 38--190
-\tcoe/year, with a midpoint of 114~\tcoe/year.
+Internet sources such as~\textcite{ecoflow:2025} cite an upper bound of
+approximately 70~kWh per TB per year for cloud storage. Using our previous
+carbon intensity assumption of 207 \gcoekwh, and conservatively assuming that
+every user stores 200~GB in the cloud, we obtain $\approx 3$~\kgcoe/user/year,
+and assume a range of 1--5 \kgcoe/user/year. This is an order-of-magnitude
+anchor, not a precise estimate. For a population of 38,000 users, it corresponds
+to 38--190 \tcoe/year, with a midpoint of 114~\tcoe/year.
 
 \subsection{Generative and agentic AI}
 
@@ -598,7 +599,7 @@ inference~\cite{verdecchia2023systematic}.
 Google~\cite{patterson:footprint:2022} reports that in 2019--2021 inference
 accounted for about 60\% of AI energy consumption, implying a ratio of training
 energy to inference energy of 2:3, though that ratio includes Google's internal
-reserch and development. Meta's model card for Llama
+research and development. Meta's model card for Llama
 3.1~\cite{meta:llama31:modelcard} reports 30.84 million GPU-hours for the 405B
 model on GPUs rated at 700 W. Multiplying GPU-hours by this nameplate power
 gives approximately 21.6 GWh. We assume a combined factor of 1.4 for host-server
@@ -709,16 +710,15 @@ exploration of alternate contexts.
 \section{Results}
 \label{sec:results}
 
-\subsection{Sustainability-report comparison}
+\subsection{Comparison with UZH Sustainability Report}
 
 The UZH 2024 Sustainability Report~\cite{uzh:sustainability:report} provides a
-comparator for university-owned devices. Including its separate 81 \tcoe\
-audiovisual row gives a total of 1,535 \tcoe. A like-for-like comparison also
-requires the report's Ecoinvent~\cite{ecoinvent} footprint factors and device
-lifetimes. The exact saved configuration behind our earlier approximately
-1,600 \tcoe\ model comparison is unavailable, so we do not treat that result as
-reproducible numerical validation. The broader scenarios below have explicit
-saved configurations and share their calculation code with the interactive app.
+data point for university-owned devices. It cites total IT emissions of 1,535
+\tcoe. A like-for-like comparison also requires the report's
+Ecoinvent~\cite{ecoinvent} footprint factors and device lifetimes. Using those
+factors and limiting our model to university-owned devices, we obtain a similar
+number of approximately 1,600 \tcoe. This similarity does not validate our
+model, but it does provide a useful sanity check.
 
 \subsection{Key results}
 
