@@ -1,11 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdir, readFile} from 'node:fs/promises';
+import {mkdir, readFile, mkdtemp} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
 import {chromium} from 'playwright';
 import {report} from '../../src/model.js';
 import {loadScenario} from '../../scripts/scenarios.js';
+import {buildApp} from '../../scripts/build-app.js';
 
 test('standalone file works offline, recalculates, restores URLs and exports the shared model', async () => {
     const macChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -81,5 +84,67 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         assert.equal(await page.locator('#supercomputing-mode').inputValue(), 'legacyPower');
         assert.equal(await page.locator('#ai-agentUsers').inputValue(), '0');
         assert.deepEqual(errors, []);
+    } finally {await browser.close();}
+});
+
+test('both deployments work offline, agree numerically, and preserve their site formatting', async () => {
+    const macChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    const browser = await chromium.launch({headless: true,
+        executablePath: process.env.BROWSER_EXECUTABLE ?? (existsSync(macChrome) ? macChrome : undefined)});
+    const directory = await mkdtemp(path.join(tmpdir(), 'calculator-sites-'));
+    try {
+        const reports = {};
+        const {configuration} = await loadScenario('baseline');
+        for (const deploymentEnvironment of ['uzh', 'maxp']) {
+            const {output} = await buildApp({deploymentEnvironment, output: path.join(directory, deploymentEnvironment + '.html')});
+            const page = await browser.newPage({viewport: {width: 1280, height: 900}});
+            const errors = [], externalRequests = [];
+            page.on('pageerror', error => errors.push(error.message));
+            await page.route(/^https?:/, route => {externalRequests.push(route.request().url()); return route.abort();});
+            await page.goto(pathToFileURL(output).href);
+            await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
+            await page.evaluate(configuration => window.EmissionsApp.setConfig(configuration), configuration);
+            reports[deploymentEnvironment] = await page.evaluate(() => window.EmissionsApp.getReport());
+            const margin = await page.locator('.emissions-calculator').evaluate(element => getComputedStyle(element).marginTop);
+            assert.equal(margin, deploymentEnvironment === 'uzh' ? '0px' : '20px');
+            assert.equal(await page.locator('.header-with-logo').count(), deploymentEnvironment === 'maxp' ? 1 : 0);
+            if (deploymentEnvironment === 'maxp') {
+                await page.waitForFunction(() => document.querySelector('.uzh-logo').naturalWidth > 0);
+                assert.equal(await page.locator('.header-title').textContent(), 'IT Emissions Calculator');
+                const link = page.locator('.intro-text a');
+                assert.equal(await link.evaluate(element => getComputedStyle(element).textDecorationLine), 'none');
+                await link.hover();
+                assert.equal(await link.evaluate(element => getComputedStyle(element).textDecorationLine), 'underline');
+                await page.mouse.move(0, 0);
+            } else {
+                // Reproduce the CMS rules that motivated the original !important overrides.
+                await page.evaluate(() => {
+                    document.querySelector('main').classList.add('HTML');
+                    const style = document.createElement('style');
+                    style.textContent = '.HTML table th, .HTML table td {border: 0 !important; padding: 0 !important; vertical-align: top !important;}'
+                        + '.HTML table th:first-child, .HTML table td:first-child {border-left: 0 !important;}'
+                        + '.HTML table th:last-child, .HTML table td:last-child {border-right: 0 !important;}'
+                        + '.HTML table {overflow: visible !important;}';
+                    document.head.append(style);
+                });
+                for (const table of ['#device-table', '#results-table']) {
+                    const first = await page.locator(table + ' td').first().evaluate(element => {
+                        const style = getComputedStyle(element);
+                        return {left: style.borderLeftWidth, padding: parseFloat(style.paddingTop)};
+                    });
+                    assert.equal(first.left, '1px'); assert.ok(first.padding > 0);
+                    const last = await page.locator(table + ' tr').filter({has: page.locator('td')}).first().locator('td').last()
+                        .evaluate(element => getComputedStyle(element).borderRightWidth);
+                    assert.equal(last, '1px');
+                }
+            }
+            await mkdir(new URL('../../output/', import.meta.url), {recursive: true});
+            await page.screenshot({path: fileURLToPath(new URL(`../../output/deployment-${deploymentEnvironment}.png`, import.meta.url))});
+            assert.deepEqual(externalRequests, [], 'fonts, scripts and the personal-site logo are embedded');
+            assert.deepEqual(errors, []);
+            await page.close();
+        }
+        assert.deepEqual(reports.uzh, reports.maxp);
+        assert.deepEqual(reports.uzh, report(configuration));
     } finally {await browser.close();}
 });

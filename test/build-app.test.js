@@ -1,0 +1,55 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtemp, readFile, writeFile, access} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {buildApp} from '../scripts/build-app.js';
+
+test('deployment builds differ in presentation and contain identical application code', async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), 'calculator-deployment-'));
+    const pages = {};
+    for (const deploymentEnvironment of ['uzh', 'maxp']) {
+        const output = path.join(directory, deploymentEnvironment, 'index.html');
+        await buildApp({deploymentEnvironment, output});
+        await buildApp({deploymentEnvironment, output, check: true});
+        pages[deploymentEnvironment] = await readFile(output, 'utf8');
+        assert.ok(pages[deploymentEnvironment].includes(`data-deployment-environment="${deploymentEnvironment}"`));
+        assert.ok(!/\{\{(?:UZH_LOGO_URL|DEPLOYMENT_ENVIRONMENT)\}\}|<!-- DEPLOYMENT_/.test(pages[deploymentEnvironment]),
+            'all deployment placeholders are resolved');
+    }
+    assert.ok(!/<div class="header-with-logo">|<img src="data:image\/svg\+xml;base64/.test(pages.uzh), 'UZH embeds without a duplicate heading or logo');
+    assert.ok(pages.maxp.includes('<div class="header-with-logo">'), 'personal site has its page header');
+    assert.ok(pages.maxp.includes('<img src="data:image/svg+xml;base64,'), 'personal-site logo is embedded');
+    const scripts = html => [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match => match[1]);
+    assert.equal(scripts(pages.uzh).length, 1);
+    const hash = value => createHash('sha256').update(value).digest('hex');
+    assert.equal(hash(scripts(pages.uzh).join('')), hash(scripts(pages.maxp).join('')),
+        'a deployment flag cannot select different model code or defaults');
+    const output = path.join(directory, 'maxp/index.html');
+    await writeFile(output, pages.maxp.replace('header-with-logo', 'changed-header'));
+    await assert.rejects(buildApp({deploymentEnvironment: 'maxp', output, check: true}), /stale/);
+});
+
+test('personal-site builds leave the tracked UZH artifact unchanged', async () => {
+    const canonical = new URL('../app/emissions-calculator.html', import.meta.url);
+    const before = await readFile(canonical, 'utf8');
+    const built = await buildApp({deploymentEnvironment: 'maxp'});
+    assert.ok(built.output.endsWith(path.join('output', 'maxp', 'emissions-calculator.html')));
+    assert.ok(await readFile(canonical, 'utf8') === before, 'the tracked UZH build is unchanged');
+});
+
+test('unknown deployment flags fail before producing an output file', async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), 'calculator-invalid-deployment-'));
+    const output = path.join(directory, 'index.html');
+    await assert.rejects(buildApp({deploymentEnvironment: 'production', output}), /Choose uzh or maxp/);
+    await assert.rejects(access(output), {code: 'ENOENT'});
+    const script = fileURLToPath(new URL('../scripts/build-app.js', import.meta.url));
+    const run = promisify(execFile);
+    await assert.rejects(run(process.execPath, [script, '--deployment-environment', 'production', '--output', output]), /Choose uzh or maxp/);
+    await assert.rejects(run(process.execPath, [script, '--deployment-enviroment', 'maxp', '--output', output]), /Unknown option/);
+    await assert.rejects(access(output), {code: 'ENOENT'});
+});

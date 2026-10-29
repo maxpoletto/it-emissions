@@ -1,0 +1,36 @@
+.emissions-calculator {
+    margin: 20px auto;
+}
+
+.emissions-calculator a {
+    color: rgba(var(--c-blue), 1);
+    text-decoration: none;
+}
+
+.emissions-calculator a:hover {
+    text-decoration: underline;
+}
+
+.emissions-calculator .header-with-logo {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.emissions-calculator .uzh-logo {
+    height: 4rem;
+    width: auto;
+    flex-shrink: 2;
+    margin-right: 1rem;
+}
+
+.emissions-calculator .header-title {
+    flex: 1;
+    text-align: center;
+    font-size: 1.8rem;
+    line-height: 1.2;
+    font-weight: 600;
+    margin: 0;
+    color: rgba(var(--c-black), 1);
+}

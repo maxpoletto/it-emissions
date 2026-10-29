@@ -9,6 +9,40 @@ Development requires Node.js 22 or newer. Install the pinned dependencies with
 in `app/`; `app/emissions-calculator.html` is the generated, standalone app and
 works directly from disk without a server or network connection.
 
+Both websites use one model and HTML template. Select their presentation with
+`--deployment-environment`:
+
+| Environment | Default output | Presentation |
+| --- | --- | --- |
+| `uzh` (default) | `app/emissions-calculator.html` | No duplicate page heading, zero outer vertical margin, scoped CMS table overrides |
+| `maxp` | `output/maxp/emissions-calculator.html` | UZH logo and calculator title, 20 px outer vertical margin, explicit link styles |
+
+```sh
+npm run build -- --deployment-environment uzh
+npm run build -- --deployment-environment maxp
+npm run build -- --deployment-environment maxp --check
+```
+
+The personal-site output is ignored by Git and does not replace the tracked UZH
+artifact. Both outputs embed styles, fonts and Chart.js; the personal-site logo
+is embedded too. Deployment flags select presentation only: application code,
+model defaults, saved configurations and calculations are identical.
+
+Use `--output path/to/index.html` to select another output file, and repeat that
+path with `--check` to verify it. For example:
+
+```sh
+npm run build -- --deployment-environment maxp --output output/maxp/index.html
+```
+
+The equivalent Make command is
+`make -C app build DEPLOYMENT_ENVIRONMENT=maxp` (or `uzh`). The default
+`make -C app all` also creates the existing UZH `app/index.html` symlink; the
+personal-site target writes only its separate output. Edit shared markup in
+`app/calculator.template.html` and site-specific styles/header markup in
+`app/deployments/`. `npm test` checks the tracked UZH artifact, and the browser
+tests exercise both environments offline, including simulated UZH CMS overrides.
+
 `npm run batch -- --config scenario.json --output output/example --year 2026`
 generates annual and projection charts plus the exact parameters and results.
 The configuration can be a JSON export from the interactive app or a partial

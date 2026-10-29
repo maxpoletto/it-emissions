@@ -8,7 +8,6 @@
     <style>
         .emissions-calculator {
             max-width: 820px !important;
-            margin: 0px auto;
         }
 
         .intro-text {
@@ -69,16 +68,6 @@
             margin-bottom: 0.25rem;
         }
 
-        .HTML table th:first-child, .HTML table td:first-child {
-            border-left: 1px solid rgba(var(--c-grey), 0.2) !important;
-        }
-        .HTML table th:last-child, .HTML table td:last-child {
-            border-right: 1px solid rgba(var(--c-grey), 0.2) !important;
-        }
-        .HTML table {
-            overflow: auto !important;
-        }
-
         .parameter-table {
             width: 100%;
             border-collapse: collapse;
@@ -86,15 +75,12 @@
         }
         .parameter-table th,
         .parameter-table td {
-            border: 1px solid rgba(var(--c-grey), 0.2) !important;
-            padding: 0.5rem !important;
-            vertical-align: middle !important;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            padding: 0.5rem;
+            vertical-align: middle;
         }
         .parameter-table th:first-child,
         .parameter-table td:first-child {
-            border: 1px solid rgba(var(--c-grey), 0.2) !important;
-            padding: 0.5rem !important;
-            vertical-align: middle !important;
             text-align: left;
             width: 40%;
             min-width: 100px;
@@ -165,13 +151,11 @@
         }
         .results-table th,
         .results-table td {
-            border: 1px solid rgba(var(--c-grey), 0.2) !important;
-            padding: 0.75rem !important;
+            border: 1px solid rgba(var(--c-grey), 0.2);
+            padding: 0.75rem;
         }
         .results-table th:first-child,
         .results-table td:first-child {
-            border: 1px solid rgba(var(--c-grey), 0.2) !important;
-            padding: 0.75rem !important;
             text-align: left;
             width: 40%;
         }
@@ -317,10 +301,12 @@
             pointer-events: none;
         }
     </style>
+    <!-- DEPLOYMENT_STYLE -->
 </head>
 <body>
     <main>
-        <div class="emissions-calculator">
+        <div class="emissions-calculator" data-deployment-environment="{{DEPLOYMENT_ENVIRONMENT}}">
+            <!-- DEPLOYMENT_HEADER -->
             <div class="intro-text">
                 <p>
                     This calculator estimates the carbon emissions of IT infrastructure at the University of Zürich.

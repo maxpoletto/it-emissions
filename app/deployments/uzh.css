@@ -1,0 +1,32 @@
+/* Magnolia supplies the page heading and spacing around the embedded calculator. */
+.emissions-calculator {
+    margin: 0 auto;
+}
+
+/* Keep the CMS table rules from overriding this widget's borders and spacing. */
+.emissions-calculator .parameter-table th,
+.emissions-calculator .parameter-table td {
+    border: 1px solid rgba(var(--c-grey), 0.2) !important;
+    padding: 0.5rem !important;
+    vertical-align: middle !important;
+}
+
+.emissions-calculator .results-table th,
+.emissions-calculator .results-table td {
+    border: 1px solid rgba(var(--c-grey), 0.2) !important;
+    padding: 0.75rem !important;
+}
+
+.HTML .emissions-calculator table th:first-child,
+.HTML .emissions-calculator table td:first-child {
+    border-left: 1px solid rgba(var(--c-grey), 0.2) !important;
+}
+
+.HTML .emissions-calculator table th:last-child,
+.HTML .emissions-calculator table td:last-child {
+    border-right: 1px solid rgba(var(--c-grey), 0.2) !important;
+}
+
+.HTML .emissions-calculator table {
+    overflow: auto !important;
+}

@@ -3,6 +3,7 @@ output/
 .DS_Store
 __pycache__
 /app/main2.css
+/app/index.html
 /doc/paper.pdf
 /doc/it-emissions.pdf
 *.aux

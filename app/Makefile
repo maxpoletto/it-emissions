@@ -1,9 +1,14 @@
 .PHONY: all build clean
 
-all: build index.html
+DEPLOYMENT_ENVIRONMENT ?= uzh
+
+all: build
+ifeq ($(DEPLOYMENT_ENVIRONMENT),uzh)
+all: index.html
+endif
 
 build:
-	npm --prefix .. run build
+	npm --prefix .. run build -- --deployment-environment "$(DEPLOYMENT_ENVIRONMENT)"
 
 index.html:
 	ln -sf emissions-calculator.html index.html
