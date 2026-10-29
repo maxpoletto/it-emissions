@@ -131,7 +131,7 @@ climate change mitigation and adaptation~\cite{climate:change:ai}. On a
 university campus, these might include more efficient building heating and
 cooling, improved transportation logistics, and reduced administrative overhead.
 However, those benefits are uncertain, indirect, and likely to interact with
-rebound effects. In this paper, we consider only the {\em direct} impacts of AI
+rebound effects. In this paper, we consider only the direct impacts of AI
 in terms of electricity consumption and associated hardware emissions.
 
 The rest of this paper is organized as follows.
@@ -166,7 +166,8 @@ staff, and students.
 Student-owned devices, such as laptops and smartphones, are in scope, since they
 are the primary means by which students access university IT services and do
 their coursework. Given the duration of studies, we include personal devices'
-embodied emissions in the model.
+embodied emissions in the model, and do not try to apportion them further
+between university and private use.
 
 University-owned devices are in scope. We have accurate numbers for staff
 workstations, classroom computers, network access points, and audiovisual
@@ -183,7 +184,7 @@ manufacturing emissions of the cooling equipment itself.)
 UZH at present does not make significant use of commercial cloud compute, but
 the model allows simulating the shift of some fraction of the server load to
 cloud VMs. For this hypothetical cloud footprint, like for on-premise data
-centers, we attempt to model operational emissions, embodied emissions, and
+centers, we try to model operational emissions, embodied emissions, and
 emissions from cooling.
 
 Application-level cloud services such as Microsoft 365 or Google Workspace are
@@ -197,13 +198,11 @@ and embodied emissions are in scope for our analysis.
 
 \subsubsection*{Generative and agentic AI}
 
-We distinguish three classes of generative-AI use: short chatbot queries, long
-or reasoning queries, and agentic workflows. We estimate inference-time
-emissions from current literature and public benchmarks, and include training
-overhead, embodied emissions, and data-center overhead as conservative
-multipliers. Agentic workflows are modeled separately because they may involve
-many sequential long-context calls per task and cannot be represented well by
-estimating ``queries per day''.
+We distinguish ordinary chatbot use, parameterized by queries per active
+user-day and energy per query, from agentic workflows, parameterized by energy
+per active user-day. We attempt to account separately for inference, training,
+and embodied emissions, applying facility overhead where it is not already
+included in the energy estimate.
 
 \subsubsection*{Summary}
 
@@ -221,14 +220,14 @@ Precision and data sources vary by category and are discussed below.
     Personal laptops and phones & yes & yes & bottom-up estimates \\
     University workstations & yes & yes & inventory + estimates \\
     University-issued mobile phones & yes & yes & inventory + estimates \\
-    University on-premise servers & yes & yes & inventory + power data \\
+    University on-premise servers & yes & yes & inventory + electricity data \\
     Audiovisual equipment & yes & yes & inventory + estimates \\
     Printers & yes & yes & inventory + estimates \\
     Campus networking & yes & yes & bottom-up estimates \\
-    Data-center cooling & yes & no & power data \\
+    Data-center overhead & yes & no & power data \\
     Cloud servers (including overhead) & yes & yes & function of on-premise \\
-    Cloud SaaS (including overhead) & yes & not separate & order-of-magnitude assumption \\
-    Supercomputing facilities (including overhead) & yes & yes & power allocation + hardware estimates \\
+    Cloud SaaS (including overhead) & yes & not separable & order-of-magnitude assumption \\
+    Supercomputing facilities (including overhead) & yes & yes & electricity allocation + hardware estimates \\
     Chatbot and agentic AI & yes & yes & literature review \\ \hline
 \end{tabular}
 \caption{System boundaries of the model.}
@@ -271,21 +270,18 @@ that we refine the model's device duty cycle to represent four six-hour periods
 over the course of the day. It allows us to specify, for example, that user
 devices are mostly used during the day whereas servers run around the clock.
 
-For servers (in on-premise data centers) we also account for cooling overhead.
-Based on limited UZH historical power data, we estimate that the on-premise
-power usage effectiveness (PUE), the ratio of total data center power (including
-cooling) to power used for computation, is approximately 2. This value, higher
-than the commercial average of 1.56~\cite{google:datacenter:efficiency}, is
-attributable to inefficient cooling.
+For servers (in on-premise data centers) we also account for cooling overhead
+using historical electricity use data.
 
 \subsubsection*{Cloud and supercomputing facilities}
 
 We model a hypothetical shift of some workloads from servers in an on-premise
-data center to a commercial cloud. We model the shift as a fraction of servers
-that are moved to the cloud, the average conversion ratio of on-premise servers
-to cloud servers, and cloud data center PUE and electricity emissions intensity
-(since the cloud data center may be located in a different region than the
-on-premise data center).
+data center to a commercial cloud. We model the shift as: the fraction of
+servers that are moved to the cloud; the average conversion ratio of on-premise
+servers to cloud servers; cloud data center power usage effectiveness (PUE), the
+ratio of total facility electricity use to IT electricity use; and electricity
+emissions intensity, since the cloud data center may be located in a different
+region than the on-premise data center.
 
 Vendors of application-level cloud
 services~\cite{microsoft:m365:emissions,google:workspace:carbon} provide
@@ -315,19 +311,21 @@ combine many model calls, tool calls, context-cache reads and writes, and long
 outputs into one work
 session~\cite{ritchie:ai:electricity:2026,couch:claude:code:energy}.
 
-We account for training overhead and the embodied emissions of the servers and
-GPUs that the model runs on. For ordinary chatbot use, this is represented as an
-amortized per-query hardware allocation. For agentic workflows, where the
-natural unit is a full work session rather than a single query, we add an
-amortized hardware allocation per kWh of server-side AI energy. Because AI
-providers do not publish workload-level energy data, the AI scenarios are
-presented as sensitivity ranges.
+We represent training as a separate allocation on top of operational inference
+emissions. Embodied hardware emissions are allocated per query for ordinary
+chatbot use and per kWh of estimated server-side electricity for agentic
+workflows. Because AI providers do not publish workload-level energy data, the
+AI scenarios are presented as sensitivity ranges.
 
-Figures show central scenarios with whiskers over explicitly bounded inputs.
-These are deterministic assumption ranges, not confidence intervals. Shared
-inputs vary consistently across categories and paired intervention cases;
-unquantified uncertainties, including the CSCS electricity allocation and actual
-AI adoption, are not represented by the whiskers.
+These AI estimates cover externally hosted services; workloads already
+represented in campus, cloud-compute, or CSCS totals are not added again.
+
+\subsection{Treatment of uncertainty}
+
+Many parameters are defined by a central estimate and upper and lower bounds of
+a plausible range. We evaluate combinations of these bounds to report ranges of
+possible outcomes. Figures display these ranges as whiskers: these are
+deterministic assumption ranges, not confidence intervals.
 
 \section{Model details}
 \label{sec:model:details}
@@ -424,6 +422,11 @@ losses, and storage networking, we retain an operational range of roughly
 50--100 \tcoe/year. The default inventory uses 250 W per switch/router and
 produces \ModelNetworkOperationalT{} \tcoe/year. The plotted operational range
 varies that electricity estimate by a factor of 0.67--1.33.
+
+Based on limited UZH historical power data, we estimate that the power usage
+effectiveness of on-premise data centers is approximately 2. This value, higher
+than the commercial average of 1.56~\cite{google:datacenter:efficiency}, is
+likely attributable to inefficient cooling.
 
 \subsubsection*{Embodied emissions}
 
