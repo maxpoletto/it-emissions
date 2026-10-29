@@ -5,7 +5,7 @@
     "sources": [
       {
         "path": "doc/scenarios/baseline.json",
-        "sha256": "53a6417567df77e69032482480ee50f097d944221dc7c9c928b29a282ca81f6f"
+        "sha256": "b920afcb08c5aaaed5c4045b16fc7a8957e0c80d89a65da55f73f4decb4a47db"
       },
       {
         "path": "doc/scenarios/sens2.json",
@@ -17,7 +17,7 @@
       "width": 1600,
       "height": 900
     },
-    "sha256": "514dbd3d2fb79bfed0876bf8ed3f3d24649d0e10e25958b88cc103cd2883e6dd"
+    "sha256": "04de3c10fb14031f5c60c5739ac0c114b0a92fd7c68cd98ff96afa8f3ee729c0"
   },
   "metadata": {
     "modelVersion": "2.0",
@@ -212,14 +212,14 @@
       "saas": {
         "enabled": true,
         "users": 38000,
-        "kgPerUserYear": 5.5,
+        "kgPerUserYear": 3,
         "bounds": {
           "kgPerUserYear": [
             1,
-            10
+            5
           ]
         },
-        "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+        "source": "Order-of-magnitude productivity SaaS assumption: 1–5 kg CO₂e/user-year, anchored to a cloud-storage proxy; not tenant measurements"
       },
       "cloud": {
         "enabled": true,
@@ -270,21 +270,21 @@
         "energyBasis": "it",
         "pue": 1.2,
         "intensityGPerKwh": 50,
-        "serverEquivalentKw": 1.2,
+        "serverEquivalentKw": 1.5,
         "embodiedKgPerServer": 1100,
         "lifetimeYears": 5,
         "legacyPowerKw": 66,
         "bounds": {
           "pue": [
-            1.1,
-            1.3
+            1.2,
+            1.2
           ],
           "serverEquivalentKw": [
-            0.4,
+            1,
             2
           ]
         },
-        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE fixed at 1.2 by default based on the CSCS efficiency report; server-equivalent power 1.5 kW (1–2); allocation uncertainty unquantified"
       },
       "ai": {
         "enabled": true,
@@ -412,13 +412,13 @@
       {
         "category": "Supercomputing",
         "usage": 216000,
-        "embodied": 75342.46575342465,
+        "embodied": 60273.97260273972,
         "electricityKwh": 4320000,
         "itElectricityKwh": 3600000,
-        "serverEquivalents": 342.4657534246575,
+        "serverEquivalents": 273.972602739726,
         "range": {
-          "low": 243205.47945205483,
-          "high": 460027.3972602739
+          "low": 261205.47945205477,
+          "high": 306410.95890410955
         }
       },
       {
@@ -446,11 +446,11 @@
       },
       {
         "category": "Productivity SaaS",
-        "usage": 209000,
+        "usage": 114000,
         "embodied": null,
         "range": {
           "low": 38000,
-          "high": 380000
+          "high": 190000
         }
       }
     ],
@@ -512,13 +512,13 @@
       }
     ],
     "summary": {
-      "totalEmbodied": 1433074.6074200913,
-      "totalUsage": 1488319.2465,
+      "totalEmbodied": 1418006.1142694063,
+      "totalUsage": 1393319.2465,
       "totalTraining": 64894.5,
-      "totalCombined": 2986288.353920091,
+      "totalCombined": 2876219.860769406,
       "range": {
-        "low": 2435242.887618721,
-        "high": 4846229.165426941
+        "low": 2453242.887618721,
+        "high": 4502612.727070777
       }
     }
   },
@@ -529,7 +529,7 @@
   "rangeAnalysis": {
     "method": "deterministic input bounds",
     "interpretation": "Assumption ranges; not confidence intervals",
-    "caseCount": 513,
+    "caseCount": 257,
     "inputs": [
       {
         "path": [
@@ -538,8 +538,8 @@
           "kgPerUserYear"
         ],
         "low": 1,
-        "high": 10,
-        "source": "Order-of-magnitude productivity SaaS assumption: 1–10 kg CO₂e/user-year; not tenant measurements"
+        "high": 5,
+        "source": "Order-of-magnitude productivity SaaS assumption: 1–5 kg CO₂e/user-year, anchored to a cloud-storage proxy; not tenant measurements"
       },
       {
         "path": [
@@ -557,9 +557,9 @@
           "supercomputing",
           "pue"
         ],
-        "low": 1.1,
-        "high": 1.3,
-        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+        "low": 1.2,
+        "high": 1.2,
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE fixed at 1.2 by default based on the CSCS efficiency report; server-equivalent power 1.5 kW (1–2); allocation uncertainty unquantified"
       },
       {
         "path": [
@@ -567,9 +567,9 @@
           "supercomputing",
           "serverEquivalentKw"
         ],
-        "low": 0.4,
+        "low": 1,
         "high": 2,
-        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE and server-equivalent power scenarios; allocation uncertainty unquantified"
+        "source": "CSCS 3.6 GWh/year allocation treated as compute-only; PUE fixed at 1.2 by default based on the CSCS efficiency report; server-equivalent power 1.5 kW (1–2); allocation uncertainty unquantified"
       },
       {
         "path": [

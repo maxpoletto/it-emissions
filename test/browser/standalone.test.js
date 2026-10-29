@@ -122,6 +122,15 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(initial, report(initial.parameters));
+        assert.equal(await page.locator('#saas-kgPerUserYear').inputValue(), '3');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Productivity cloud services (SaaS): Emissions per user-year (kg CO₂e) low assumption', exact: true}).inputValue(), '1');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Productivity cloud services (SaaS): Emissions per user-year (kg CO₂e) high assumption', exact: true}).inputValue(), '5');
+        assert.equal(await page.locator('#supercomputing-pue').inputValue(), '1.2');
+        assert.equal(await page.locator('#supercomputing-serverEquivalentKw').inputValue(), '1.5');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Supercomputing (CSCS): Supercomputing PUE low assumption', exact: true}).inputValue(), '1.2');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Supercomputing (CSCS): Supercomputing PUE high assumption', exact: true}).inputValue(), '1.2');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Supercomputing (CSCS): Average power per server equivalent (kW IT) low assumption', exact: true}).inputValue(), '1');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Supercomputing (CSCS): Average power per server equivalent (kW IT) high assumption', exact: true}).inputValue(), '2');
         const queryLow = page.getByRole('spinbutton', {name: 'Hosted AI: Queries per active user-day low assumption', exact: true});
         const queryHigh = page.getByRole('spinbutton', {name: 'Hosted AI: Queries per active user-day high assumption', exact: true});
         assert.equal(await queryLow.inputValue(), '10');
@@ -153,7 +162,7 @@ test('standalone file works offline, recalculates, restores URLs and exports the
             'changing an environment selector preserves the refreshed summary');
         await page.locator('#saas-users').fill('100');
         await page.locator('#saas-users').dispatchEvent('change');
-        assert.equal(await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Productivity SaaS').usage), 550);
+        assert.equal(await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Productivity SaaS').usage), 300);
         assert.equal(await page.locator('#model-error').textContent(), '');
         await page.locator('#supercomputing-electricityKwh').fill('0');
         await page.locator('#supercomputing-electricityKwh').dispatchEvent('change');

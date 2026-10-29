@@ -13,9 +13,11 @@ Use `--figure baseline` (or another figure name) for a single figure. Run the fu
 command after changing inputs that also affect manuscript numbers.
 
 Whiskers are endpoint envelopes of declared assumptions. Network electricity,
-SaaS factors, CSCS PUE/server-equivalent power, and AI energy, chat query volume,
+SaaS factors, CSCS server-equivalent power, and AI energy, chat query volume,
 agent adoption and hardware allowances have explicit bounds. Device SD/min/max
 reference values do not automatically become uncertainty in a population mean.
+CSCS PUE is fixed at 1.2 in the paper (both saved endpoints are 1.2); the app
+keeps those endpoints editable for alternative scenarios.
 The low-device-footprint sensitivity is a separate scenario. The agent figure
 varies daily facility-inference energy at fixed hardware and grid assumptions,
 with a separate training allocation. Its three curves cover 5–20% adoption and

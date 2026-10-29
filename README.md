@@ -99,11 +99,19 @@ also hides its total whisker. Default environment bounds and their source
 descriptions are in `src/environments.js`; no statistical distribution is inferred
 from device populations.
 
-New configurations include productivity SaaS at 38,000 users and 5.5 kg
-CO₂e/user-year (209 t/year), with a declared 1–10 kg/user-year range. Imported
+New configurations include productivity SaaS at 38,000 users and 3 kg
+CO₂e/user-year (114 t/year), with a declared 1–5 kg/user-year range. This remains
+a composite assumption, anchored to a storage proxy rather than tenant measurements. Imported
 version 1 configurations retain the original service scope; new components are
 disabled unless explicitly enabled. Configuration exports retain that
 compatibility setting so old saved scenarios do not silently acquire new services.
+
+Supercomputing defaults to a 3.6 GWh/year compute-only allocation, PUE fixed at 1.2
+by default, and server-equivalent IT power of 1.5 kW (1–2 kW). The app retains
+editable low/high PUE inputs for alternative scenarios.
+PUE affects operational electricity; hardware allocation uses IT electricity
+and remains independent of PUE for a compute-only input. These bounds do not
+quantify uncertainty in the allocation or hardware inventory.
 
 Hosted AI separates ordinary chat from agent workloads. The illustrative default
 uses 38,000 chat users and 3,800 agent users; these are scenarios, not measured
