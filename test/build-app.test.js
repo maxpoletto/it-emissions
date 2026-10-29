@@ -57,3 +57,21 @@ test('unknown deployment flags fail before producing an output file', async () =
     await assert.rejects(run(process.execPath, [script, '--output', output]), /Select --deployment-environment/);
     await assert.rejects(access(output), {code: 'ENOENT'});
 });
+
+test('all four UZH Source Sans faces retain their original WOFF2 font data', async () => {
+    const directory = await mkdtemp(path.join(tmpdir(), 'calculator-fonts-'));
+    const output = path.join(directory, 'index.html');
+    await buildApp({output});
+    const html = await readFile(output, 'utf8');
+    const faces = [...html.matchAll(/@font-face\s*\{[^}]*\}/g)]
+        .map(match => match[0]).filter(face => face.includes('Source Sans Pro'));
+    assert.equal(faces.length, 4);
+    for (const [index, file] of ['Regular', 'It', 'Semibold', 'SemiboldIt'].entries()) {
+        const face = faces[index];
+        assert.ok(!/format\(["']woff["']\)/.test(face), 'no duplicate WOFF fallback');
+        const embedded = face.match(/data:font\/woff2;base64,([^"')\s]+)/)?.[1];
+        assert.ok(embedded, 'each face is embedded for offline use');
+        const original = await readFile(new URL(`../src/assets/fonts/WOFF2/SourceSans3-${file}.otf.woff2`, import.meta.url));
+        assert.ok(Buffer.from(embedded, 'base64').equals(original), 'font outlines and characters are unchanged: ' + file);
+    }
+});

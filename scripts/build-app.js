@@ -14,12 +14,14 @@ export async function buildApp({check = false, deploymentEnvironment = 'uzh', ou
     const template = await readFile(path.join(root, 'src/calculator.template.html'), 'utf8');
     const cssPath = path.join(root, 'src/assets/css/main.css');
     let css = await readFile(cssPath, 'utf8');
-    const fonts = [...new Set([...css.matchAll(/url\("(\.\.\/fonts\/[^"\)]+)"\)/g)].map(m => m[1]))];
+    const fontUrls = /url\((["']?)(\.\.\/fonts\/[^"'()\s]+\.woff2)\1\)/g;
+    const fonts = [...new Set([...css.matchAll(fontUrls)].map(m => m[2]))];
+    const embeddedFonts = new Map();
     for (const font of fonts) {
         const bytes = await readFile(path.resolve(path.dirname(cssPath), font));
-        const mime = font.endsWith('woff2') ? 'font/woff2' : 'font/woff';
-        css = css.replaceAll(`url("${font}")`, `url("data:${mime};base64,${bytes.toString('base64')}")`);
+        embeddedFonts.set(font, 'data:font/woff2;base64,' + bytes.toString('base64'));
     }
+    css = css.replace(fontUrls, (_url, _quote, font) => `url("${embeddedFonts.get(font)}")`);
     const deploymentCss = await readFile(path.join(root, `src/deployments/${deploymentEnvironment}.css`), 'utf8');
     let header = '';
     if (deploymentEnvironment === 'maxp') {
