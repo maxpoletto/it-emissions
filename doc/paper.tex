@@ -384,18 +384,17 @@ estimated lifetime CO$_2$ emissions. Based on some manufacturer data sheets,
 primarily from Apple, Cisco, and Dell, we model power draw of different devices
 while under load using the following initial parameters:
 
-%point 7
 \begin{center}
-  \begin{tabular}{|l|r|r|}
+  \begin{tabular}{|l|r|}
     \hline
-    \textbf{Device} & \textbf{Mean (W)} & \textbf{$\sigma$ (W)} \\ \hline
-    Laptop & 50 & 20 \\ \hline
-    Monitor & 50 & 10 \\ \hline
-    Desktop & 100 & 20 \\ \hline
-    Server & 400 & 100 \\ \hline
-    Mobile phone & 10 & 2 \\ \hline
-    A/V equipment & 250 & 50 \\ \hline
-    Printer & 1000 & 200 \\ \hline
+    \textbf{Device} & \textbf{Mean (W)} \\ \hline
+    Laptop & 50 \\ \hline
+    Monitor & 50 \\ \hline
+    Desktop & 100 \\ \hline
+    Server & 400 \\ \hline
+    Mobile phone & 10 \\ \hline
+    A/V equipment & 250 \\ \hline
+    Printer & 1000 \\ \hline
   \end{tabular}
 \end{center}
 
@@ -688,27 +687,23 @@ For sensitivity analysis, we vary adoption from 5\% to 20\% of the population
 hardware-factor bounds, enter the annual-bar whiskers.
 
 \subsection{Model limitations}
-% point 6
 Our biggest limitation is the relative lack of ground truth data about UZH IT
-systems. We have obtained only estimates of campus data center energy use, and
-limited information about UZH research workloads, SaaS use, and external
-high-performance computing infrastructure.
+systems. We were able to obtain partial records of campus data center energy use
+and limited information about research workloads and high-performance computing
+infrastructure. Many parameters required assumptions based on literature and
+anecdotal evidence.
 
-Additionally, our work relies on assumptions and anecdotal evidence about device
-ownership and use among the university population. The largest remaining
-behavioral uncertainty is AI usage, especially the adoption rate of agentic
-workflows. We therefore avoid a single point prediction for agentic AI and
-instead report adoption and intensity thresholds.
-
-Moreover, cloud vendors and AI companies are secretive about their
+We made assumptions about device ownership and use among the university
+population, including the extent of AI usage and the adoption rate of agentic
+workflows. Moreover, cloud vendors and AI companies are secretive about their
 infrastructure, and we have had to rely on public datasets, vendor tools, and
-research literature to estimate cloud and AI emissions. Microsoft and Google
-tenant-level emissions reports, and provider-level energy-per-task disclosures
-for AI systems, would substantially reduce uncertainty.
+research literature to estimate cloud and AI emissions. Tenant-level emissions
+reports, and provider-level energy-per-task disclosures for AI systems, would
+substantially reduce uncertainty.
 
-However, all these points of uncertainty are exposed as user-configurable
-parameters or explicit scenario ranges in the model, allowing sensitivity
-analysis and exploration of alternate contexts.
+Key numerical assumptions are exposed as user-configurable parameters or
+explicit scenario ranges in the model, allowing sensitivity analysis and
+exploration of alternate contexts.
 
 \section{Results}
 \label{sec:results}
@@ -1053,9 +1048,10 @@ and generative-AI services. Whenever possible it accounts for both embodied and
 operational emissions. The model is bottom-up and exposes almost 100
 configurable parameters to support different environments and enable exploration
 of different scenarios. A complete parameter inventory is provided in
-Appendix~\ref{app:parameters}. The model is available at
-\url{https://maxp.net/it-emissions} and can be freely modified under an MIT
-License.
+Appendix~\ref{app:parameters}. The model's source code is available at
+\url{https://github.com/maxpoletto/it-emissions} and can be freely modified
+under an MIT License. At the time of writing, the model is also available as an
+interactive web application at \url{https://poletto.org/it-emissions}.
 
 Within the context of UZH, our analysis shows that, at least on the Swiss grid,
 embodied emissions dominate the IT carbon footprint, while operational impacts
