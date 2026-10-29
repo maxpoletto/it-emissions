@@ -6,7 +6,6 @@ import path from 'node:path';
 import {calculate} from '../src/model.js';
 import {emissionsChart, projectionChart} from '../src/charts.js';
 import {renderChart} from '../scripts/render.js';
-import {buildApp} from '../scripts/build-app.js';
 
 test('both chart configurations render real PNG files in Node', async () => {
     const result = calculate(); const dir = await mkdtemp(path.join(tmpdir(), 'emissions-charts-'));
@@ -18,4 +17,3 @@ test('both chart configurations render real PNG files in Node', async () => {
         assert.ok(bytes.length > 10000);
     }
 });
-test('distributed HTML matches its sources', () => buildApp({check: true}));

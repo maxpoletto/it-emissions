@@ -3,11 +3,11 @@
 all: app docs
 
 app:
-	make -C app all
+	$(MAKE) -C src all
 
 docs:
-	make -C doc all
+	$(MAKE) -C doc all
 
 clean:
-	make -C app clean
-	make -C doc clean
+	$(MAKE) -C src clean
+	$(MAKE) -C doc clean

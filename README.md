@@ -4,45 +4,51 @@ Although many of the default parameter values are specific to UZH, the model sho
 
 See doc/paper.tex for a detailed description of methodology and analysis of results.
 
-Development requires Node.js 22 or newer. Install the pinned dependencies with
-`npm ci`, then run `npm run build`. Edit the files in `src/` and the HTML template
-in `app/`; `app/emissions-calculator.html` is the generated, standalone app and
-works directly from disk without a server or network connection.
+Development requires Node.js 22 or newer. Run `npm ci` to install the pinned local
+dependencies, then `npm run build` to generate both websites. Esbuild is already
+declared in `package.json`; no global or separate esbuild installation is needed.
+The version-specific `allowScripts` entry approves its installation script for
+npm versions that support this setting. Keep that entry aligned with the pinned
+esbuild version when upgrading.
 
-Both websites use one model and HTML template. Select their presentation with
-`--deployment-environment`:
+All source files are in `src/`: the JavaScript model, HTML template, deployment
+styles, logos and other assets. `app/` contains only generated output and is
+ignored by Git. Each deployment is a self-contained HTML file that opens from
+disk without a server or network connection:
 
 | Environment | Default output | Presentation |
 | --- | --- | --- |
-| `uzh` (default) | `app/emissions-calculator.html` | No duplicate page heading, zero outer vertical margin, scoped CMS table overrides |
-| `maxp` | `output/maxp/emissions-calculator.html` | UZH logo and calculator title, 20 px outer vertical margin, explicit link styles |
+| `uzh` | `app/uzh/index.html` | No duplicate page heading, zero outer vertical margin, scoped CMS table overrides |
+| `maxp` | `app/maxp/index.html` | UZH logo and calculator title, 20 px outer vertical margin, explicit link styles |
 
 ```sh
+npm run build
 npm run build -- --deployment-environment uzh
 npm run build -- --deployment-environment maxp
-npm run build -- --deployment-environment maxp --check
+npm run build -- --check
 ```
 
-The personal-site output is ignored by Git and does not replace the tracked UZH
-artifact. Both outputs embed styles, fonts and Chart.js; the personal-site logo
-is embedded too. Deployment flags select presentation only: application code,
-model defaults, saved configurations and calculations are identical.
+With no environment flag (or `--deployment-environment all`), the build produces
+both directories. Selecting one environment leaves the other output intact.
+Both outputs embed styles, fonts and Chart.js; the personal-site logo is embedded
+too. Deployment flags select presentation only: application code, model defaults,
+saved configurations and calculations are identical. Deploy either directory as
+it stands; its `index.html` is an ordinary file and needs no external assets.
 
-Use `--output path/to/index.html` to select another output file, and repeat that
-path with `--check` to verify it. For example:
+Use `--output path/to/index.html` with a single environment to select another
+output file, and repeat both options with `--check` to verify it. For example:
 
 ```sh
-npm run build -- --deployment-environment maxp --output output/maxp/index.html
+npm run build -- --deployment-environment maxp --output output/preview/index.html
 ```
 
-The equivalent Make command is
-`make -C app build DEPLOYMENT_ENVIRONMENT=maxp` (or `uzh`). Use
-`make -C app all DEPLOYMENT_ENVIRONMENT=maxp` to also point `app/index.html` at
-the personal-site output; `uzh` points it at the UZH output. The link is refreshed
-on every `all` build, so switching environments needs no clean step. Edit shared markup in
-`app/calculator.template.html` and site-specific styles/header markup in
-`app/deployments/`. `npm test` checks the tracked UZH artifact, and the browser
-tests exercise both environments offline, including simulated UZH CMS overrides.
+The equivalent Make commands are `make app` for both environments and
+`make app DEPLOYMENT_ENVIRONMENT=maxp` (or `uzh`) for one. The application Makefile
+lives in `src/`; `make -C src clean` removes the generated `app/` directory.
+Edit shared markup in `src/calculator.template.html` and site-specific styles and
+header markup in `src/deployments/`. Tests build their own outputs and work in a
+fresh checkout after `npm ci`, even before a normal build. Browser tests exercise
+both environments offline, including simulated UZH CMS overrides.
 
 `npm run batch -- --config scenario.json --output output/example --year 2026`
 generates annual and projection charts plus the exact parameters and results.

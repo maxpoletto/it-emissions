@@ -34,12 +34,15 @@ test('deployment builds differ in presentation and contain identical application
     await assert.rejects(buildApp({deploymentEnvironment: 'maxp', output, check: true}), /stale/);
 });
 
-test('personal-site builds leave the tracked UZH artifact unchanged', async () => {
-    const canonical = new URL('../app/emissions-calculator.html', import.meta.url);
+test('both deployments have independent output directories and ordinary index files', async () => {
+    const uzh = await buildApp({deploymentEnvironment: 'uzh'});
+    const canonical = uzh.output;
     const before = await readFile(canonical, 'utf8');
     const built = await buildApp({deploymentEnvironment: 'maxp'});
-    assert.ok(built.output.endsWith(path.join('output', 'maxp', 'emissions-calculator.html')));
-    assert.ok(await readFile(canonical, 'utf8') === before, 'the tracked UZH build is unchanged');
+    assert.ok(uzh.output.endsWith(path.join('app', 'uzh', 'index.html')));
+    assert.ok(built.output.endsWith(path.join('app', 'maxp', 'index.html')));
+    assert.ok(await readFile(canonical, 'utf8') === before, 'building maxp leaves the UZH output unchanged');
+    for (const deploymentEnvironment of ['uzh', 'maxp']) await buildApp({deploymentEnvironment, check: true});
 });
 
 test('unknown deployment flags fail before producing an output file', async () => {
@@ -51,5 +54,6 @@ test('unknown deployment flags fail before producing an output file', async () =
     const run = promisify(execFile);
     await assert.rejects(run(process.execPath, [script, '--deployment-environment', 'production', '--output', output]), /Choose uzh or maxp/);
     await assert.rejects(run(process.execPath, [script, '--deployment-enviroment', 'maxp', '--output', output]), /Unknown option/);
+    await assert.rejects(run(process.execPath, [script, '--output', output]), /Select --deployment-environment/);
     await assert.rejects(access(output), {code: 'ENOENT'});
 });

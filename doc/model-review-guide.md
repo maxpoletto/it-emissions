@@ -103,7 +103,7 @@ Edit calculations in [src/model.js](../src/model.js), environment defaults and
 field definitions in [src/environments.js](../src/environments.js), and shared
 chart definitions in [src/charts.js](../src/charts.js). Browser code and the HTML
 template contain presentation and interaction code. Rebuild the distributed
-[calculator](../app/emissions-calculator.html) after changing its sources.
+[calculator](../app/uzh/index.html) after changing its sources.
 
 The [paper baseline](scenarios/baseline.json) freezes a full input configuration;
 other [scenarios](scenarios/README.md) extend it with explicit overrides. Changing

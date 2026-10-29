@@ -19,7 +19,9 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         page.on('pageerror', e => errors.push(e.message));
         await page.route('http://**/*', route => route.abort());
         await page.route('https://**/*', route => route.abort());
-        const url = new URL('../../app/emissions-calculator.html', import.meta.url).href;
+        const directory = await mkdtemp(path.join(tmpdir(), 'calculator-offline-'));
+        const {output} = await buildApp({deploymentEnvironment: 'uzh', output: path.join(directory, 'index.html')});
+        const url = pathToFileURL(output).href;
         await page.goto(url);
         await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
