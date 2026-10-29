@@ -118,22 +118,22 @@ CSCS hardware footprint / life & 1,100 / 5 & kg \coe\ / years & Server proxy, no
 \endhead
 User population & 38,000 & users & UZH population & Fixed for UZH scenarios \\ \hline
 Chat users & 38,000 & users & Illustrative ordinary-chat scenario & Independent of agent users \\ \hline
-Ordinary chat volume & 15 & queries/user/day & Scenario assumption & 5--40 queries/user/day \\ \hline
+Ordinary chat volume & 15 & queries/user/day & Scenario assumption & 10--30 queries/user/day \\ \hline
 Chat / agent active days & 250 each & days/year & Separate workday-use inputs & 200--365 days/year \\ \hline
 Ordinary query energy & 1.0 & Wh/query & Conservative value above recent 0.3 Wh estimates & 0.3--3 Wh/query \\ \hline
 Training overhead & 20 & \% & Conservative inference/training allocation & 0--100\% \\ \hline
 AI electricity intensity & 207 & g \coe/kWh & EU electricity generation intensity & 50--400 g \coe/kWh \\ \hline
 Embodied emissions & 0.1 & g \coe/query & Conservative GPU/server allocation default & 0.01--0.1 g/query \\ \hline
-Agentic hardware allocation & 100 & g \coe/kWh IT & Cautious scenario allowance; not a measured fleet factor & 50--150 g \coe/kWh IT \\ \hline
+Agentic hardware allocation & 30 & g \coe/kWh facility & Cautious scenario allowance; not a measured fleet factor & 10--50 g \coe/kWh facility \\ \hline
 AI PUE & 1.2 & ratio & Applied to IT-only inputs & Independent of other environments \\ \hline
 Chat energy boundary & Facility & scope & Wh/query includes facility overhead & No extra PUE \\ \hline
-Agent energy boundary & IT only & scope & Working assumption; source boundary uncertain & Apply AI PUE once \\ \hline
+Agent energy boundary & Facility & scope & Inference electricity includes data-center overhead & Training added separately; no extra PUE \\ \hline
+Agent hardware basis & Facility & scope & Hardware footprint allocated per facility kWh & IT electricity basis also supported \\ \hline
 Annual usage growth & 50 & \% & Aggressive growth scenario & 0--100\% \\ \hline
 Annual efficiency growth & 30 & \% & Hardware/software improvement scenario & 0--50\% \\ \hline
 Annual training growth & 50 & \% & Frontier-model training growth scenario & 0--100\% \\ \hline
-Long/reasoning task energy & 10--50 & Wh/task & Jegham et al., IEA/Ritchie synthesis & Scenario range \\ \hline
-Agentic AI adoption & 10 (3,800) & \% (users) & Illustrative central scenario, no campus survey & 0--20\% in adoption figure \\ \hline
-Agentic AI energy & 1.3 & IT kWh/active user-day & IEA/Ritchie and Claude Code case study & 0.1--2.4 \\ \hline
+Agentic AI adoption & 10 (3,800) & \% (users) & Illustrative central scenario, no campus survey & 5--20\% (1,900--7,600 users) \\ \hline
+Agentic AI energy & 1.5 & Facility kWh/active user-day & Ritchie and Claude Code case study & 1--3; inference only \\ \hline
 \end{longtable}
 
 \begin{longtable}{|L{0.19\textwidth}|L{0.15\textwidth}|L{0.15\textwidth}|L{0.24\textwidth}|L{0.18\textwidth}|}
@@ -149,8 +149,8 @@ Productivity SaaS & 209 \tcoe/year & 38--380 \tcoe/year & 38,000 users times mid
 CSCS operational electricity & 180 \tcoe/year & Depends on grid factor & 3.6 GWh/year UZH allocation at $\sim$50 g \coe/kWh & Based on CSCS contact data \\ \hline
 CSCS facility overhead & 36 \tcoe/year & 18--54 \tcoe/year & PUE 1.2; range 1.1--1.3 on compute-only input & No extra PUE for facility-wide electricity \\ \hline
 CSCS embodied emissions & \ModelCscsHardwareT{} \tcoe/year & 45--226 \tcoe/year & Server-equivalent power 1.2 kW; range 0.4--2.0 & Allocation and hardware mix uncertainty unquantified \\ \hline
-Agentic AI example A & \ModelAgentFivePercentT{} \tcoe/year & 5\% users, 1.3 IT kWh/day & Heavy-use scenario & Includes PUE, training and hardware \\ \hline
-Agentic AI main-chart scenario & \ModelAgentDefaultT{} \tcoe/year & 10\% users, 1.3 IT kWh/day & Illustrative adoption scenario & PUE 1.2, training 20\%, hardware 100 g \coe/kWh IT \\ \hline
-Agentic AI example B & \ModelAgentHighT{} \tcoe/year & 10\% users, 2.4 IT kWh/day & Heavy-agent scenario & Includes PUE, training and hardware \\ \hline
+Agentic AI example A & \ModelAgentFivePercentT{} \tcoe/year & 5\% users, 1.5 facility kWh/day & Heavy-use scenario & Includes training and hardware; no extra PUE \\ \hline
+Agentic AI main-chart scenario & \ModelAgentDefaultT{} \tcoe/year & 10\% users, 1.5 facility kWh/day & Illustrative adoption scenario & Training 20\%, hardware 30 g \coe/kWh facility \\ \hline
+Agentic AI example B & \ModelAgentHighT{} \tcoe/year & 10\% users, 3 facility kWh/day & Heavy-agent scenario & Includes training and hardware; no extra PUE \\ \hline
 \end{longtable}
 }

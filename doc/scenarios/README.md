@@ -13,11 +13,12 @@ Use `--figure baseline` (or another figure name) for a single figure. Run the fu
 command after changing inputs that also affect manuscript numbers.
 
 Whiskers are endpoint envelopes of declared assumptions. Network electricity,
-SaaS factors, CSCS PUE/server-equivalent power, and AI energy/hardware allowances
-have explicit bounds. Device SD/min/max reference values do not automatically
-become uncertainty in a population mean. Adoption scenarios and the low-device
-footprint sensitivity are separate from these bounds. The agent figure varies
-daily IT energy at fixed hardware, PUE and grid assumptions; its three curves
+SaaS factors, CSCS PUE/server-equivalent power, and AI energy, chat query volume,
+agent adoption and hardware allowances have explicit bounds. Device SD/min/max
+reference values do not automatically become uncertainty in a population mean.
+The low-device-footprint sensitivity is a separate scenario. The agent figure
+varies daily facility-inference energy at fixed hardware and grid assumptions,
+with a separate training allocation. Its three curves cover 5–20% adoption and
 are not confidence bounds.
 
 `lifecycle-before.json` and `lifecycle-after.json` define the paired device-life

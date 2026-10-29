@@ -108,6 +108,13 @@ compatibility setting so old saved scenarios do not silently acquire new service
 Hosted AI separates ordinary chat from agent workloads. The illustrative default
 uses 38,000 chat users and 3,800 agent users; these are scenarios, not measured
 adoption. Groups may overlap. Chat energy defaults to a facility-wide Wh/query
-estimate; agent energy defaults to IT kWh/user-day, with PUE applied once. Hardware
-and training allocations remain separate. The five-year projection covers ordinary
-chat only. See the input labels and exported parameters for each energy boundary.
+estimate; agent energy defaults to 1.5 facility kWh/user-day, bounded at 1–3.
+Agent hardware defaults to 30 g CO₂e per facility kWh, bounded at 10–50; its
+electricity basis is explicit. A separate 20% training allocation applies to
+inference emissions. Agent adoption bounds are 1,900–7,600 users (5–20% of the
+38,000-person reference population). Saved configurations retain their explicit
+bounds and older IT-based hardware allocations. The five-year projection covers
+ordinary chat only. Ordinary chat defaults to 15 queries per active user-day at 1 Wh/query;
+editable assumption bounds cover 10–30 queries/user-day and 0.3–3 Wh/query.
+Both inputs contribute to annual and projected whiskers. See the input labels
+and exported parameters for each energy boundary.

@@ -1,15 +1,15 @@
 {
   "figure": {
     "name": "agentic-ai",
-    "description": "External agent emissions against adoption, at three fixed IT-energy allowances. Ordinary chat is excluded from the curves. Savings benchmarks are paired interventions, not emissions offsets assumed to occur.",
+    "description": "External agent emissions against 5–20% adoption at three fixed facility-inference energy allowances. Training and facility-based hardware allocations are added separately. Ordinary chat is excluded; savings benchmarks are paired interventions.",
     "sources": [
       {
         "path": "doc/scenarios/baseline.json",
-        "sha256": "48c1debafed3366e740b3eedfa602a2ac5c388f75846eecf225dd89ec67908cf"
+        "sha256": "53a6417567df77e69032482480ee50f097d944221dc7c9c928b29a282ca81f6f"
       },
       {
         "path": "doc/scenarios/agentic-ai.json",
-        "sha256": "4d63ec99bfe138dcf8044bbdcd0effc452548c98777502337be5559a40449863"
+        "sha256": "4ea8190dde07d93f1e062be0a94446681e4c47a83f7255abd4488337a50d390e"
       },
       {
         "path": "doc/scenarios/cloud.json",
@@ -29,7 +29,7 @@
       "width": 1600,
       "height": 900
     },
-    "sha256": "0c8fb4a1159ceb4445d5aa90a2d49a0fb21a7499bf181dd299658e72ea92bdd7"
+    "sha256": "272f652d52fcb1e84671542958ddda0783c167bca3e57df2dafbbfe5df7b096f"
   },
   "metadata": {
     "modelVersion": "2.0",
@@ -311,9 +311,10 @@
         "chatHardwareGPerQuery": 0.1,
         "agentUsers": 3800,
         "agentDays": 250,
-        "kwhPerAgentDay": 1.3,
-        "agentEnergyBasis": "it",
-        "agentHardwareGPerKwh": 100,
+        "kwhPerAgentDay": 1.5,
+        "agentEnergyBasis": "facility",
+        "agentHardwareGPerKwh": 30,
+        "agentHardwareEnergyBasis": "facility",
         "trainingPercent": 20,
         "usageGrowthPercent": 50,
         "efficiencyImprovementPercent": 30,
@@ -323,16 +324,24 @@
             0.3,
             3
           ],
+          "queriesPerUserDay": [
+            10,
+            30
+          ],
+          "agentUsers": [
+            1900,
+            7600
+          ],
           "kwhPerAgentDay": [
-            0.1,
-            2.4
+            1,
+            3
           ],
           "agentHardwareGPerKwh": [
-            50,
-            150
+            10,
+            50
           ]
         },
-        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
       }
     },
     "compatibility": null
@@ -431,20 +440,20 @@
         "training": 5899.5,
         "electricityKwh": 142500,
         "range": {
-          "low": 24869.1,
-          "high": 120441
+          "low": 16579.4,
+          "high": 240882
         }
       },
       {
         "category": "AI (agents)",
-        "usage": 306774,
-        "embodied": 123500,
-        "training": 61354.8,
-        "electricityKwh": 1482000,
-        "itElectricityKwh": 1235000,
+        "usage": 294975,
+        "embodied": 42750,
+        "training": 58995,
+        "electricityKwh": 1425000,
+        "itElectricityKwh": 1187500,
         "range": {
-          "low": 33067.6,
-          "high": 1021622.4
+          "low": 122740,
+          "high": 1700880
         }
       },
       {
@@ -465,8 +474,8 @@
         "training": 5899.5,
         "total": 49647,
         "range": {
-          "low": 24869.1,
-          "high": 120441
+          "low": 16579.4,
+          "high": 240882
         }
       },
       {
@@ -476,8 +485,8 @@
         "training": 8849.25,
         "total": 61196.625,
         "range": {
-          "low": 33321.4875,
-          "high": 140839.875
+          "low": 22214.324999999997,
+          "high": 281679.75
         }
       },
       {
@@ -487,8 +496,8 @@
         "training": 13273.875,
         "total": 77857.36875,
         "range": {
-          "low": 45800.960625,
-          "high": 169447.10624999998
+          "low": 30533.97375,
+          "high": 338894.21249999997
         }
       },
       {
@@ -498,8 +507,8 @@
         "training": 19910.8125,
         "total": 102151.60593749999,
         "range": {
-          "low": 64311.10678125,
-          "high": 210267.31781249997
+          "low": 42874.0711875,
+          "high": 420534.63562499994
         }
       },
       {
@@ -509,19 +518,19 @@
         "training": 29866.21875,
         "total": 137861.239359375,
         "range": {
-          "low": 91856.80930781251,
-          "high": 269302.468078125
+          "low": 61237.872871875,
+          "high": 538604.93615625
         }
       }
     ],
     "summary": {
-      "totalEmbodied": 2569745.799086758,
-      "totalUsage": 1500118.2465,
-      "totalTraining": 67254.3,
-      "totalCombined": 4137118.3455867576,
+      "totalEmbodied": 2488995.799086758,
+      "totalUsage": 1488319.2465,
+      "totalTraining": 64894.5,
+      "totalCombined": 4042209.545586758,
       "range": {
-        "low": 3409781.3792853886,
-        "high": 5102451.757093608
+        "low": 3491164.0792853883,
+        "high": 5902150.357093608
       }
     }
   },
@@ -532,7 +541,7 @@
   "rangeAnalysis": {
     "method": "deterministic input bounds",
     "interpretation": "Assumption ranges; not confidence intervals",
-    "caseCount": 129,
+    "caseCount": 513,
     "inputs": [
       {
         "path": [
@@ -582,7 +591,27 @@
         ],
         "low": 0.3,
         "high": 3,
-        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "queriesPerUserDay"
+        ],
+        "low": 10,
+        "high": 30,
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+      },
+      {
+        "path": [
+          "environments",
+          "ai",
+          "agentUsers"
+        ],
+        "low": 1900,
+        "high": 7600,
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
       },
       {
         "path": [
@@ -590,9 +619,9 @@
           "ai",
           "kwhPerAgentDay"
         ],
-        "low": 0.1,
-        "high": 2.4,
-        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+        "low": 1,
+        "high": 3,
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
       },
       {
         "path": [
@@ -600,721 +629,557 @@
           "ai",
           "agentHardwareGPerKwh"
         ],
-        "low": 50,
-        "high": 150,
-        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+        "low": 10,
+        "high": 50,
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
       }
     ]
   },
   "projectionScope": "ordinary chat only",
   "adoptionAnalysis": {
-    "scope": "External agents only; hardware, training and facility electricity included",
+    "scope": "External agents only; facility inference electricity, separate training allocation and hardware included",
+    "energyBasis": "facility",
     "curves": [
       {
-        "energyKwhPerDay": 0.1,
+        "energyKwhPerDay": 1,
         "points": [
-          {
-            "adoptionPercent": 0,
-            "agentUsers": 0,
-            "category": "AI (agents)",
-            "usage": 0,
-            "embodied": 0,
-            "training": 0,
-            "electricityKwh": 0,
-            "itElectricityKwh": 0,
-            "total": 0
-          },
-          {
-            "adoptionPercent": 1,
-            "agentUsers": 380,
-            "category": "AI (agents)",
-            "usage": 2359.8,
-            "embodied": 950,
-            "training": 471.96,
-            "electricityKwh": 11400,
-            "itElectricityKwh": 9500,
-            "total": 3781.76
-          },
-          {
-            "adoptionPercent": 2,
-            "agentUsers": 760,
-            "category": "AI (agents)",
-            "usage": 4719.6,
-            "embodied": 1900,
-            "training": 943.92,
-            "electricityKwh": 22800,
-            "itElectricityKwh": 19000,
-            "total": 7563.52
-          },
-          {
-            "adoptionPercent": 3,
-            "agentUsers": 1140,
-            "category": "AI (agents)",
-            "usage": 7079.4,
-            "embodied": 2850,
-            "training": 1415.88,
-            "electricityKwh": 34200,
-            "itElectricityKwh": 28500,
-            "total": 11345.279999999999
-          },
-          {
-            "adoptionPercent": 4,
-            "agentUsers": 1520,
-            "category": "AI (agents)",
-            "usage": 9439.2,
-            "embodied": 3800,
-            "training": 1887.84,
-            "electricityKwh": 45600,
-            "itElectricityKwh": 38000,
-            "total": 15127.04
-          },
           {
             "adoptionPercent": 5,
             "agentUsers": 1900,
             "category": "AI (agents)",
-            "usage": 11799,
-            "embodied": 4750,
-            "training": 2359.8,
-            "electricityKwh": 57000,
-            "itElectricityKwh": 47500,
-            "total": 18908.8
-          },
-          {
-            "adoptionPercent": 6,
-            "agentUsers": 2280,
-            "category": "AI (agents)",
-            "usage": 14158.8,
-            "embodied": 5700,
-            "training": 2831.76,
-            "electricityKwh": 68400,
-            "itElectricityKwh": 57000,
-            "total": 22690.559999999998
-          },
-          {
-            "adoptionPercent": 7,
-            "agentUsers": 2660,
-            "category": "AI (agents)",
-            "usage": 16518.6,
-            "embodied": 6650,
-            "training": 3303.72,
-            "electricityKwh": 79800,
-            "itElectricityKwh": 66500,
-            "total": 26472.32
-          },
-          {
-            "adoptionPercent": 8,
-            "agentUsers": 3040,
-            "category": "AI (agents)",
-            "usage": 18878.4,
-            "embodied": 7600,
-            "training": 3775.68,
-            "electricityKwh": 91200,
-            "itElectricityKwh": 76000,
-            "total": 30254.08
-          },
-          {
-            "adoptionPercent": 9,
-            "agentUsers": 3420,
-            "category": "AI (agents)",
-            "usage": 21238.2,
-            "embodied": 8550,
-            "training": 4247.64,
-            "electricityKwh": 102600,
-            "itElectricityKwh": 85500,
-            "total": 34035.840000000004
-          },
-          {
-            "adoptionPercent": 10,
-            "agentUsers": 3800,
-            "category": "AI (agents)",
-            "usage": 23598,
-            "embodied": 9500,
-            "training": 4719.6,
-            "electricityKwh": 114000,
-            "itElectricityKwh": 95000,
-            "total": 37817.6
-          },
-          {
-            "adoptionPercent": 11,
-            "agentUsers": 4180,
-            "category": "AI (agents)",
-            "usage": 25957.8,
-            "embodied": 10450,
-            "training": 5191.56,
-            "electricityKwh": 125400,
-            "itElectricityKwh": 104500,
-            "total": 41599.36
-          },
-          {
-            "adoptionPercent": 12,
-            "agentUsers": 4560,
-            "category": "AI (agents)",
-            "usage": 28317.6,
-            "embodied": 11400,
-            "training": 5663.52,
-            "electricityKwh": 136800,
-            "itElectricityKwh": 114000,
-            "total": 45381.119999999995
-          },
-          {
-            "adoptionPercent": 13,
-            "agentUsers": 4940,
-            "category": "AI (agents)",
-            "usage": 30677.4,
-            "embodied": 12350,
-            "training": 6135.48,
-            "electricityKwh": 148200,
-            "itElectricityKwh": 123500,
-            "total": 49162.880000000005
-          },
-          {
-            "adoptionPercent": 14,
-            "agentUsers": 5320,
-            "category": "AI (agents)",
-            "usage": 33037.2,
-            "embodied": 13300,
-            "training": 6607.44,
-            "electricityKwh": 159600,
-            "itElectricityKwh": 133000,
-            "total": 52944.64
-          },
-          {
-            "adoptionPercent": 15,
-            "agentUsers": 5700,
-            "category": "AI (agents)",
-            "usage": 35397,
+            "usage": 98325,
             "embodied": 14250,
-            "training": 7079.4,
-            "electricityKwh": 171000,
-            "itElectricityKwh": 142500,
-            "total": 56726.4
+            "training": 19665,
+            "electricityKwh": 475000,
+            "itElectricityKwh": 395833.3333333334,
+            "total": 132240
           },
           {
-            "adoptionPercent": 16,
-            "agentUsers": 6080,
+            "adoptionPercent": 6,
+            "agentUsers": 2280,
             "category": "AI (agents)",
-            "usage": 37756.8,
-            "embodied": 15200,
-            "training": 7551.36,
-            "electricityKwh": 182400,
-            "itElectricityKwh": 152000,
-            "total": 60508.16
-          },
-          {
-            "adoptionPercent": 17,
-            "agentUsers": 6460,
-            "category": "AI (agents)",
-            "usage": 40116.6,
-            "embodied": 16150,
-            "training": 8023.32,
-            "electricityKwh": 193800,
-            "itElectricityKwh": 161500,
-            "total": 64289.92
-          },
-          {
-            "adoptionPercent": 18,
-            "agentUsers": 6840,
-            "category": "AI (agents)",
-            "usage": 42476.4,
+            "usage": 117990,
             "embodied": 17100,
-            "training": 8495.28,
-            "electricityKwh": 205200,
-            "itElectricityKwh": 171000,
-            "total": 68071.68000000001
-          },
-          {
-            "adoptionPercent": 19,
-            "agentUsers": 7220,
-            "category": "AI (agents)",
-            "usage": 44836.2,
-            "embodied": 18050,
-            "training": 8967.24,
-            "electricityKwh": 216600,
-            "itElectricityKwh": 180500,
-            "total": 71853.44
-          },
-          {
-            "adoptionPercent": 20,
-            "agentUsers": 7600,
-            "category": "AI (agents)",
-            "usage": 47196,
-            "embodied": 19000,
-            "training": 9439.2,
-            "electricityKwh": 228000,
-            "itElectricityKwh": 190000,
-            "total": 75635.2
-          }
-        ]
-      },
-      {
-        "energyKwhPerDay": 1.3,
-        "points": [
-          {
-            "adoptionPercent": 0,
-            "agentUsers": 0,
-            "category": "AI (agents)",
-            "usage": 0,
-            "embodied": 0,
-            "training": 0,
-            "electricityKwh": 0,
-            "itElectricityKwh": 0,
-            "total": 0
-          },
-          {
-            "adoptionPercent": 1,
-            "agentUsers": 380,
-            "category": "AI (agents)",
-            "usage": 30677.4,
-            "embodied": 12350,
-            "training": 6135.48,
-            "electricityKwh": 148200,
-            "itElectricityKwh": 123500,
-            "total": 49162.880000000005
-          },
-          {
-            "adoptionPercent": 2,
-            "agentUsers": 760,
-            "category": "AI (agents)",
-            "usage": 61354.8,
-            "embodied": 24700,
-            "training": 12270.96,
-            "electricityKwh": 296400,
-            "itElectricityKwh": 247000,
-            "total": 98325.76000000001
-          },
-          {
-            "adoptionPercent": 3,
-            "agentUsers": 1140,
-            "category": "AI (agents)",
-            "usage": 92032.2,
-            "embodied": 37050,
-            "training": 18406.44,
-            "electricityKwh": 444600,
-            "itElectricityKwh": 370500,
-            "total": 147488.63999999998
-          },
-          {
-            "adoptionPercent": 4,
-            "agentUsers": 1520,
-            "category": "AI (agents)",
-            "usage": 122709.6,
-            "embodied": 49400,
-            "training": 24541.92,
-            "electricityKwh": 592800,
-            "itElectricityKwh": 494000,
-            "total": 196651.52000000002
-          },
-          {
-            "adoptionPercent": 5,
-            "agentUsers": 1900,
-            "category": "AI (agents)",
-            "usage": 153387,
-            "embodied": 61750,
-            "training": 30677.4,
-            "electricityKwh": 741000,
-            "itElectricityKwh": 617500,
-            "total": 245814.4
-          },
-          {
-            "adoptionPercent": 6,
-            "agentUsers": 2280,
-            "category": "AI (agents)",
-            "usage": 184064.4,
-            "embodied": 74100,
-            "training": 36812.88,
-            "electricityKwh": 889200,
-            "itElectricityKwh": 741000,
-            "total": 294977.27999999997
+            "training": 23598,
+            "electricityKwh": 570000,
+            "itElectricityKwh": 475000,
+            "total": 158688
           },
           {
             "adoptionPercent": 7,
             "agentUsers": 2660,
             "category": "AI (agents)",
-            "usage": 214741.8,
-            "embodied": 86450,
-            "training": 42948.36,
-            "electricityKwh": 1037400,
-            "itElectricityKwh": 864500,
-            "total": 344140.16
+            "usage": 137655,
+            "embodied": 19950,
+            "training": 27531,
+            "electricityKwh": 665000,
+            "itElectricityKwh": 554166.6666666667,
+            "total": 185136
           },
           {
             "adoptionPercent": 8,
             "agentUsers": 3040,
             "category": "AI (agents)",
-            "usage": 245419.2,
-            "embodied": 98800,
-            "training": 49083.84,
-            "electricityKwh": 1185600,
-            "itElectricityKwh": 988000,
-            "total": 393303.04000000004
-          },
-          {
-            "adoptionPercent": 9,
-            "agentUsers": 3420,
-            "category": "AI (agents)",
-            "usage": 276096.6,
-            "embodied": 111150,
-            "training": 55219.32,
-            "electricityKwh": 1333800,
-            "itElectricityKwh": 1111500,
-            "total": 442465.92
-          },
-          {
-            "adoptionPercent": 10,
-            "agentUsers": 3800,
-            "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
-            "total": 491628.8
-          },
-          {
-            "adoptionPercent": 11,
-            "agentUsers": 4180,
-            "category": "AI (agents)",
-            "usage": 337451.4,
-            "embodied": 135850,
-            "training": 67490.28,
-            "electricityKwh": 1630200,
-            "itElectricityKwh": 1358500,
-            "total": 540791.68
-          },
-          {
-            "adoptionPercent": 12,
-            "agentUsers": 4560,
-            "category": "AI (agents)",
-            "usage": 368128.8,
-            "embodied": 148200,
-            "training": 73625.76,
-            "electricityKwh": 1778400,
-            "itElectricityKwh": 1482000,
-            "total": 589954.5599999999
-          },
-          {
-            "adoptionPercent": 13,
-            "agentUsers": 4940,
-            "category": "AI (agents)",
-            "usage": 398806.2,
-            "embodied": 160550,
-            "training": 79761.24,
-            "electricityKwh": 1926600,
-            "itElectricityKwh": 1605500,
-            "total": 639117.44
-          },
-          {
-            "adoptionPercent": 14,
-            "agentUsers": 5320,
-            "category": "AI (agents)",
-            "usage": 429483.6,
-            "embodied": 172900,
-            "training": 85896.72,
-            "electricityKwh": 2074800,
-            "itElectricityKwh": 1729000,
-            "total": 688280.32
-          },
-          {
-            "adoptionPercent": 15,
-            "agentUsers": 5700,
-            "category": "AI (agents)",
-            "usage": 460161,
-            "embodied": 185250,
-            "training": 92032.2,
-            "electricityKwh": 2223000,
-            "itElectricityKwh": 1852500,
-            "total": 737443.2
-          },
-          {
-            "adoptionPercent": 16,
-            "agentUsers": 6080,
-            "category": "AI (agents)",
-            "usage": 490838.4,
-            "embodied": 197600,
-            "training": 98167.68,
-            "electricityKwh": 2371200,
-            "itElectricityKwh": 1976000,
-            "total": 786606.0800000001
-          },
-          {
-            "adoptionPercent": 17,
-            "agentUsers": 6460,
-            "category": "AI (agents)",
-            "usage": 521515.8,
-            "embodied": 209950,
-            "training": 104303.16,
-            "electricityKwh": 2519400,
-            "itElectricityKwh": 2099500,
-            "total": 835768.9600000001
-          },
-          {
-            "adoptionPercent": 18,
-            "agentUsers": 6840,
-            "category": "AI (agents)",
-            "usage": 552193.2,
-            "embodied": 222300,
-            "training": 110438.64,
-            "electricityKwh": 2667600,
-            "itElectricityKwh": 2223000,
-            "total": 884931.84
-          },
-          {
-            "adoptionPercent": 19,
-            "agentUsers": 7220,
-            "category": "AI (agents)",
-            "usage": 582870.6,
-            "embodied": 234650,
-            "training": 116574.12,
-            "electricityKwh": 2815800,
-            "itElectricityKwh": 2346500,
-            "total": 934094.72
-          },
-          {
-            "adoptionPercent": 20,
-            "agentUsers": 7600,
-            "category": "AI (agents)",
-            "usage": 613548,
-            "embodied": 247000,
-            "training": 122709.6,
-            "electricityKwh": 2964000,
-            "itElectricityKwh": 2470000,
-            "total": 983257.6
-          }
-        ]
-      },
-      {
-        "energyKwhPerDay": 2.4,
-        "points": [
-          {
-            "adoptionPercent": 0,
-            "agentUsers": 0,
-            "category": "AI (agents)",
-            "usage": 0,
-            "embodied": 0,
-            "training": 0,
-            "electricityKwh": 0,
-            "itElectricityKwh": 0,
-            "total": 0
-          },
-          {
-            "adoptionPercent": 1,
-            "agentUsers": 380,
-            "category": "AI (agents)",
-            "usage": 56635.2,
+            "usage": 157320,
             "embodied": 22800,
-            "training": 11327.04,
-            "electricityKwh": 273600,
-            "itElectricityKwh": 228000,
-            "total": 90762.23999999999
-          },
-          {
-            "adoptionPercent": 2,
-            "agentUsers": 760,
-            "category": "AI (agents)",
-            "usage": 113270.4,
-            "embodied": 45600,
-            "training": 22654.08,
-            "electricityKwh": 547200,
-            "itElectricityKwh": 456000,
-            "total": 181524.47999999998
-          },
-          {
-            "adoptionPercent": 3,
-            "agentUsers": 1140,
-            "category": "AI (agents)",
-            "usage": 169905.6,
-            "embodied": 68400,
-            "training": 33981.12,
-            "electricityKwh": 820800,
-            "itElectricityKwh": 684000,
-            "total": 272286.72000000003
-          },
-          {
-            "adoptionPercent": 4,
-            "agentUsers": 1520,
-            "category": "AI (agents)",
-            "usage": 226540.8,
-            "embodied": 91200,
-            "training": 45308.16,
-            "electricityKwh": 1094400,
-            "itElectricityKwh": 912000,
-            "total": 363048.95999999996
-          },
-          {
-            "adoptionPercent": 5,
-            "agentUsers": 1900,
-            "category": "AI (agents)",
-            "usage": 283176,
-            "embodied": 114000,
-            "training": 56635.2,
-            "electricityKwh": 1368000,
-            "itElectricityKwh": 1140000,
-            "total": 453811.2
-          },
-          {
-            "adoptionPercent": 6,
-            "agentUsers": 2280,
-            "category": "AI (agents)",
-            "usage": 339811.2,
-            "embodied": 136800,
-            "training": 67962.24,
-            "electricityKwh": 1641600,
-            "itElectricityKwh": 1368000,
-            "total": 544573.4400000001
-          },
-          {
-            "adoptionPercent": 7,
-            "agentUsers": 2660,
-            "category": "AI (agents)",
-            "usage": 396446.4,
-            "embodied": 159600,
-            "training": 79289.28,
-            "electricityKwh": 1915200,
-            "itElectricityKwh": 1596000,
-            "total": 635335.68
-          },
-          {
-            "adoptionPercent": 8,
-            "agentUsers": 3040,
-            "category": "AI (agents)",
-            "usage": 453081.6,
-            "embodied": 182400,
-            "training": 90616.32,
-            "electricityKwh": 2188800,
-            "itElectricityKwh": 1824000,
-            "total": 726097.9199999999
+            "training": 31464,
+            "electricityKwh": 760000,
+            "itElectricityKwh": 633333.3333333334,
+            "total": 211584
           },
           {
             "adoptionPercent": 9,
             "agentUsers": 3420,
             "category": "AI (agents)",
-            "usage": 509716.8,
-            "embodied": 205200,
-            "training": 101943.36,
-            "electricityKwh": 2462400,
-            "itElectricityKwh": 2052000,
-            "total": 816860.16
+            "usage": 176985,
+            "embodied": 25650,
+            "training": 35397,
+            "electricityKwh": 855000,
+            "itElectricityKwh": 712500,
+            "total": 238032
           },
           {
             "adoptionPercent": 10,
             "agentUsers": 3800,
             "category": "AI (agents)",
-            "usage": 566352,
-            "embodied": 228000,
-            "training": 113270.4,
-            "electricityKwh": 2736000,
-            "itElectricityKwh": 2280000,
-            "total": 907622.4
+            "usage": 196650,
+            "embodied": 28500,
+            "training": 39330,
+            "electricityKwh": 950000,
+            "itElectricityKwh": 791666.6666666667,
+            "total": 264480
           },
           {
             "adoptionPercent": 11,
             "agentUsers": 4180,
             "category": "AI (agents)",
-            "usage": 622987.2,
-            "embodied": 250800,
-            "training": 124597.44,
-            "electricityKwh": 3009600,
-            "itElectricityKwh": 2508000,
-            "total": 998384.6399999999
+            "usage": 216315,
+            "embodied": 31350,
+            "training": 43263,
+            "electricityKwh": 1045000,
+            "itElectricityKwh": 870833.3333333334,
+            "total": 290928
           },
           {
             "adoptionPercent": 12,
             "agentUsers": 4560,
             "category": "AI (agents)",
-            "usage": 679622.4,
-            "embodied": 273600,
-            "training": 135924.48,
-            "electricityKwh": 3283200,
-            "itElectricityKwh": 2736000,
-            "total": 1089146.8800000001
+            "usage": 235980,
+            "embodied": 34200,
+            "training": 47196,
+            "electricityKwh": 1140000,
+            "itElectricityKwh": 950000,
+            "total": 317376
           },
           {
             "adoptionPercent": 13,
             "agentUsers": 4940,
             "category": "AI (agents)",
-            "usage": 736257.6,
-            "embodied": 296400,
-            "training": 147251.52,
-            "electricityKwh": 3556800,
-            "itElectricityKwh": 2964000,
-            "total": 1179909.1199999999
+            "usage": 255645,
+            "embodied": 37050,
+            "training": 51129,
+            "electricityKwh": 1235000,
+            "itElectricityKwh": 1029166.6666666667,
+            "total": 343824
           },
           {
             "adoptionPercent": 14,
             "agentUsers": 5320,
             "category": "AI (agents)",
-            "usage": 792892.8,
-            "embodied": 319200,
-            "training": 158578.56,
-            "electricityKwh": 3830400,
-            "itElectricityKwh": 3192000,
-            "total": 1270671.36
+            "usage": 275310,
+            "embodied": 39900,
+            "training": 55062,
+            "electricityKwh": 1330000,
+            "itElectricityKwh": 1108333.3333333335,
+            "total": 370272
           },
           {
             "adoptionPercent": 15,
             "agentUsers": 5700,
             "category": "AI (agents)",
-            "usage": 849528,
-            "embodied": 342000,
-            "training": 169905.6,
-            "electricityKwh": 4104000,
-            "itElectricityKwh": 3420000,
-            "total": 1361433.6
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
+            "total": 396720
           },
           {
             "adoptionPercent": 16,
             "agentUsers": 6080,
             "category": "AI (agents)",
-            "usage": 906163.2,
-            "embodied": 364800,
-            "training": 181232.64,
-            "electricityKwh": 4377600,
-            "itElectricityKwh": 3648000,
-            "total": 1452195.8399999999
+            "usage": 314640,
+            "embodied": 45600,
+            "training": 62928,
+            "electricityKwh": 1520000,
+            "itElectricityKwh": 1266666.6666666667,
+            "total": 423168
           },
           {
             "adoptionPercent": 17,
             "agentUsers": 6460,
             "category": "AI (agents)",
-            "usage": 962798.4,
-            "embodied": 387600,
-            "training": 192559.68,
-            "electricityKwh": 4651200,
-            "itElectricityKwh": 3876000,
-            "total": 1542958.0799999998
+            "usage": 334305,
+            "embodied": 48450,
+            "training": 66861,
+            "electricityKwh": 1615000,
+            "itElectricityKwh": 1345833.3333333335,
+            "total": 449616
           },
           {
             "adoptionPercent": 18,
             "agentUsers": 6840,
             "category": "AI (agents)",
-            "usage": 1019433.6,
-            "embodied": 410400,
-            "training": 203886.72,
-            "electricityKwh": 4924800,
-            "itElectricityKwh": 4104000,
-            "total": 1633720.32
+            "usage": 353970,
+            "embodied": 51300,
+            "training": 70794,
+            "electricityKwh": 1710000,
+            "itElectricityKwh": 1425000,
+            "total": 476064
           },
           {
             "adoptionPercent": 19,
             "agentUsers": 7220,
             "category": "AI (agents)",
-            "usage": 1076068.8,
-            "embodied": 433200,
-            "training": 215213.76,
-            "electricityKwh": 5198400,
-            "itElectricityKwh": 4332000,
-            "total": 1724482.56
+            "usage": 373635,
+            "embodied": 54150,
+            "training": 74727,
+            "electricityKwh": 1805000,
+            "itElectricityKwh": 1504166.6666666667,
+            "total": 502512
           },
           {
             "adoptionPercent": 20,
             "agentUsers": 7600,
             "category": "AI (agents)",
-            "usage": 1132704,
-            "embodied": 456000,
-            "training": 226540.8,
-            "electricityKwh": 5472000,
-            "itElectricityKwh": 4560000,
-            "total": 1815244.8
+            "usage": 393300,
+            "embodied": 57000,
+            "training": 78660,
+            "electricityKwh": 1900000,
+            "itElectricityKwh": 1583333.3333333335,
+            "total": 528960
+          }
+        ]
+      },
+      {
+        "energyKwhPerDay": 1.5,
+        "points": [
+          {
+            "adoptionPercent": 5,
+            "agentUsers": 1900,
+            "category": "AI (agents)",
+            "usage": 147487.5,
+            "embodied": 21375,
+            "training": 29497.5,
+            "electricityKwh": 712500,
+            "itElectricityKwh": 593750,
+            "total": 198360
+          },
+          {
+            "adoptionPercent": 6,
+            "agentUsers": 2280,
+            "category": "AI (agents)",
+            "usage": 176985,
+            "embodied": 25650,
+            "training": 35397,
+            "electricityKwh": 855000,
+            "itElectricityKwh": 712500,
+            "total": 238032
+          },
+          {
+            "adoptionPercent": 7,
+            "agentUsers": 2660,
+            "category": "AI (agents)",
+            "usage": 206482.5,
+            "embodied": 29925,
+            "training": 41296.5,
+            "electricityKwh": 997500,
+            "itElectricityKwh": 831250,
+            "total": 277704
+          },
+          {
+            "adoptionPercent": 8,
+            "agentUsers": 3040,
+            "category": "AI (agents)",
+            "usage": 235980,
+            "embodied": 34200,
+            "training": 47196,
+            "electricityKwh": 1140000,
+            "itElectricityKwh": 950000,
+            "total": 317376
+          },
+          {
+            "adoptionPercent": 9,
+            "agentUsers": 3420,
+            "category": "AI (agents)",
+            "usage": 265477.5,
+            "embodied": 38475,
+            "training": 53095.5,
+            "electricityKwh": 1282500,
+            "itElectricityKwh": 1068750,
+            "total": 357048
+          },
+          {
+            "adoptionPercent": 10,
+            "agentUsers": 3800,
+            "category": "AI (agents)",
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
+            "total": 396720
+          },
+          {
+            "adoptionPercent": 11,
+            "agentUsers": 4180,
+            "category": "AI (agents)",
+            "usage": 324472.5,
+            "embodied": 47025,
+            "training": 64894.5,
+            "electricityKwh": 1567500,
+            "itElectricityKwh": 1306250,
+            "total": 436392
+          },
+          {
+            "adoptionPercent": 12,
+            "agentUsers": 4560,
+            "category": "AI (agents)",
+            "usage": 353970,
+            "embodied": 51300,
+            "training": 70794,
+            "electricityKwh": 1710000,
+            "itElectricityKwh": 1425000,
+            "total": 476064
+          },
+          {
+            "adoptionPercent": 13,
+            "agentUsers": 4940,
+            "category": "AI (agents)",
+            "usage": 383467.5,
+            "embodied": 55575,
+            "training": 76693.5,
+            "electricityKwh": 1852500,
+            "itElectricityKwh": 1543750,
+            "total": 515736
+          },
+          {
+            "adoptionPercent": 14,
+            "agentUsers": 5320,
+            "category": "AI (agents)",
+            "usage": 412965,
+            "embodied": 59850,
+            "training": 82593,
+            "electricityKwh": 1995000,
+            "itElectricityKwh": 1662500,
+            "total": 555408
+          },
+          {
+            "adoptionPercent": 15,
+            "agentUsers": 5700,
+            "category": "AI (agents)",
+            "usage": 442462.5,
+            "embodied": 64125,
+            "training": 88492.5,
+            "electricityKwh": 2137500,
+            "itElectricityKwh": 1781250,
+            "total": 595080
+          },
+          {
+            "adoptionPercent": 16,
+            "agentUsers": 6080,
+            "category": "AI (agents)",
+            "usage": 471960,
+            "embodied": 68400,
+            "training": 94392,
+            "electricityKwh": 2280000,
+            "itElectricityKwh": 1900000,
+            "total": 634752
+          },
+          {
+            "adoptionPercent": 17,
+            "agentUsers": 6460,
+            "category": "AI (agents)",
+            "usage": 501457.5,
+            "embodied": 72675,
+            "training": 100291.5,
+            "electricityKwh": 2422500,
+            "itElectricityKwh": 2018750,
+            "total": 674424
+          },
+          {
+            "adoptionPercent": 18,
+            "agentUsers": 6840,
+            "category": "AI (agents)",
+            "usage": 530955,
+            "embodied": 76950,
+            "training": 106191,
+            "electricityKwh": 2565000,
+            "itElectricityKwh": 2137500,
+            "total": 714096
+          },
+          {
+            "adoptionPercent": 19,
+            "agentUsers": 7220,
+            "category": "AI (agents)",
+            "usage": 560452.5,
+            "embodied": 81225,
+            "training": 112090.5,
+            "electricityKwh": 2707500,
+            "itElectricityKwh": 2256250,
+            "total": 753768
+          },
+          {
+            "adoptionPercent": 20,
+            "agentUsers": 7600,
+            "category": "AI (agents)",
+            "usage": 589950,
+            "embodied": 85500,
+            "training": 117990,
+            "electricityKwh": 2850000,
+            "itElectricityKwh": 2375000,
+            "total": 793440
+          }
+        ]
+      },
+      {
+        "energyKwhPerDay": 3,
+        "points": [
+          {
+            "adoptionPercent": 5,
+            "agentUsers": 1900,
+            "category": "AI (agents)",
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
+            "total": 396720
+          },
+          {
+            "adoptionPercent": 6,
+            "agentUsers": 2280,
+            "category": "AI (agents)",
+            "usage": 353970,
+            "embodied": 51300,
+            "training": 70794,
+            "electricityKwh": 1710000,
+            "itElectricityKwh": 1425000,
+            "total": 476064
+          },
+          {
+            "adoptionPercent": 7,
+            "agentUsers": 2660,
+            "category": "AI (agents)",
+            "usage": 412965,
+            "embodied": 59850,
+            "training": 82593,
+            "electricityKwh": 1995000,
+            "itElectricityKwh": 1662500,
+            "total": 555408
+          },
+          {
+            "adoptionPercent": 8,
+            "agentUsers": 3040,
+            "category": "AI (agents)",
+            "usage": 471960,
+            "embodied": 68400,
+            "training": 94392,
+            "electricityKwh": 2280000,
+            "itElectricityKwh": 1900000,
+            "total": 634752
+          },
+          {
+            "adoptionPercent": 9,
+            "agentUsers": 3420,
+            "category": "AI (agents)",
+            "usage": 530955,
+            "embodied": 76950,
+            "training": 106191,
+            "electricityKwh": 2565000,
+            "itElectricityKwh": 2137500,
+            "total": 714096
+          },
+          {
+            "adoptionPercent": 10,
+            "agentUsers": 3800,
+            "category": "AI (agents)",
+            "usage": 589950,
+            "embodied": 85500,
+            "training": 117990,
+            "electricityKwh": 2850000,
+            "itElectricityKwh": 2375000,
+            "total": 793440
+          },
+          {
+            "adoptionPercent": 11,
+            "agentUsers": 4180,
+            "category": "AI (agents)",
+            "usage": 648945,
+            "embodied": 94050,
+            "training": 129789,
+            "electricityKwh": 3135000,
+            "itElectricityKwh": 2612500,
+            "total": 872784
+          },
+          {
+            "adoptionPercent": 12,
+            "agentUsers": 4560,
+            "category": "AI (agents)",
+            "usage": 707940,
+            "embodied": 102600,
+            "training": 141588,
+            "electricityKwh": 3420000,
+            "itElectricityKwh": 2850000,
+            "total": 952128
+          },
+          {
+            "adoptionPercent": 13,
+            "agentUsers": 4940,
+            "category": "AI (agents)",
+            "usage": 766935,
+            "embodied": 111150,
+            "training": 153387,
+            "electricityKwh": 3705000,
+            "itElectricityKwh": 3087500,
+            "total": 1031472
+          },
+          {
+            "adoptionPercent": 14,
+            "agentUsers": 5320,
+            "category": "AI (agents)",
+            "usage": 825930,
+            "embodied": 119700,
+            "training": 165186,
+            "electricityKwh": 3990000,
+            "itElectricityKwh": 3325000,
+            "total": 1110816
+          },
+          {
+            "adoptionPercent": 15,
+            "agentUsers": 5700,
+            "category": "AI (agents)",
+            "usage": 884925,
+            "embodied": 128250,
+            "training": 176985,
+            "electricityKwh": 4275000,
+            "itElectricityKwh": 3562500,
+            "total": 1190160
+          },
+          {
+            "adoptionPercent": 16,
+            "agentUsers": 6080,
+            "category": "AI (agents)",
+            "usage": 943920,
+            "embodied": 136800,
+            "training": 188784,
+            "electricityKwh": 4560000,
+            "itElectricityKwh": 3800000,
+            "total": 1269504
+          },
+          {
+            "adoptionPercent": 17,
+            "agentUsers": 6460,
+            "category": "AI (agents)",
+            "usage": 1002915,
+            "embodied": 145350,
+            "training": 200583,
+            "electricityKwh": 4845000,
+            "itElectricityKwh": 4037500,
+            "total": 1348848
+          },
+          {
+            "adoptionPercent": 18,
+            "agentUsers": 6840,
+            "category": "AI (agents)",
+            "usage": 1061910,
+            "embodied": 153900,
+            "training": 212382,
+            "electricityKwh": 5130000,
+            "itElectricityKwh": 4275000,
+            "total": 1428192
+          },
+          {
+            "adoptionPercent": 19,
+            "agentUsers": 7220,
+            "category": "AI (agents)",
+            "usage": 1120905,
+            "embodied": 162450,
+            "training": 224181,
+            "electricityKwh": 5415000,
+            "itElectricityKwh": 4512500,
+            "total": 1507536
+          },
+          {
+            "adoptionPercent": 20,
+            "agentUsers": 7600,
+            "category": "AI (agents)",
+            "usage": 1179900,
+            "embodied": 171000,
+            "training": 235980,
+            "electricityKwh": 5700000,
+            "itElectricityKwh": 4750000,
+            "total": 1586880
           }
         ]
       }
@@ -1598,9 +1463,10 @@
               "chatHardwareGPerQuery": 0.1,
               "agentUsers": 3800,
               "agentDays": 250,
-              "kwhPerAgentDay": 1.3,
-              "agentEnergyBasis": "it",
-              "agentHardwareGPerKwh": 100,
+              "kwhPerAgentDay": 1.5,
+              "agentEnergyBasis": "facility",
+              "agentHardwareGPerKwh": 30,
+              "agentHardwareEnergyBasis": "facility",
               "trainingPercent": 20,
               "usageGrowthPercent": 50,
               "efficiencyImprovementPercent": 30,
@@ -1610,16 +1476,24 @@
                   0.3,
                   3
                 ],
+                "queriesPerUserDay": [
+                  10,
+                  30
+                ],
+                "agentUsers": [
+                  1900,
+                  7600
+                ],
                 "kwhPerAgentDay": [
-                  0.1,
-                  2.4
+                  1,
+                  3
                 ],
                 "agentHardwareGPerKwh": [
-                  50,
-                  150
+                  10,
+                  50
                 ]
               },
-              "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+              "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
             }
           },
           "compatibility": null
@@ -1632,11 +1506,11 @@
           }
         },
         "comparison": {
-          "baselineTotal": 4137118.3455867576,
+          "baselineTotal": 4042209.545586758,
           "savings": {
             "central": 206152.74074999988,
             "low": 206152.74074999988,
-            "high": 206152.7407500008
+            "high": 206152.74075000128
           },
           "units": "kg CO2e/year",
           "method": "Paired whole-model evaluations with shared assumptions"
@@ -1920,9 +1794,10 @@
               "chatHardwareGPerQuery": 0.1,
               "agentUsers": 3800,
               "agentDays": 250,
-              "kwhPerAgentDay": 1.3,
-              "agentEnergyBasis": "it",
-              "agentHardwareGPerKwh": 100,
+              "kwhPerAgentDay": 1.5,
+              "agentEnergyBasis": "facility",
+              "agentHardwareGPerKwh": 30,
+              "agentHardwareEnergyBasis": "facility",
               "trainingPercent": 20,
               "usageGrowthPercent": 50,
               "efficiencyImprovementPercent": 30,
@@ -1932,16 +1807,24 @@
                   0.3,
                   3
                 ],
+                "queriesPerUserDay": [
+                  10,
+                  30
+                ],
+                "agentUsers": [
+                  1900,
+                  7600
+                ],
                 "kwhPerAgentDay": [
-                  0.1,
-                  2.4
+                  1,
+                  3
                 ],
                 "agentHardwareGPerKwh": [
-                  50,
-                  150
+                  10,
+                  50
                 ]
               },
-              "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+              "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
             }
           },
           "compatibility": null
@@ -1957,11 +1840,11 @@
           }
         },
         "comparison": {
-          "baselineTotal": 4617118.345586757,
+          "baselineTotal": 4522209.545586757,
           "savings": {
             "central": 625833.333333333,
-            "low": 625833.3333333326,
-            "high": 625833.333333334
+            "low": 625833.333333333,
+            "high": 625833.3333333344
           },
           "units": "kg CO2e/year",
           "method": "Paired whole-model evaluations with shared assumptions"

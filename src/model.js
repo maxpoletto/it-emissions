@@ -33,8 +33,16 @@ export function createConfig(input = {}) {
         environments.ai.agentUsers = 0;
         // Version-1 bookmarks can omit this field; retain their original default.
         environments.ai.trainingPercent = 25;
+        environments.ai.kwhPerAgentDay = 1.3;
+        environments.ai.agentEnergyBasis = 'it';
+        environments.ai.agentHardwareGPerKwh = 100;
+        environments.ai.agentHardwareEnergyBasis = 'it';
         environments.ai.bounds = {};
     }
+    // Existing configurations expressed agent hardware per IT kWh.
+    if (raw.environments?.ai?.agentHardwareGPerKwh !== undefined
+        && raw.environments.ai.agentHardwareEnergyBasis === undefined)
+        environments.ai.agentHardwareEnergyBasis = 'it';
     for (const [old, key] of Object.entries(AI_LEGACY_KEYS)) {
         if (raw.llms?.[old] !== undefined) environments.ai[key] = raw.llms[old];
     }
@@ -59,6 +67,9 @@ export function createConfig(input = {}) {
         powerW: powerWDefault, compute: computeDefault, dutyCycle6h: dutyCycle6hDefault,
         environments,
     }, raw);
+    // Saved bounds are an explicit set, not an invitation to add new uncertainty.
+    if (raw.environments?.ai?.bounds !== undefined)
+        config.environments.ai.bounds = clone(raw.environments.ai.bounds);
     for (const key of Object.keys(CLOUD_LEGACY_KEYS)) delete config.compute[key];
     delete config.compute['Campus data center PUE x100'];
     delete config.compute['Campus networking overhead %'];

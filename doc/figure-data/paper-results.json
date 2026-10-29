@@ -7,7 +7,7 @@
   "sources": [
     {
       "path": "doc/scenarios/baseline.json",
-      "sha256": "48c1debafed3366e740b3eedfa602a2ac5c388f75846eecf225dd89ec67908cf"
+      "sha256": "53a6417567df77e69032482480ee50f097d944221dc7c9c928b29a282ca81f6f"
     },
     {
       "path": "doc/scenarios/cloud.json",
@@ -15,7 +15,7 @@
     },
     {
       "path": "doc/scenarios/sens1.json",
-      "sha256": "25fb91dcf6094062cd9d3fb331125609340abcdc4259378369b4c1a8af1fcbfb"
+      "sha256": "2bdaba1a8dbda153f1f85ca8ef0d8ccaaba5a059678fb140ad47e47ea3cacdd6"
     },
     {
       "path": "doc/scenarios/sens2.json",
@@ -23,7 +23,7 @@
     },
     {
       "path": "doc/scenarios/sens-combined.json",
-      "sha256": "4f0a742c863ad3aa06553cd0fb030e603c07373ae3cd87bcd4e44b8009977a90"
+      "sha256": "d58a04bb10820209d707a714c46b172a371d508473a9faf2f1ea00e0b841e948"
     },
     {
       "path": "doc/scenarios/lifecycle-before.json",
@@ -35,11 +35,11 @@
     }
   ],
   "metrics": {
-    "BaselineKt": 4.1371183455867575,
-    "CloudKt": 3.9309656048367576,
+    "BaselineKt": 4.042209545586758,
+    "CloudKt": 3.836056804836758,
     "CloudSavingT": 206.15274074999988,
     "LaptopEmbodiedPercent": 80.8298531591001,
-    "EndUserEmbodiedPercent": 50.047718251571425,
+    "EndUserEmbodiedPercent": 51.2228104451913,
     "EndUserOperationalPercent": 13.592314138447131,
     "CscsHardwareT": 75.34246575342465,
     "CscsTotalT": 291.3424657534247,
@@ -50,29 +50,28 @@
     "NetworkHardwareT": 39.5,
     "LocalOverheadT": 168.90331200000003,
     "ChatT": 49.647,
-    "ChatPercent": 1.2000381872798151,
+    "ChatPercent": 1.228214406999362,
     "ChatFinalT": 137.861239359375,
-    "ChatFinalLowT": 91.85680930781251,
-    "ChatFinalHighT": 269.302468078125,
-    "AgentDefaultT": 491.6288,
-    "AgentFivePercentT": 245.8144,
-    "AgentHighT": 907.6224,
-    "AgentCoefficient": 3781.76,
-    "SensOneChatPercent": 10.526241393208862,
-    "LowDeviceEmbodiedPercent": 49.13105302249515,
-    "CombinedChatPercent": 9.579547665247668,
-    "CombinedWithoutAgentsPercent": 11.225622908634875,
-    "LifetimeBeforeKt": 4.617118345586757,
-    "LifetimeAfterKt": 3.991285012253424,
+    "ChatFinalLowT": 61.237872871875,
+    "ChatFinalHighT": 538.60493615625,
+    "AgentDefaultT": 396.72,
+    "AgentFivePercentT": 198.36,
+    "AgentHighT": 793.44,
+    "SensOneChatPercent": 8.375617994053338,
+    "LowDeviceEmbodiedPercent": 47.988487298585845,
+    "CombinedChatPercent": 7.580809742997651,
+    "CombinedWithoutAgentsPercent": 8.662316940190298,
+    "LifetimeBeforeKt": 4.522209545586757,
+    "LifetimeAfterKt": 3.8963762122534242,
     "LifetimeSavingT": 625.833333333333,
-    "LifetimeSavingPercent": 13.55463053988061
+    "LifetimeSavingPercent": 13.839105132668749
   },
   "lifetimeComparison": {
-    "baselineTotal": 4617118.345586757,
+    "baselineTotal": 4522209.545586757,
     "savings": {
       "central": 625833.333333333,
-      "low": 625833.3333333326,
-      "high": 625833.333333334
+      "low": 625833.333333333,
+      "high": 625833.3333333344
     },
     "units": "kg CO2e/year",
     "method": "Paired whole-model evaluations with shared assumptions"
@@ -360,9 +359,10 @@
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -372,16 +372,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -480,20 +488,20 @@
             "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -514,8 +522,8 @@
             "training": 5899.5,
             "total": 49647,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
@@ -525,8 +533,8 @@
             "training": 8849.25,
             "total": 61196.625,
             "range": {
-              "low": 33321.4875,
-              "high": 140839.875
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
@@ -536,8 +544,8 @@
             "training": 13273.875,
             "total": 77857.36875,
             "range": {
-              "low": 45800.960625,
-              "high": 169447.10624999998
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
@@ -547,8 +555,8 @@
             "training": 19910.8125,
             "total": 102151.60593749999,
             "range": {
-              "low": 64311.10678125,
-              "high": 210267.31781249997
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
@@ -558,19 +566,19 @@
             "training": 29866.21875,
             "total": 137861.239359375,
             "range": {
-              "low": 91856.80930781251,
-              "high": 269302.468078125
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 2569745.799086758,
-          "totalUsage": 1500118.2465,
-          "totalTraining": 67254.3,
-          "totalCombined": 4137118.3455867576,
+          "totalEmbodied": 2488995.799086758,
+          "totalUsage": 1488319.2465,
+          "totalTraining": 64894.5,
+          "totalCombined": 4042209.545586758,
           "range": {
-            "low": 3409781.3792853886,
-            "high": 5102451.757093608
+            "low": 3491164.0792853883,
+            "high": 5902150.357093608
           }
         }
       },
@@ -581,7 +589,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -631,7 +639,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -639,9 +667,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -649,9 +677,9 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },
@@ -939,9 +967,10 @@
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -951,16 +980,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -1059,20 +1096,20 @@
             "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -1093,8 +1130,8 @@
             "training": 5899.5,
             "total": 49647,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
@@ -1104,8 +1141,8 @@
             "training": 8849.25,
             "total": 61196.625,
             "range": {
-              "low": 33321.4875,
-              "high": 140839.875
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
@@ -1115,8 +1152,8 @@
             "training": 13273.875,
             "total": 77857.36875,
             "range": {
-              "low": 45800.960625,
-              "high": 169447.10624999998
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
@@ -1126,8 +1163,8 @@
             "training": 19910.8125,
             "total": 102151.60593749999,
             "range": {
-              "low": 64311.10678125,
-              "high": 210267.31781249997
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
@@ -1137,19 +1174,19 @@
             "training": 29866.21875,
             "total": 137861.239359375,
             "range": {
-              "low": 91856.80930781251,
-              "high": 269302.468078125
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 2519300.799086758,
-          "totalUsage": 1344410.50575,
-          "totalTraining": 67254.3,
-          "totalCombined": 3930965.6048367578,
+          "totalEmbodied": 2438550.799086758,
+          "totalUsage": 1332611.50575,
+          "totalTraining": 64894.5,
+          "totalCombined": 3836056.804836758,
           "range": {
-            "low": 3203628.6385353887,
-            "high": 4896299.016343608
+            "low": 3285011.3385353885,
+            "high": 5695997.616343607
           }
         }
       },
@@ -1160,7 +1197,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -1210,7 +1247,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -1218,9 +1275,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -1228,16 +1285,16 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },
       "projectionScope": "ordinary chat only"
     },
     "sens1": {
-      "description": "Restrict laptop and phone counts to university-managed devices and raise ordinary-chat use to 40 queries/day at 3 Wh/query. Other defaults, including six-year laptop lifetime and illustrative agent adoption, remain fixed. This is not the sustainability-report validation configuration.",
+      "description": "Restrict laptop and phone counts to university-managed devices and raise ordinary-chat use to 30 queries/day at 3 Wh/query. Other defaults, including six-year laptop lifetime and illustrative agent adoption, remain fixed. This is not the sustainability-report validation configuration.",
       "metadata": {
         "modelVersion": "2.0",
         "description": "UZH IT Emissions Model",
@@ -1511,16 +1568,17 @@
             "intensityGPerKwh": 207,
             "pue": 1.2,
             "chatUsers": 38000,
-            "queriesPerUserDay": 40,
+            "queriesPerUserDay": 30,
             "chatDays": 250,
             "whPerQuery": 3,
             "chatEnergyBasis": "facility",
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -1530,16 +1588,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -1633,25 +1699,25 @@
           },
           {
             "category": "AI (chatbot)",
-            "usage": 235980,
-            "embodied": 38000,
-            "training": 47196,
-            "electricityKwh": 1140000,
+            "usage": 176985,
+            "embodied": 28500,
+            "training": 35397,
+            "electricityKwh": 855000,
             "range": {
-              "low": 66317.6,
-              "high": 321176
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -1667,68 +1733,68 @@
         "projection": [
           {
             "year": 2026,
-            "usage": 235980,
-            "embodied": 38000,
-            "training": 47196,
-            "total": 321176,
+            "usage": 176985,
+            "embodied": 28500,
+            "training": 35397,
+            "total": 240882,
             "range": {
-              "low": 66317.6,
-              "high": 321176
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "year": 2027,
-            "usage": 247778.99999999997,
-            "embodied": 57000,
-            "training": 70794,
-            "total": 375573,
+            "usage": 185834.25,
+            "embodied": 42750,
+            "training": 53095.5,
+            "total": 281679.75,
             "range": {
-              "low": 88857.29999999999,
-              "high": 375573
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
             "year": 2028,
-            "usage": 260167.94999999995,
-            "embodied": 85500,
-            "training": 106191,
-            "total": 451858.94999999995,
+            "usage": 195125.96249999997,
+            "embodied": 64125,
+            "training": 79643.25,
+            "total": 338894.21249999997,
             "range": {
-              "low": 122135.895,
-              "high": 451858.94999999995
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
             "year": 2029,
-            "usage": 273176.3474999999,
-            "embodied": 128250,
-            "training": 159286.5,
-            "total": 560712.8474999999,
+            "usage": 204882.26062499994,
+            "embodied": 96187.5,
+            "training": 119464.875,
+            "total": 420534.63562499994,
             "range": {
-              "low": 171496.28475,
-              "high": 560712.8474999999
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
             "year": 2030,
-            "usage": 286835.16487499996,
-            "embodied": 192375,
-            "training": 238929.75,
-            "total": 718139.914875,
+            "usage": 215126.37365624995,
+            "embodied": 144281.25,
+            "training": 179197.3125,
+            "total": 538604.93615625,
             "range": {
-              "low": 244951.4914875,
-              "high": 718139.914875
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 1404012.4657534247,
-          "totalUsage": 1538630.299,
-          "totalTraining": 108550.8,
-          "totalCombined": 3051193.5647534244,
+          "totalEmbodied": 1313762.4657534247,
+          "totalUsage": 1467836.299,
+          "totalTraining": 94392,
+          "totalCombined": 2875990.7647534246,
           "range": {
-            "low": 2093776.0984520547,
-            "high": 3945732.976260274
+            "low": 2133710.2984520546,
+            "high": 4544696.576260274
           }
         }
       },
@@ -1739,7 +1805,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -1789,7 +1855,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -1797,9 +1883,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -1807,9 +1893,9 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },
@@ -2097,9 +2183,10 @@
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -2109,16 +2196,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -2217,20 +2312,20 @@
             "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -2251,8 +2346,8 @@
             "training": 5899.5,
             "total": 49647,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
@@ -2262,8 +2357,8 @@
             "training": 8849.25,
             "total": 61196.625,
             "range": {
-              "low": 33321.4875,
-              "high": 140839.875
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
@@ -2273,8 +2368,8 @@
             "training": 13273.875,
             "total": 77857.36875,
             "range": {
-              "low": 45800.960625,
-              "high": 169447.10624999998
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
@@ -2284,8 +2379,8 @@
             "training": 19910.8125,
             "total": 102151.60593749999,
             "range": {
-              "low": 64311.10678125,
-              "high": 210267.31781249997
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
@@ -2295,19 +2390,19 @@
             "training": 29866.21875,
             "total": 137861.239359375,
             "range": {
-              "low": 91856.80930781251,
-              "high": 269302.468078125
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 1513824.6074200913,
-          "totalUsage": 1500118.2465,
-          "totalTraining": 67254.3,
-          "totalCombined": 3081197.1539200908,
+          "totalEmbodied": 1433074.6074200913,
+          "totalUsage": 1488319.2465,
+          "totalTraining": 64894.5,
+          "totalCombined": 2986288.353920091,
           "range": {
-            "low": 2353860.1876187217,
-            "high": 4046530.5654269406
+            "low": 2435242.887618721,
+            "high": 4846229.165426941
           }
         }
       },
@@ -2318,7 +2413,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -2368,7 +2463,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -2376,9 +2491,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -2386,9 +2501,9 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },
@@ -2669,16 +2784,17 @@
             "intensityGPerKwh": 207,
             "pue": 1.2,
             "chatUsers": 38000,
-            "queriesPerUserDay": 40,
+            "queriesPerUserDay": 30,
             "chatDays": 250,
             "whPerQuery": 3,
             "chatEnergyBasis": "facility",
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -2688,16 +2804,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -2791,25 +2915,25 @@
           },
           {
             "category": "AI (chatbot)",
-            "usage": 235980,
-            "embodied": 38000,
-            "training": 47196,
-            "electricityKwh": 1140000,
+            "usage": 176985,
+            "embodied": 28500,
+            "training": 35397,
+            "electricityKwh": 855000,
             "range": {
-              "low": 66317.6,
-              "high": 321176
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -2825,68 +2949,68 @@
         "projection": [
           {
             "year": 2026,
-            "usage": 235980,
-            "embodied": 38000,
-            "training": 47196,
-            "total": 321176,
+            "usage": 176985,
+            "embodied": 28500,
+            "training": 35397,
+            "total": 240882,
             "range": {
-              "low": 66317.6,
-              "high": 321176
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "year": 2027,
-            "usage": 247778.99999999997,
-            "embodied": 57000,
-            "training": 70794,
-            "total": 375573,
+            "usage": 185834.25,
+            "embodied": 42750,
+            "training": 53095.5,
+            "total": 281679.75,
             "range": {
-              "low": 88857.29999999999,
-              "high": 375573
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
             "year": 2028,
-            "usage": 260167.94999999995,
-            "embodied": 85500,
-            "training": 106191,
-            "total": 451858.94999999995,
+            "usage": 195125.96249999997,
+            "embodied": 64125,
+            "training": 79643.25,
+            "total": 338894.21249999997,
             "range": {
-              "low": 122135.895,
-              "high": 451858.94999999995
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
             "year": 2029,
-            "usage": 273176.3474999999,
-            "embodied": 128250,
-            "training": 159286.5,
-            "total": 560712.8474999999,
+            "usage": 204882.26062499994,
+            "embodied": 96187.5,
+            "training": 119464.875,
+            "total": 420534.63562499994,
             "range": {
-              "low": 171496.28475,
-              "high": 560712.8474999999
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
             "year": 2030,
-            "usage": 286835.16487499996,
-            "embodied": 192375,
-            "training": 238929.75,
-            "total": 718139.914875,
+            "usage": 215126.37365624995,
+            "embodied": 144281.25,
+            "training": 179197.3125,
+            "total": 538604.93615625,
             "range": {
-              "low": 244951.4914875,
-              "high": 718139.914875
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 1537574.6074200913,
-          "totalUsage": 1706600.7465,
-          "totalTraining": 108550.8,
-          "totalCombined": 3352726.1539200908,
+          "totalEmbodied": 1447324.6074200913,
+          "totalUsage": 1635806.7465,
+          "totalTraining": 94392,
+          "totalCombined": 3177523.353920091,
           "range": {
-            "low": 2395308.6876187217,
-            "high": 4247265.565426941
+            "low": 2435242.887618721,
+            "high": 4846229.165426941
           }
         }
       },
@@ -2897,7 +3021,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -2947,7 +3071,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -2955,9 +3099,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -2965,9 +3109,9 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },
@@ -3255,9 +3399,10 @@
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -3267,16 +3412,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -3375,20 +3528,20 @@
             "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -3409,8 +3562,8 @@
             "training": 5899.5,
             "total": 49647,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
@@ -3420,8 +3573,8 @@
             "training": 8849.25,
             "total": 61196.625,
             "range": {
-              "low": 33321.4875,
-              "high": 140839.875
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
@@ -3431,8 +3584,8 @@
             "training": 13273.875,
             "total": 77857.36875,
             "range": {
-              "low": 45800.960625,
-              "high": 169447.10624999998
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
@@ -3442,8 +3595,8 @@
             "training": 19910.8125,
             "total": 102151.60593749999,
             "range": {
-              "low": 64311.10678125,
-              "high": 210267.31781249997
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
@@ -3453,19 +3606,19 @@
             "training": 29866.21875,
             "total": 137861.239359375,
             "range": {
-              "low": 91856.80930781251,
-              "high": 269302.468078125
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 3049745.799086758,
-          "totalUsage": 1500118.2465,
-          "totalTraining": 67254.3,
-          "totalCombined": 4617118.345586757,
+          "totalEmbodied": 2968995.799086758,
+          "totalUsage": 1488319.2465,
+          "totalTraining": 64894.5,
+          "totalCombined": 4522209.545586757,
           "range": {
-            "low": 3889781.3792853886,
-            "high": 5582451.757093608
+            "low": 3971164.0792853883,
+            "high": 6382150.357093608
           }
         }
       },
@@ -3476,7 +3629,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -3526,7 +3679,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -3534,9 +3707,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -3544,9 +3717,9 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },
@@ -3834,9 +4007,10 @@
             "chatHardwareGPerQuery": 0.1,
             "agentUsers": 3800,
             "agentDays": 250,
-            "kwhPerAgentDay": 1.3,
-            "agentEnergyBasis": "it",
-            "agentHardwareGPerKwh": 100,
+            "kwhPerAgentDay": 1.5,
+            "agentEnergyBasis": "facility",
+            "agentHardwareGPerKwh": 30,
+            "agentHardwareEnergyBasis": "facility",
             "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
@@ -3846,16 +4020,24 @@
                 0.3,
                 3
               ],
+              "queriesPerUserDay": [
+                10,
+                30
+              ],
+              "agentUsers": [
+                1900,
+                7600
+              ],
               "kwhPerAgentDay": [
-                0.1,
-                2.4
+                1,
+                3
               ],
               "agentHardwareGPerKwh": [
-                50,
-                150
+                10,
+                50
               ]
             },
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         },
         "compatibility": null
@@ -3954,20 +4136,20 @@
             "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
             "category": "AI (agents)",
-            "usage": 306774,
-            "embodied": 123500,
-            "training": 61354.8,
-            "electricityKwh": 1482000,
-            "itElectricityKwh": 1235000,
+            "usage": 294975,
+            "embodied": 42750,
+            "training": 58995,
+            "electricityKwh": 1425000,
+            "itElectricityKwh": 1187500,
             "range": {
-              "low": 33067.6,
-              "high": 1021622.4
+              "low": 122740,
+              "high": 1700880
             }
           },
           {
@@ -3988,8 +4170,8 @@
             "training": 5899.5,
             "total": 49647,
             "range": {
-              "low": 24869.1,
-              "high": 120441
+              "low": 16579.4,
+              "high": 240882
             }
           },
           {
@@ -3999,8 +4181,8 @@
             "training": 8849.25,
             "total": 61196.625,
             "range": {
-              "low": 33321.4875,
-              "high": 140839.875
+              "low": 22214.324999999997,
+              "high": 281679.75
             }
           },
           {
@@ -4010,8 +4192,8 @@
             "training": 13273.875,
             "total": 77857.36875,
             "range": {
-              "low": 45800.960625,
-              "high": 169447.10624999998
+              "low": 30533.97375,
+              "high": 338894.21249999997
             }
           },
           {
@@ -4021,8 +4203,8 @@
             "training": 19910.8125,
             "total": 102151.60593749999,
             "range": {
-              "low": 64311.10678125,
-              "high": 210267.31781249997
+              "low": 42874.0711875,
+              "high": 420534.63562499994
             }
           },
           {
@@ -4032,19 +4214,19 @@
             "training": 29866.21875,
             "total": 137861.239359375,
             "range": {
-              "low": 91856.80930781251,
-              "high": 269302.468078125
+              "low": 61237.872871875,
+              "high": 538604.93615625
             }
           }
         ],
         "summary": {
-          "totalEmbodied": 2423912.4657534244,
-          "totalUsage": 1500118.2465,
-          "totalTraining": 67254.3,
-          "totalCombined": 3991285.012253424,
+          "totalEmbodied": 2343162.4657534244,
+          "totalUsage": 1488319.2465,
+          "totalTraining": 64894.5,
+          "totalCombined": 3896376.2122534243,
           "range": {
-            "low": 3263948.045952055,
-            "high": 4956618.423760274
+            "low": 3345330.745952055,
+            "high": 5756317.023760274
           }
         }
       },
@@ -4055,7 +4237,7 @@
       "rangeAnalysis": {
         "method": "deterministic input bounds",
         "interpretation": "Assumption ranges; not confidence intervals",
-        "caseCount": 129,
+        "caseCount": 513,
         "inputs": [
           {
             "path": [
@@ -4105,7 +4287,27 @@
             ],
             "low": 0.3,
             "high": 3,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "queriesPerUserDay"
+            ],
+            "low": 10,
+            "high": 30,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
+          },
+          {
+            "path": [
+              "environments",
+              "ai",
+              "agentUsers"
+            ],
+            "low": 1900,
+            "high": 7600,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -4113,9 +4315,9 @@
               "ai",
               "kwhPerAgentDay"
             ],
-            "low": 0.1,
-            "high": 2.4,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 1,
+            "high": 3,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           },
           {
             "path": [
@@ -4123,9 +4325,9 @@
               "ai",
               "agentHardwareGPerKwh"
             ],
-            "low": 50,
-            "high": 150,
-            "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+            "low": 10,
+            "high": 50,
+            "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
           }
         ]
       },

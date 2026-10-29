@@ -11,6 +11,12 @@ test('paper baseline is an explicit, reproducible calculator configuration', asy
     assert.deepEqual(record.results, report().results);
     assert.equal(record.parameters.referenceYear, 2026);
     assert.equal(record.parameters.environments.ai.trainingPercent, 20);
+    assert.deepEqual(record.parameters.environments.ai.bounds.whPerQuery, [0.3, 3]);
+    assert.deepEqual(record.parameters.environments.ai.bounds.queriesPerUserDay, [10, 30]);
+    assert.equal(record.parameters.environments.ai.kwhPerAgentDay, 1.5);
+    assert.equal(record.parameters.environments.ai.agentEnergyBasis, 'facility');
+    assert.equal(record.parameters.environments.ai.agentHardwareEnergyBasis, 'facility');
+    assert.deepEqual(record.parameters.environments.ai.bounds.agentUsers, [1900, 7600]);
     assert.equal(chart.options.scales.y.title.text, 't CO₂e/year');
     assert.equal(chart.data.datasets.length, 3, 'hardware, training and operation are separate');
     assert.ok(chart.options.plugins.assumptionRanges.bounds.filter(Boolean).length >= 5);
@@ -61,10 +67,10 @@ test('managed-device sensitivity changes counts and chat without dropping broad-
     assert.equal(record.parameters.deviceInfo.Laptops.Count, 10440);
     assert.equal(record.parameters.deviceInfo['Mobile phones'].Count, 2439);
     const ai = record.parameters.environments.ai;
-    assert.equal(ai.whPerQuery, 3); assert.equal(ai.queriesPerUserDay, 40);
+    assert.equal(ai.whPerQuery, 3); assert.equal(ai.queriesPerUserDay, 30);
     assert.equal(ai.agentUsers, 3800);
     const chat = record.results.data.find(r => r.category === 'AI (chatbot)');
-    assert.ok(Math.abs(chat.usage - 235980) < 1e-6);
+    assert.ok(Math.abs(chat.usage - 176985) < 1e-6);
     assert.ok(record.results.data.some(r => r.category === 'Productivity SaaS'));
 });
 
@@ -85,12 +91,18 @@ test('low-device sensitivity changes manufacturing assumptions without changing 
 test('agent curves use the annual model and comparable, paired intervention savings', async () => {
     const {record, chart} = await prepareFigure('agentic-ai');
     const analysis = record.adoptionAnalysis;
-    const central = analysis.curves.find(curve => curve.energyKwhPerDay === 1.3);
+    const central = analysis.curves.find(curve => curve.energyKwhPerDay === 1.5);
     const atTenPercent = central.points.find(point => point.adoptionPercent === 10);
     const annualAgents = record.results.data.find(row => row.category === 'AI (agents)');
     assert.equal(atTenPercent.total, annualAgents.usage + annualAgents.embodied + annualAgents.training);
-    assert.equal(central.points[0].total, 0);
-    assert.ok(Math.abs(analysis.curves[2].points[10].total - 907622.4) < 1e-6);
+    assert.equal(central.points[0].adoptionPercent, 5);
+    assert.equal(central.points.at(-1).adoptionPercent, 20);
+    assert.ok(Math.abs(central.points[0].total - 198360) < 1e-6);
+    const high = analysis.curves.find(curve => curve.energyKwhPerDay === 3).points.find(point => point.adoptionPercent === 10);
+    assert.ok(Math.abs(high.total - 793440) < 1e-6);
+    assert.equal(analysis.energyBasis, 'facility');
+    assert.equal(chart.options.scales.x.min, 5);
+    assert.match(chart.data.datasets[1].label, /1\.5.*facility/);
     const lifetime = analysis.benchmarks.find(b => b.after === 'lifecycle-after');
     assert.ok(Math.abs(lifetime.comparison.savings.central - 625833.3333333333) < 1e-6);
     assert.equal(chart.data.datasets.length, 5);

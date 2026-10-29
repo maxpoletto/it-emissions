@@ -83,11 +83,11 @@ export function projectionChart(data, {divisor = 1, title = 'Ordinary chat growt
     return withRanges(configuration, data, divisor);
 }
 
-export function agentAdoptionChart({curves, benchmarks}, {divisor = 1000} = {}) {
+export function agentAdoptionChart({curves, benchmarks, energyBasis = 'it'}, {divisor = 1000} = {}) {
     const colors = ['#197b77', COLORS.border, '#85479a'];
     const patterns = [[8, 4], [], [3, 4]];
     return {type: 'line', data: {datasets: [
-        ...curves.map((curve, i) => ({label: `${curve.energyKwhPerDay} kWh/active user-day (IT)`,
+        ...curves.map((curve, i) => ({label: `${curve.energyKwhPerDay} kWh/active user-day (${energyBasis === 'facility' ? 'facility' : 'IT'})`,
             data: curve.points.map(point => ({x: point.adoptionPercent, y: point.total / divisor})),
             borderColor: colors[i % colors.length], borderDash: patterns[i % patterns.length],
             borderWidth: 3, pointRadius: 0, tension: 0})),
@@ -99,7 +99,9 @@ export function agentAdoptionChart({curves, benchmarks}, {divisor = 1000} = {}) 
         plugins: {title: {display: true, text: 'Agent adoption compared with annual savings'},
             subtitle: {display: true, text: 'Energy scenarios, not adoption forecasts; ordinary chat excluded'},
             legend: {display: true, position: 'bottom'}},
-        scales: {x: {type: 'linear', min: 0, title: {display: true, text: 'Population using agents on active days (%)'}},
+        scales: {x: {type: 'linear', min: Math.min(...curves.flatMap(curve => curve.points.map(point => point.adoptionPercent))),
+            ticks: {stepSize: 5},
+            title: {display: true, text: 'Population using agents on active days (%)'}},
             y: {beginAtZero: true, title: {display: true, text: divisor === 1000 ? 't CO₂e/year' : 'kg CO₂e/year'}}},
     }};
 }

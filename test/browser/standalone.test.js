@@ -122,6 +122,31 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(initial, report(initial.parameters));
+        const queryLow = page.getByRole('spinbutton', {name: 'Hosted AI: Queries per active user-day low assumption', exact: true});
+        const queryHigh = page.getByRole('spinbutton', {name: 'Hosted AI: Queries per active user-day high assumption', exact: true});
+        assert.equal(await queryLow.inputValue(), '10');
+        assert.equal(await queryHigh.inputValue(), '30');
+        assert.equal(await page.locator('#ai-kwhPerAgentDay').inputValue(), '1.5');
+        assert.equal(await page.locator('#ai-agentEnergyBasis').inputValue(), 'facility');
+        assert.equal(await page.locator('#ai-agentHardwareGPerKwh').inputValue(), '30');
+        assert.equal(await page.locator('#ai-agentHardwareEnergyBasis').inputValue(), 'facility');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Hosted AI: People using agents low assumption', exact: true}).inputValue(), '1900');
+        assert.equal(await page.getByRole('spinbutton', {name: 'Hosted AI: People using agents high assumption', exact: true}).inputValue(), '7600');
+        await queryLow.fill('12'); await queryLow.dispatchEvent('change');
+        await queryHigh.fill('25'); await queryHigh.dispatchEvent('change');
+        const bounded = await page.evaluate(() => window.EmissionsApp.getReport());
+        assert.equal(bounded.results.summary.totalCombined, initial.results.summary.totalCombined);
+        const chatRange = result => result.results.data.find(row => row.category === 'AI (chatbot)').range;
+        assert.ok(chatRange(bounded).low > chatRange(initial).low);
+        assert.ok(chatRange(bounded).high < chatRange(initial).high);
+        assert.deepEqual(bounded, report(bounded.parameters));
+        await page.reload();
+        assert.equal(await queryLow.inputValue(), '12');
+        assert.equal(await queryHigh.inputValue(), '25');
+        assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), bounded);
+        await page.getByRole('button', {name: 'Reset Parameters', exact: true}).click();
+        assert.equal(await queryLow.inputValue(), '10');
+        assert.equal(await queryHigh.inputValue(), '30');
         assert.equal(await page.locator('#power-table th').count(), 2, 'only operationally active power inputs are editable');
         await page.locator('#cloud-energyBasis').selectOption('facility');
         assert.match(await page.locator('#ai-summary').textContent(), /Chat: .*agents: .*AI:/,
@@ -140,6 +165,9 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.locator('#cloud-intensityGPerKwh').dispatchEvent('change');
         const cloud = await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Cloud'));
         assert.equal(cloud.usage, 0); assert.ok(cloud.embodied > 0);
+        // The no-agent counterfactual also needs its adoption bounds to include zero.
+        const agentLow = page.getByRole('spinbutton', {name: 'Hosted AI: People using agents low assumption', exact: true});
+        await agentLow.fill('0'); await agentLow.dispatchEvent('change');
         for (const field of ['chatUsers', 'agentUsers']) {
             await page.locator('#ai-' + field).fill('0');
             await page.locator('#ai-' + field).dispatchEvent('change');

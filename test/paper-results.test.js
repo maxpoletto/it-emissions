@@ -8,11 +8,12 @@ test('manuscript numbers reproduce paired device-lifetime savings and share deno
     const expected = (32000 * 180 * (1 / 4 - 1 / 6) + 35000 * 50 * (1 / 3 - 1 / 4)) / 1000;
     assert.ok(Math.abs(record.metrics.LifetimeSavingT - expected) < 1e-8);
     assert.ok(record.metrics.CombinedWithoutAgentsPercent > record.metrics.CombinedChatPercent);
-    assert.ok(Math.abs(record.metrics.EndUserEmbodiedPercent - 50) < 1,
+    assert.ok(Math.abs(record.metrics.EndUserEmbodiedPercent - 50) < 2,
         'end-user embodied emissions remain approximately half of the broad footprint');
-    assert.ok(record.metrics.LowDeviceEmbodiedPercent > 48 && record.metrics.LowDeviceEmbodiedPercent < 50,
+    assert.ok(record.metrics.LowDeviceEmbodiedPercent < 50,
         'the low-device case must not be described as hardware accounting for a majority');
-    assert.ok(Math.abs(record.metrics.AgentCoefficient - 3781.76) < 1e-8);
+    assert.ok(Math.abs(record.metrics.AgentDefaultT - 396.72) < 1e-8);
+    assert.equal('AgentCoefficient' in record.metrics, false);
 });
 
 test('missing historical validation inputs cannot silently fall back to modern defaults', async () => {

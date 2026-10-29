@@ -2,5 +2,5 @@
   "schemaVersion": 1,
   "extends": "sens2",
   "description": "Low local-device embodied footprints and high ordinary-chat activity together, retaining broad device counts and illustrative agent adoption.",
-  "overrides": {"environments": {"ai": {"queriesPerUserDay": 40, "whPerQuery": 3}}}
+  "overrides": {"environments": {"ai": {"queriesPerUserDay": 30, "whPerQuery": 3}}}
 }

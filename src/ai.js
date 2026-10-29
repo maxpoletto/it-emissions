@@ -8,13 +8,14 @@ export function aiWorkloads(ai) {
     const agentInputKwh = ai.enabled ? ai.agentUsers * ai.agentDays * ai.kwhPerAgentDay : 0;
     const agentItKwh = ai.agentEnergyBasis === 'it' ? agentInputKwh : agentInputKwh / ai.pue;
     const agentElectricity = agentInputKwh * facilityMultiplier({pue: ai.pue, energyBasis: ai.agentEnergyBasis});
+    const agentHardwareKwh = ai.agentHardwareEnergyBasis === 'facility' ? agentElectricity : agentItKwh;
     const component = (category, electricityKwh, embodied) => {
         const usage = electricityKwh * ai.intensityGPerKwh / 1000;
         return {category, usage, embodied, training: usage * ai.trainingPercent / 100, electricityKwh};
     };
     return {
         chat: component('AI (chatbot)', chatElectricity, queries * ai.chatHardwareGPerQuery / 1000),
-        agents: {...component('AI (agents)', agentElectricity, agentItKwh * ai.agentHardwareGPerKwh / 1000),
+        agents: {...component('AI (agents)', agentElectricity, agentHardwareKwh * ai.agentHardwareGPerKwh / 1000),
             itElectricityKwh: agentItKwh},
     };
 }

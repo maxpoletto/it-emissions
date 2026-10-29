@@ -49,7 +49,8 @@ async function agentAdoption(scenario) {
             comparison: interventionComparison(before.configuration, after.overrides)});
         scenario.sources.push(...before.sources, ...after.sources);
     }
-    return {scope: 'External agents only; hardware, training and facility electricity included', curves, benchmarks};
+    return {scope: 'External agents only; facility inference electricity, separate training allocation and hardware included',
+        energyBasis: scenario.configuration.environments.ai.agentEnergyBasis, curves, benchmarks};
 }
 
 export async function prepareFigure(name) {

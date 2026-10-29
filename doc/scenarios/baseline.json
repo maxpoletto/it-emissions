@@ -276,9 +276,10 @@
         "chatHardwareGPerQuery": 0.1,
         "agentUsers": 3800,
         "agentDays": 250,
-        "kwhPerAgentDay": 1.3,
-        "agentEnergyBasis": "it",
-        "agentHardwareGPerKwh": 100,
+        "kwhPerAgentDay": 1.5,
+        "agentEnergyBasis": "facility",
+        "agentHardwareGPerKwh": 30,
+        "agentHardwareEnergyBasis": "facility",
         "trainingPercent": 20,
         "usageGrowthPercent": 50,
         "efficiencyImprovementPercent": 30,
@@ -288,16 +289,24 @@
             0.3,
             3
           ],
+          "queriesPerUserDay": [
+            10,
+            30
+          ],
+          "agentUsers": [
+            1900,
+            7600
+          ],
           "kwhPerAgentDay": [
-            0.1,
-            2.4
+            1,
+            3
           ],
           "agentHardwareGPerKwh": [
-            50,
-            150
+            10,
+            50
           ]
         },
-        "source": "Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured"
+        "source": "Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured"
       }
     },
     "compatibility": null

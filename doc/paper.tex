@@ -313,8 +313,8 @@ session~\cite{ritchie:ai:electricity:2026,couch:claude:code:energy}.
 
 We represent training as a separate allocation on top of operational inference
 emissions. Embodied hardware emissions are allocated per query for ordinary
-chatbot use and per kWh of estimated server-side electricity for agentic
-workflows. Because AI providers do not publish workload-level energy data, the
+chatbot use and per kWh of estimated facility inference electricity for
+agentic workflows. Because AI providers do not publish workload-level energy data, the
 AI scenarios are presented as sensitivity ranges.
 
 These AI estimates cover externally hosted services; workloads already
@@ -582,14 +582,15 @@ A widely cited 2023 study~\cite{devries2023growing} estimated the average energy
 consumption of a large language model like ChatGPT at approximately 3
 Wh/request, about ten times the energy of a standard Google search query. In
 2025, \textcite{epoch2025howmuchenergydoeschatgptuse} argued that the energy use
-for the average GPT-4o query was closer to 0.3 Wh, while noting that unusually
-long inputs or more ambitious applications such as OpenAI's Deep
-Research~\cite{oai:deepresearch} could rise into the tens of watt-hours.
-\textcite{jegham2025hungry} similarly find strong workload dependence: their
-benchmarked long prompts exceed 29 Wh for the most energy-intensive models and
-vary by more than a factor of 60 across systems. We therefore use 1 Wh/query as
-our ordinary-chat default and vary this from 0.3--3 Wh/query in sensitivity
-scenarios.
+for the average GPT-4o query was closer to 0.3 Wh.
+\textcite{ritchie:ai:electricity:2026}, summarizing IEA and benchmark data,
+places simple text queries around 0.1--0.6 Wh. However,
+\textcite{jegham2025hungry} finds strong workload dependence: their benchmarked
+long prompts exceed 29 Wh for the most energy-intensive models and vary by more
+than a factor of 60 across systems. We assume 1 Wh/query as our ordinary-chat
+default and vary this from 0.3--3 Wh/query in sensitivity scenarios. For the
+purposes of this report, we treat query energy estimates as facility-wide and do
+not apply PUE again.
 
 Due to the increasing size and complexity of state-of-the-art models, the power
 required to train such models has been doubling
@@ -598,17 +599,17 @@ into the relative electricity consumption of training and
 inference~\cite{verdecchia2023systematic}.
 Google~\cite{patterson:footprint:2022} reports that in 2019--2021 inference
 accounted for about 60\% of AI energy consumption, implying a ratio of training
-energy to inference energy of 2:3, though that ratio was presumably skewed high
-due to internal reserch and development. Meta's model card for Llama
+energy to inference energy of 2:3, though that ratio includes Google's internal
+reserch and development. Meta's model card for Llama
 3.1~\cite{meta:llama31:modelcard} reports 30.84 million GPU-hours for the 405B
 model on GPUs rated at 700 W. Multiplying GPU-hours by this nameplate power
 gives approximately 21.6 GWh. We assume a combined factor of 1.4 for host-server
 electricity and data-center overhead, giving a rough facility-level training
 estimate of 30 GWh. Assuming ChatGPT's reported 2.5 billion queries per
 day~\cite{techcrunch:chatgpt} and 0.3 Wh/query, inference energy is
-approximately 750 MWh/day, or 203 GWh over an assumed nine-month deployment
-lifetime. This gives a training-to-inference ratio of $30:203 \approx 1:7$.
-Under a high assumption of 1 Wh/query, inference energy would instead be
+approximately 750 MWh/day, or 203 GWh over an assumed nine-month model
+deployment lifetime. This gives a training-to-inference ratio of $30:203 \approx
+1:7$. At our default of 1 Wh/query, inference energy would instead be
 approximately 675 GWh over the same period, and the ratio would be about $1:22$.
 Given these order-of-magnitude illustrations, and wanting to be conservative in
 not underestimating training overhead, we set our training overhead allocation
@@ -620,75 +621,72 @@ H100 GPU time per query. NVIDIA reports~\cite{nvidia:h100} a cradle-to-gate
 carbon footprint of 1,312 \kgcoe\ for an HGX H100 baseboard containing eight
 GPUs. We use a working whole-server footprint of 2,000 \kgcoe, including that
 baseboard, and divide by eight to allocate 250 \kgcoe\ per GPU, including its
-share of the host server~\cite{nvidia:dgx}. If this platform is used
-for three years at 70\% utilization, we obtain direct embodied emissions of
-approximately 0.004 \gcoe/query; the model retains 0.1 \gcoe/query as a conservative
+share of the host server~\cite{nvidia:dgx}. If this platform is used for three
+years at 70\% utilization~\cite{tomshardware:2024}, we obtain direct embodied
+emissions of approximately 0.004 \gcoe/query~\footnote{70\% utilization for
+three years is approximately 18,000 hours; at one GPU-second per query, that
+equates to 65M queries.}. The model uses 0.1 \gcoe/query as a very conservative
 default to allow for lower utilization and allocation uncertainty.
-
-We treat the ordinary-query energy estimate as facility-wide and do not apply
-PUE again. The interface also supports compute-only query energy with an
-explicit AI PUE.
 
 The facilities hosting LLMs are distributed and the location that serves a
 particular request is unknown. To map energy use to emissions we use the average
 emissions intensity of electricity generation in the EU in 2023, 207
 \gcoekwh~\cite{eea:emissions:2025}. This is higher than the Swiss campus
-electricity intensity and therefore conservative for AI requests served from
-lower-carbon regions, but not conservative for requests served from
-carbon-intensive grids.
+electricity intensity, but an illustrative proxy for unknown serving locations.
 
-%point 5
-For chatbot use, we make the following default and sensitivity assumptions:
+In summary, for chatbot use, we make the following default and sensitivity assumptions:
 
 \begin{itemize}
   \item Ordinary chat: default 15 queries/user/day at 1 Wh/query; sensitivity
-  range 0.3--3 Wh/query and 5--40 queries/user/day.
-  \item Long or reasoning tasks: 1--5 tasks/user/day at 10--50 Wh/task.
-  \item Training overhead of 25\% on operational inference energy.
+  range 0.3--3 Wh/query and 10--30 queries/user/day.
+  \item Training overhead of 20\% on operational inference energy.
   \item Carbon emission intensity of 207 \gcoekwh.
-  \item Embodied emissions of 0.1 \gcoe/query for query-style accounting.
+  \item Embodied emissions of 0.1 \gcoe/query.
 \end{itemize}
 
 \subsubsection*{Agentic AI use}
 
-\textcite{ritchie:ai:electricity:2026}, summarizing IEA and benchmark data,
-places simple text queries around 0.1--0.6 Wh, while agentic or reasoning tasks
-move into the range of several to tens of Wh per task. A heavy-use illustration
-of 24 agentic tasks/day at 100 Wh/task reaches 2.4 kWh/day.
-\textcite{couch:claude:code:energy} estimates, from personal Claude Code logs, a
-median coding-agent session of 41 Wh and a heavy coding-agent workday of
-approximately 1.3 kWh. This source is not a peer-reviewed measurement, but it is
-useful as a transparent case study of the token volumes created by coding
-agents.
+Agentic or reasoning workflows have far different energy requirements.
+\textcite{ritchie:ai:electricity:2026} describes a heavy-use example of 24
+agentic tasks/day at 100 Wh/task, hence 2.4 kWh/day.
+\textcite{couch:claude:code:energy} presents a non-peer-reviewed but nonetheless
+useful methodology that derives token volumes from local Claude Code logs and
+infers a median coding-agent session of 41 Wh and a heavy coding-agent workday
+of approximately 1.3 kWh. We use 1.5 kWh/day as a central estimate, with a range
+of 1--3 kWh/day. As with the chatbot case, we treat these energy estimates as
+facility inference electricity, including data-center overhead. We add training
+as a separate allocation.
 
-% point 2
-We treat these kWh/user-day estimates as IT electricity for inference, tool use,
-context-cache reads and writes, and long outputs. Their facility boundary is not
-well established; our working assumption applies AI PUE 1.2. If an estimate
-already includes facility overhead, no additional PUE is appropriate. Agent
-emissions combine facility electricity emissions, a 25\% training allocation on
-those emissions, and amortized hardware emissions. Chat and agent user groups may
-overlap; agent-generated requests must not also be counted in ordinary chat.
+For amortized hardware emissions, the 250 \kgcoe per-GPU allocation given above,
+spread over roughly 18,000 active hours and with allocated facility power of 1
+kW, implies 14 \gcoekwh. Again, being deliberately cautious, we assume 30
+\gcoekwh, with a range of 10--50 \gcoekwh in sensitivity scenarios.
 
-For amortized hardware, the 250 \kgcoe\ allocation above, spread over roughly
-18,000 active hours and an allocated IT power of 0.6--1.5 kW, would imply about
-9--23 \gcoe/kWh. We retain the deliberately cautious scenario allowance of
-100 \gcoe/kWh, varied from 50--150, to allow for uncertain hardware mix,
-utilization, and lifetime. These are explicit assumptions rather than measured
-fleet factors. The denominator is IT electricity, so facility PUE does not
-inflate hardware emissions.
+Summarizing, in the agentic case we have:
 
-For the middle-of-the-road agentic scenario, a useful approximation is:
+\begin{itemize}
+  \item 1.5 kWh/day per active user, with a range of 1--3 kWh/day.
+  \item Training overhead of 20\% on operational inference energy.
+  \item 30 \gcoekwh\ amortized hardware emissions, with a range of 10--50
+  \gcoekwh.
+  \item Carbon emission intensity of 207 \gcoekwh.
+\end{itemize}
 
-\[\mathrm{annual~emissions~(t~CO_2e)} \approx \ModelAgentCoefficient{} \times f \times E\]
+Agent-generated requests are excluded from the ordinary-chat allowance.
+A central, illustrative estimate of emissions per active agentic user per day
+is therefore as follows. The factor $(1+0.20)$ accounts for the training
+allocation; facility overhead is already included in the daily energy input:
 
-where $f$ is the fraction of the 38,000-person UZH population that uses agentic
-AI heavily on workdays, and $E$ is IT kWh per active user-day. The coefficient
-assumes 250 active days/year, 207 \gcoekwh, PUE 1.2, a 25\% training allocation, and 100
-\gcoe/kWh amortized hardware embodied emissions. Thus 5\% adoption at 1.3
-kWh/day is \ModelAgentFivePercentT{} \tcoe/year, 10\% adoption at 1.3 kWh/day is
-\ModelAgentDefaultT{} \tcoe/year, and 10\% adoption at 2.4 kWh/day is
-\ModelAgentHighT{} \tcoe/year.
+\[ 1.5~\mathrm{kWh/day} \times \bigl[207 \times (1+0.20) + 30\bigr]~\mathrm{gCO_2e/kWh} \approx 0.4~\mathrm{kgCO_2e/day}. \]
+
+Then, for example, assuming that 10\% of the UZH population uses agentic AI
+heavily on 250 workdays per year, we obtain
+
+\[ 0.1 \times 38{,}000~\mathrm{users} \times 0.4~\mathrm{kgCO_2e/(user-day)} \times 250~\mathrm{days/year} \approx 380~\mathrm{tCO_2e/year}. \]
+
+For sensitivity analysis, we vary adoption from 5\% to 20\% of the population
+(1,900--7,600 users). These adoption bounds, together with the daily energy and
+hardware-factor bounds, enter the annual-bar whiskers.
 
 \subsection{Model limitations}
 % point 6
@@ -743,7 +741,7 @@ emissions. See Figure~\ref{fig:baseline}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-baseline.png}
-  \caption{Baseline scenario from the shared calculator. Bars separate embodied hardware, training allocations, and operational emissions (including the composite SaaS factor). Whiskers show assumption ranges for network electricity, SaaS emissions per user, CSCS PUE and server-equivalent power, and AI energy and agent hardware allocations; other uncertainty is not quantified. Agent use is illustrative: 10\% adoption at 1.3 kWh of IT electricity per active user-day.}
+  \caption{Baseline scenario from the shared calculator. Bars separate embodied hardware, training allocations, and operational emissions (including the composite SaaS factor). Whiskers show assumption ranges for network electricity, SaaS emissions per user, CSCS PUE and server-equivalent power, chatbot query energy and volume, and agent adoption, daily energy and hardware allocations; other uncertainty is not quantified. Central agent use is illustrative: 10\% adoption at 1.5 kWh of facility inference electricity per active user-day.}
   \label{fig:baseline}
 \end{figure}
 
@@ -791,7 +789,7 @@ migrating might be invested in more cost effective emissions improvements
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-llm-growth.png}
-  \caption{Ordinary chatbot growth scenario, excluding agents. Central values assume 15 queries/user/day, initially 1 Wh/query, 250 active days/year, 50\% annual usage growth, 30\% annual reduction in query energy, 50\% annual growth in training emissions, 25\% initial training allocation, and 0.1 \gcoe/query hardware allocation. Whiskers vary initial query energy from 0.3 to 3 Wh while holding growth rates and user counts fixed.}
+  \caption{Ordinary chatbot growth scenario, excluding agents. Central values assume 15 queries/user/day, initially 1 Wh/query, 250 active days/year, 50\% annual usage growth, 30\% annual reduction in query energy, 50\% annual growth in training emissions, 20\% initial training allocation, and 0.1 \gcoe/query hardware allocation. Whiskers vary initial query energy from 0.3 to 3 Wh and initial query volume from 10 to 30 queries/user/day while holding growth rates and user counts fixed.}
   \label{fig:llm:growth}
 \end{figure}
 
@@ -808,8 +806,9 @@ Moreover, under aggressive ordinary-chat growth projections (50\% YoY usage
 growth, 50\% YoY growth in training-overhead emissions, and a moderate 30\% YoY
 improvement in inference efficiency), the central ordinary-chat scenario reaches
 \ModelChatFinalT{} \tcoe/year in 2030, the fifth plotted year, or about 3--4\%
-of the baseline broad IT footprint. Varying starting query energy from 0.3 to
-3 Wh gives \ModelChatFinalLowT{}--\ModelChatFinalHighT{} \tcoe/year in that year;
+of the baseline broad IT footprint. Varying initial query energy from 0.3 to 3 Wh and initial volume from 10 to
+30 queries/user/day gives \ModelChatFinalLowT{}--\ModelChatFinalHighT{}
+\tcoe/year in that year;
 growth rates remain fixed. See Figure~\ref{fig:llm:growth}. This result is consistent with other
 analyses that put simple LLM use in the context of other computer
 activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt,ritchie:ai:electricity:2026}.
@@ -817,9 +816,9 @@ activity~\cite{epoch2025howmuchenergydoeschatgptuse,ritchie:chatgpt,ritchie:ai:e
 Agentic AI is different. The main result figures therefore split AI into ``AI
 (chatbot)'' and ``AI (agents)''. The agent bar represents an illustrative
 scenario in which 10\% of the UZH population uses coding or research agents
-heavily on workdays at 1.3 IT kWh/user-day, yielding \ModelAgentDefaultT{} \tcoe/year
+heavily on workdays at 1.5 facility kWh/user-day, yielding \ModelAgentDefaultT{} \tcoe/year
 once facility overhead, training and amortized hardware are included. If 10\% used such
-systems at 2.4 IT kWh/user-day, emissions would be \ModelAgentHighT{} \tcoe/year,
+systems at 3 facility kWh/user-day, emissions would be \ModelAgentHighT{} \tcoe/year,
 comparable to major existing operational IT categories.
 Figure~\ref{fig:agentic:ai} shows the sensitivity of annual emissions to both
 adoption and intensity. The conclusion is therefore not that all AI use is
@@ -829,7 +828,7 @@ dominated by simple chat or shifts toward high-intensity agentic work.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-agentic-ai.png}
-  \caption{Annual agent emissions against adoption at three fixed daily IT-energy allowances. All curves include PUE 1.2, a 25\% training allocation, and 100 \gcoe/kWh of IT electricity for hardware, with 250 active days/year, 38,000 potential users, and 207 \gcoekwh. Reference lines show modeled annual savings from cloud migration and from extending laptop/phone lifetimes from 4/3 to 6/4 years. These are scenarios, not measured adoption or statistical bounds; ordinary chat is excluded from the curves.}
+  \caption{Annual agent emissions against 5--20\% adoption at three fixed facility-inference energy allowances: 1, 1.5 and 3 kWh per active user-day. All curves add a separate 20\% training allocation and 30 \gcoe/kWh of facility electricity for hardware, with 250 active days/year, 38,000 potential users, and 207 \gcoekwh. No additional PUE multiplier is applied. Reference lines show modeled annual savings from cloud migration and from extending laptop/phone lifetimes from 4/3 to 6/4 years. These are scenarios, not measured adoption or statistical bounds; ordinary chat is excluded from the curves.}
   \label{fig:agentic:ai}
 \end{figure}
 
@@ -843,13 +842,13 @@ For example, if we (1) massively reduce the set of end-user devices in scope to
 just those owned and managed by the university (about 10,000 laptops and
 monitors, 2,400 mobile phones), (2) triple the ordinary LLM per-query energy use
 to 3 Wh, and (3) assume that each of the 38,000 people at UZH uses a
-GPT-4o-class LLM 40 times per day, then emissions from ordinary chat are about
+GPT-4o-class LLM 30 times per day, then emissions from ordinary chat are about
 \ModelSensOneChatPercent{}\% of total (Figure~\ref{fig:sens1}).
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{fig-sens1.png}
-  \caption{Sensitivity scenario with university-managed laptop and phone counts, and high ordinary-chat use (40 queries/user/day at 3 Wh/query). Other assumptions, including the six-year laptop lifetime and illustrative agent use, are retained. Whiskers vary the same inputs as in Figure~\ref{fig:baseline}; this is separate from the sustainability-report comparison.}
+  \caption{Sensitivity scenario with university-managed laptop and phone counts, and high ordinary-chat use (30 queries/user/day at 3 Wh/query). Other assumptions, including the six-year laptop lifetime and illustrative agent use, are retained. Whiskers vary the same inputs as in Figure~\ref{fig:baseline}; this is separate from the sustainability-report comparison.}
   \label{fig:sens1}
 \end{figure}
 

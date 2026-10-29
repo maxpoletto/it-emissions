@@ -19,10 +19,12 @@ export const ENVIRONMENT_DEFAULTS = {
     ai: {enabled: true, population: 38000, intensityGPerKwh: 207, pue: 1.2,
         chatUsers: 38000, queriesPerUserDay: 15, chatDays: 250, whPerQuery: 1,
         chatEnergyBasis: 'facility', chatHardwareGPerQuery: 0.1,
-        agentUsers: 3800, agentDays: 250, kwhPerAgentDay: 1.3, agentEnergyBasis: 'it', agentHardwareGPerKwh: 100,
+        agentUsers: 3800, agentDays: 250, kwhPerAgentDay: 1.5, agentEnergyBasis: 'facility',
+        agentHardwareGPerKwh: 30, agentHardwareEnergyBasis: 'facility',
         trainingPercent: 20, usageGrowthPercent: 50, efficiencyImprovementPercent: 30, trainingGrowthPercent: 50,
-        bounds: {whPerQuery: [0.3, 3], kwhPerAgentDay: [0.1, 2.4], agentHardwareGPerKwh: [50, 150]},
-        source: 'Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured'},
+        bounds: {whPerQuery: [0.3, 3], queriesPerUserDay: [10, 30], agentUsers: [1900, 7600],
+            kwhPerAgentDay: [1, 3], agentHardwareGPerKwh: [10, 50]},
+        source: 'Paper chat energy/query-volume and agent facility-inference energy/hardware scenarios; agent adoption 5–20% of 38,000 people is illustrative, not measured'},
 };
 
 export const ENVIRONMENT_FIELDS = {
@@ -101,7 +103,8 @@ export const ENVIRONMENT_FIELDS = {
             {key: 'agentDays', label: 'Active agent days per year', min: 0, max: 366},
             {key: 'kwhPerAgentDay', label: 'Energy per active agent user-day (kWh)', min: 0},
             {key: 'agentEnergyBasis', label: 'Agent energy includes', type: 'select', options: {it: 'IT equipment only', facility: 'IT equipment and facility overhead'}},
-            {key: 'agentHardwareGPerKwh', label: 'Hardware allocation (g CO₂e/kWh of IT electricity)', min: 0},
+            {key: 'agentHardwareGPerKwh', label: 'Hardware allocation (g CO₂e/kWh)', min: 0},
+            {key: 'agentHardwareEnergyBasis', label: 'Hardware allocation electricity basis', type: 'select', options: {it: 'IT equipment electricity', facility: 'Facility electricity'}},
             {key: 'usageGrowthPercent', label: 'Annual chat workload growth (%)', min: -100, group: 'Ordinary chat growth scenario'},
             {key: 'efficiencyImprovementPercent', label: 'Annual reduction in query energy (%)', min: 0, max: 100},
             {key: 'trainingGrowthPercent', label: 'Annual growth in training emissions (%)', min: -100},
