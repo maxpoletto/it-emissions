@@ -279,7 +279,7 @@
         "kwhPerAgentDay": 1.3,
         "agentEnergyBasis": "it",
         "agentHardwareGPerKwh": 100,
-        "trainingPercent": 25,
+        "trainingPercent": 20,
         "usageGrowthPercent": 50,
         "efficiencyImprovementPercent": 30,
         "trainingGrowthPercent": 50,

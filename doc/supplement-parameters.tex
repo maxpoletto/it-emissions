@@ -121,7 +121,7 @@ Chat users & 38,000 & users & Illustrative ordinary-chat scenario & Independent 
 Ordinary chat volume & 15 & queries/user/day & Scenario assumption & 5--40 queries/user/day \\ \hline
 Chat / agent active days & 250 each & days/year & Separate workday-use inputs & 200--365 days/year \\ \hline
 Ordinary query energy & 1.0 & Wh/query & Conservative value above recent 0.3 Wh estimates & 0.3--3 Wh/query \\ \hline
-Training overhead & 25 & \% & Conservative inference/training allocation & 0--100\% \\ \hline
+Training overhead & 20 & \% & Conservative inference/training allocation & 0--100\% \\ \hline
 AI electricity intensity & 207 & g \coe/kWh & EU electricity generation intensity & 50--400 g \coe/kWh \\ \hline
 Embodied emissions & 0.1 & g \coe/query & Conservative GPU/server allocation default & 0.01--0.1 g/query \\ \hline
 Agentic hardware allocation & 100 & g \coe/kWh IT & Cautious scenario allowance; not a measured fleet factor & 50--150 g \coe/kWh IT \\ \hline
@@ -150,7 +150,7 @@ CSCS operational electricity & 180 \tcoe/year & Depends on grid factor & 3.6 GWh
 CSCS facility overhead & 36 \tcoe/year & 18--54 \tcoe/year & PUE 1.2; range 1.1--1.3 on compute-only input & No extra PUE for facility-wide electricity \\ \hline
 CSCS embodied emissions & \ModelCscsHardwareT{} \tcoe/year & 45--226 \tcoe/year & Server-equivalent power 1.2 kW; range 0.4--2.0 & Allocation and hardware mix uncertainty unquantified \\ \hline
 Agentic AI example A & \ModelAgentFivePercentT{} \tcoe/year & 5\% users, 1.3 IT kWh/day & Heavy-use scenario & Includes PUE, training and hardware \\ \hline
-Agentic AI main-chart scenario & \ModelAgentDefaultT{} \tcoe/year & 10\% users, 1.3 IT kWh/day & Illustrative adoption scenario & PUE 1.2, training 25\%, hardware 100 g \coe/kWh IT \\ \hline
+Agentic AI main-chart scenario & \ModelAgentDefaultT{} \tcoe/year & 10\% users, 1.3 IT kWh/day & Illustrative adoption scenario & PUE 1.2, training 20\%, hardware 100 g \coe/kWh IT \\ \hline
 Agentic AI example B & \ModelAgentHighT{} \tcoe/year & 10\% users, 2.4 IT kWh/day & Heavy-agent scenario & Includes PUE, training and hardware \\ \hline
 \end{longtable}
 }

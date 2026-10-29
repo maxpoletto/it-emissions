@@ -356,6 +356,7 @@ Monitors & 10,440 & 8 \\
   \label{tab:oncampusdevices}
 \end{center}
 
+% point 3
 In addition to these numbers, which cover staff and facilities, we assume that
 80\% of the student population of 28,000 people have a laptop (or equivalent
 device, such as a tablet), and that everyone at the university has a mobile
@@ -384,6 +385,7 @@ estimated lifetime CO$_2$ emissions. Based on some manufacturer data sheets,
 primarily from Apple, Cisco, and Dell, we model power draw of different devices
 while under load using the following initial parameters:
 
+%point 7
 \begin{center}
   \begin{tabular}{|l|r|r|}
     \hline
@@ -519,6 +521,7 @@ embodied and operational emissions of cloud infrastructure. The best resource we
 have found is the Datavizta API by the Boavizta working
 group~\cite{boavizta:api}.
 
+%point 4
 Lacking information about UZH's workloads, we model a hypothetical UZH cloud
 footprint as the replacement of one campus server with a configurable number (by
 default, one) of Azure {\tt standard\_d48s\_v3} instances (Intel Xeon, 48 cores,
@@ -592,21 +595,24 @@ Due to the increasing size and complexity of state-of-the-art models, the power
 required to train such models has been doubling
 annually~\cite{epoch2024powerusagetrend}. The literature offers little insight
 into the relative electricity consumption of training and
-inference~\cite{verdecchia2023systematic}, but
+inference~\cite{verdecchia2023systematic}.
 Google~\cite{patterson:footprint:2022} reports that in 2019--2021 inference
 accounted for about 60\% of AI energy consumption, implying a ratio of training
-energy to inference energy of 2:3. A bottom-up check based on Llama 3.1 training
-energy gives a lower ratio. Training Llama 3.1, a model comparable to GPT-4o,
-required roughly 25 MW of power for three months, or 54
-GWh~\cite{grattafiori2024llama}. Assuming ChatGPT's recently reported 2.5
-billion queries per day~\cite{techcrunch:chatgpt} and 0.3 Wh/query, inference
-energy is approximately 750 MWh/day, or 203 GWh over a 9-month model lifetime.
-This gives a training-to-inference ratio of $54:203 \approx 1:4$. Under our
-ordinary-chat default of 1 Wh/query, inference energy would instead be
-approximately 675 GWh over the same period, and the training-to-inference ratio
-would be about $1:13$. We therefore use a 25\% training overhead, which is
-conservative for the default query-energy assumption but still well below the
-Google-wide 2:3 estimate.
+energy to inference energy of 2:3, though that ratio was presumably skewed high
+due to internal reserch and development. Meta's model card for Llama
+3.1~\cite{meta:llama31:modelcard} reports 30.84 million GPU-hours for the 405B
+model on GPUs rated at 700 W. Multiplying GPU-hours by this nameplate power
+gives approximately 21.6 GWh. We assume a combined factor of 1.4 for host-server
+electricity and data-center overhead, giving a rough facility-level training
+estimate of 30 GWh. Assuming ChatGPT's reported 2.5 billion queries per
+day~\cite{techcrunch:chatgpt} and 0.3 Wh/query, inference energy is
+approximately 750 MWh/day, or 203 GWh over an assumed nine-month deployment
+lifetime. This gives a training-to-inference ratio of $30:203 \approx 1:7$.
+Under a high assumption of 1 Wh/query, inference energy would instead be
+approximately 675 GWh over the same period, and the ratio would be about $1:22$.
+Given these order-of-magnitude illustrations, and wanting to be conservative in
+not underestimating training overhead, we set our training overhead allocation
+to 20\% of inference costs.
 
 For chatbot embodied emissions, we use a bottom-up GPU allocation.
 \textcite{epoch2025howmuchenergydoeschatgptuse} estimates 1 second of NVIDIA
@@ -631,6 +637,7 @@ electricity intensity and therefore conservative for AI requests served from
 lower-carbon regions, but not conservative for requests served from
 carbon-intensive grids.
 
+%point 5
 For chatbot use, we make the following default and sensitivity assumptions:
 
 \begin{itemize}
@@ -654,6 +661,7 @@ approximately 1.3 kWh. This source is not a peer-reviewed measurement, but it is
 useful as a transparent case study of the token volumes created by coding
 agents.
 
+% point 2
 We treat these kWh/user-day estimates as IT electricity for inference, tool use,
 context-cache reads and writes, and long outputs. Their facility boundary is not
 well established; our working assumption applies AI PUE 1.2. If an estimate
@@ -683,7 +691,7 @@ kWh/day is \ModelAgentFivePercentT{} \tcoe/year, 10\% adoption at 1.3 kWh/day is
 \ModelAgentHighT{} \tcoe/year.
 
 \subsection{Model limitations}
-
+% point 6
 Our biggest limitation is the relative lack of ground truth data about UZH IT
 systems. We have obtained only estimates of campus data center energy use, and
 limited information about UZH research workloads, SaaS use, and external

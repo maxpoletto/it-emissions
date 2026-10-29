@@ -7,7 +7,7 @@
   "sources": [
     {
       "path": "doc/scenarios/baseline.json",
-      "sha256": "3fc7dffd4d9056fcac7317f8be00a340f75d444f0d7a0da8f39c7f40f7a8d53e"
+      "sha256": "48c1debafed3366e740b3eedfa602a2ac5c388f75846eecf225dd89ec67908cf"
     },
     {
       "path": "doc/scenarios/cloud.json",
@@ -35,11 +35,11 @@
     }
   ],
   "metrics": {
-    "BaselineKt": 4.153931920586758,
-    "CloudKt": 3.947779179836758,
+    "BaselineKt": 4.1371183455867575,
+    "CloudKt": 3.9309656048367576,
     "CloudSavingT": 206.15274074999988,
     "LaptopEmbodiedPercent": 80.8298531591001,
-    "EndUserEmbodiedPercent": 49.84514365947681,
+    "EndUserEmbodiedPercent": 50.047718251571425,
     "EndUserOperationalPercent": 13.592314138447131,
     "CscsHardwareT": 75.34246575342465,
     "CscsTotalT": 291.3424657534247,
@@ -49,29 +49,29 @@
     "NetworkOperationalT": 75.336,
     "NetworkHardwareT": 39.5,
     "LocalOverheadT": 168.90331200000003,
-    "ChatT": 51.121875,
-    "ChatPercent": 1.2306863948983269,
-    "ChatFinalT": 145.327794046875,
-    "ChatFinalLowT": 94.0967757140625,
-    "ChatFinalHighT": 291.702132140625,
-    "AgentDefaultT": 506.9675,
-    "AgentFivePercentT": 253.48375,
-    "AgentHighT": 935.94,
-    "AgentCoefficient": 3899.75,
-    "SensOneChatPercent": 10.816737100796441,
-    "LowDeviceEmbodiedPercent": 48.86440815999958,
-    "CombinedChatPercent": 9.85172818762517,
-    "CombinedWithoutAgentsPercent": 11.590219728799225,
-    "LifetimeBeforeKt": 4.6339319205867575,
-    "LifetimeAfterKt": 4.008098587253424,
+    "ChatT": 49.647,
+    "ChatPercent": 1.2000381872798151,
+    "ChatFinalT": 137.861239359375,
+    "ChatFinalLowT": 91.85680930781251,
+    "ChatFinalHighT": 269.302468078125,
+    "AgentDefaultT": 491.6288,
+    "AgentFivePercentT": 245.8144,
+    "AgentHighT": 907.6224,
+    "AgentCoefficient": 3781.76,
+    "SensOneChatPercent": 10.526241393208862,
+    "LowDeviceEmbodiedPercent": 49.13105302249515,
+    "CombinedChatPercent": 9.579547665247668,
+    "CombinedWithoutAgentsPercent": 11.225622908634875,
+    "LifetimeBeforeKt": 4.617118345586757,
+    "LifetimeAfterKt": 3.991285012253424,
     "LifetimeSavingT": 625.833333333333,
-    "LifetimeSavingPercent": 13.505449455418173
+    "LifetimeSavingPercent": 13.55463053988061
   },
   "lifetimeComparison": {
-    "baselineTotal": 4633931.920586757,
+    "baselineTotal": 4617118.345586757,
     "savings": {
       "central": 625833.333333333,
-      "low": 625833.333333333,
+      "low": 625833.3333333326,
       "high": 625833.333333334
     },
     "units": "kg CO2e/year",
@@ -363,7 +363,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -477,23 +477,23 @@
             "category": "AI (chatbot)",
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
+            "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -511,66 +511,66 @@
             "year": 2026,
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
-            "total": 51121.875,
+            "training": 5899.5,
+            "total": 49647,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "year": 2027,
             "usage": 30972.374999999996,
             "embodied": 21375,
-            "training": 11061.5625,
-            "total": 63408.9375,
+            "training": 8849.25,
+            "total": 61196.625,
             "range": {
-              "low": 33985.18125,
-              "high": 147476.8125
+              "low": 33321.4875,
+              "high": 140839.875
             }
           },
           {
             "year": 2028,
             "usage": 32520.993749999994,
             "embodied": 32062.5,
-            "training": 16592.34375,
-            "total": 81175.8375,
+            "training": 13273.875,
+            "total": 77857.36875,
             "range": {
-              "low": 46796.50125,
-              "high": 179402.51249999998
+              "low": 45800.960625,
+              "high": 169447.10624999998
             }
           },
           {
             "year": 2029,
             "usage": 34147.04343749999,
             "embodied": 48093.75,
-            "training": 24888.515625,
-            "total": 107129.30906249999,
+            "training": 19910.8125,
+            "total": 102151.60593749999,
             "range": {
-              "low": 65804.41771874999,
-              "high": 225200.42718749997
+              "low": 64311.10678125,
+              "high": 210267.31781249997
             }
           },
           {
             "year": 2030,
             "usage": 35854.395609374995,
             "embodied": 72140.625,
-            "training": 37332.7734375,
-            "total": 145327.794046875,
+            "training": 29866.21875,
+            "total": 137861.239359375,
             "range": {
-              "low": 94096.7757140625,
-              "high": 291702.132140625
+              "low": 91856.80930781251,
+              "high": 269302.468078125
             }
           }
         ],
         "summary": {
           "totalEmbodied": 2569745.799086758,
           "totalUsage": 1500118.2465,
-          "totalTraining": 84067.875,
-          "totalCombined": 4153931.920586758,
+          "totalTraining": 67254.3,
+          "totalCombined": 4137118.3455867576,
           "range": {
-            "low": 3411403.7417853884,
-            "high": 5135193.982093608
+            "low": 3409781.3792853886,
+            "high": 5102451.757093608
           }
         }
       },
@@ -942,7 +942,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -1056,23 +1056,23 @@
             "category": "AI (chatbot)",
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
+            "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -1090,66 +1090,66 @@
             "year": 2026,
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
-            "total": 51121.875,
+            "training": 5899.5,
+            "total": 49647,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "year": 2027,
             "usage": 30972.374999999996,
             "embodied": 21375,
-            "training": 11061.5625,
-            "total": 63408.9375,
+            "training": 8849.25,
+            "total": 61196.625,
             "range": {
-              "low": 33985.18125,
-              "high": 147476.8125
+              "low": 33321.4875,
+              "high": 140839.875
             }
           },
           {
             "year": 2028,
             "usage": 32520.993749999994,
             "embodied": 32062.5,
-            "training": 16592.34375,
-            "total": 81175.8375,
+            "training": 13273.875,
+            "total": 77857.36875,
             "range": {
-              "low": 46796.50125,
-              "high": 179402.51249999998
+              "low": 45800.960625,
+              "high": 169447.10624999998
             }
           },
           {
             "year": 2029,
             "usage": 34147.04343749999,
             "embodied": 48093.75,
-            "training": 24888.515625,
-            "total": 107129.30906249999,
+            "training": 19910.8125,
+            "total": 102151.60593749999,
             "range": {
-              "low": 65804.41771874999,
-              "high": 225200.42718749997
+              "low": 64311.10678125,
+              "high": 210267.31781249997
             }
           },
           {
             "year": 2030,
             "usage": 35854.395609374995,
             "embodied": 72140.625,
-            "training": 37332.7734375,
-            "total": 145327.794046875,
+            "training": 29866.21875,
+            "total": 137861.239359375,
             "range": {
-              "low": 94096.7757140625,
-              "high": 291702.132140625
+              "low": 91856.80930781251,
+              "high": 269302.468078125
             }
           }
         ],
         "summary": {
           "totalEmbodied": 2519300.799086758,
           "totalUsage": 1344410.50575,
-          "totalTraining": 84067.875,
-          "totalCombined": 3947779.179836758,
+          "totalTraining": 67254.3,
+          "totalCombined": 3930965.6048367578,
           "range": {
-            "low": 3205251.0010353886,
-            "high": 4929041.241343607
+            "low": 3203628.6385353887,
+            "high": 4896299.016343608
           }
         }
       },
@@ -1521,7 +1521,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -1635,23 +1635,23 @@
             "category": "AI (chatbot)",
             "usage": 235980,
             "embodied": 38000,
-            "training": 58995,
+            "training": 47196,
             "electricityKwh": 1140000,
             "range": {
-              "low": 67497.5,
-              "high": 332975
+              "low": 66317.6,
+              "high": 321176
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -1669,66 +1669,66 @@
             "year": 2026,
             "usage": 235980,
             "embodied": 38000,
-            "training": 58995,
-            "total": 332975,
+            "training": 47196,
+            "total": 321176,
             "range": {
-              "low": 67497.5,
-              "high": 332975
+              "low": 66317.6,
+              "high": 321176
             }
           },
           {
             "year": 2027,
             "usage": 247778.99999999997,
             "embodied": 57000,
-            "training": 88492.5,
-            "total": 393271.5,
+            "training": 70794,
+            "total": 375573,
             "range": {
-              "low": 90627.15,
-              "high": 393271.5
+              "low": 88857.29999999999,
+              "high": 375573
             }
           },
           {
             "year": 2028,
             "usage": 260167.94999999995,
             "embodied": 85500,
-            "training": 132738.75,
-            "total": 478406.69999999995,
+            "training": 106191,
+            "total": 451858.94999999995,
             "range": {
-              "low": 124790.67,
-              "high": 478406.69999999995
+              "low": 122135.895,
+              "high": 451858.94999999995
             }
           },
           {
             "year": 2029,
             "usage": 273176.3474999999,
             "embodied": 128250,
-            "training": 199108.125,
-            "total": 600534.4724999999,
+            "training": 159286.5,
+            "total": 560712.8474999999,
             "range": {
-              "low": 175478.44725,
-              "high": 600534.4724999999
+              "low": 171496.28475,
+              "high": 560712.8474999999
             }
           },
           {
             "year": 2030,
             "usage": 286835.16487499996,
             "embodied": 192375,
-            "training": 298662.1875,
-            "total": 777872.352375,
+            "training": 238929.75,
+            "total": 718139.914875,
             "range": {
-              "low": 250924.7352375,
-              "high": 777872.352375
+              "low": 244951.4914875,
+              "high": 718139.914875
             }
           }
         ],
         "summary": {
           "totalEmbodied": 1404012.4657534247,
           "totalUsage": 1538630.299,
-          "totalTraining": 135688.5,
-          "totalCombined": 3078331.2647534246,
+          "totalTraining": 108550.8,
+          "totalCombined": 3051193.5647534244,
           "range": {
-            "low": 2096135.8984520547,
-            "high": 3985849.5762602743
+            "low": 2093776.0984520547,
+            "high": 3945732.976260274
           }
         }
       },
@@ -2100,7 +2100,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -2214,23 +2214,23 @@
             "category": "AI (chatbot)",
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
+            "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -2248,66 +2248,66 @@
             "year": 2026,
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
-            "total": 51121.875,
+            "training": 5899.5,
+            "total": 49647,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "year": 2027,
             "usage": 30972.374999999996,
             "embodied": 21375,
-            "training": 11061.5625,
-            "total": 63408.9375,
+            "training": 8849.25,
+            "total": 61196.625,
             "range": {
-              "low": 33985.18125,
-              "high": 147476.8125
+              "low": 33321.4875,
+              "high": 140839.875
             }
           },
           {
             "year": 2028,
             "usage": 32520.993749999994,
             "embodied": 32062.5,
-            "training": 16592.34375,
-            "total": 81175.8375,
+            "training": 13273.875,
+            "total": 77857.36875,
             "range": {
-              "low": 46796.50125,
-              "high": 179402.51249999998
+              "low": 45800.960625,
+              "high": 169447.10624999998
             }
           },
           {
             "year": 2029,
             "usage": 34147.04343749999,
             "embodied": 48093.75,
-            "training": 24888.515625,
-            "total": 107129.30906249999,
+            "training": 19910.8125,
+            "total": 102151.60593749999,
             "range": {
-              "low": 65804.41771874999,
-              "high": 225200.42718749997
+              "low": 64311.10678125,
+              "high": 210267.31781249997
             }
           },
           {
             "year": 2030,
             "usage": 35854.395609374995,
             "embodied": 72140.625,
-            "training": 37332.7734375,
-            "total": 145327.794046875,
+            "training": 29866.21875,
+            "total": 137861.239359375,
             "range": {
-              "low": 94096.7757140625,
-              "high": 291702.132140625
+              "low": 91856.80930781251,
+              "high": 269302.468078125
             }
           }
         ],
         "summary": {
           "totalEmbodied": 1513824.6074200913,
           "totalUsage": 1500118.2465,
-          "totalTraining": 84067.875,
-          "totalCombined": 3098010.728920091,
+          "totalTraining": 67254.3,
+          "totalCombined": 3081197.1539200908,
           "range": {
-            "low": 2355482.5501187216,
-            "high": 4079272.7904269407
+            "low": 2353860.1876187217,
+            "high": 4046530.5654269406
           }
         }
       },
@@ -2679,7 +2679,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -2793,23 +2793,23 @@
             "category": "AI (chatbot)",
             "usage": 235980,
             "embodied": 38000,
-            "training": 58995,
+            "training": 47196,
             "electricityKwh": 1140000,
             "range": {
-              "low": 67497.5,
-              "high": 332975
+              "low": 66317.6,
+              "high": 321176
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -2827,66 +2827,66 @@
             "year": 2026,
             "usage": 235980,
             "embodied": 38000,
-            "training": 58995,
-            "total": 332975,
+            "training": 47196,
+            "total": 321176,
             "range": {
-              "low": 67497.5,
-              "high": 332975
+              "low": 66317.6,
+              "high": 321176
             }
           },
           {
             "year": 2027,
             "usage": 247778.99999999997,
             "embodied": 57000,
-            "training": 88492.5,
-            "total": 393271.5,
+            "training": 70794,
+            "total": 375573,
             "range": {
-              "low": 90627.15,
-              "high": 393271.5
+              "low": 88857.29999999999,
+              "high": 375573
             }
           },
           {
             "year": 2028,
             "usage": 260167.94999999995,
             "embodied": 85500,
-            "training": 132738.75,
-            "total": 478406.69999999995,
+            "training": 106191,
+            "total": 451858.94999999995,
             "range": {
-              "low": 124790.67,
-              "high": 478406.69999999995
+              "low": 122135.895,
+              "high": 451858.94999999995
             }
           },
           {
             "year": 2029,
             "usage": 273176.3474999999,
             "embodied": 128250,
-            "training": 199108.125,
-            "total": 600534.4724999999,
+            "training": 159286.5,
+            "total": 560712.8474999999,
             "range": {
-              "low": 175478.44725,
-              "high": 600534.4724999999
+              "low": 171496.28475,
+              "high": 560712.8474999999
             }
           },
           {
             "year": 2030,
             "usage": 286835.16487499996,
             "embodied": 192375,
-            "training": 298662.1875,
-            "total": 777872.352375,
+            "training": 238929.75,
+            "total": 718139.914875,
             "range": {
-              "low": 250924.7352375,
-              "high": 777872.352375
+              "low": 244951.4914875,
+              "high": 718139.914875
             }
           }
         ],
         "summary": {
           "totalEmbodied": 1537574.6074200913,
           "totalUsage": 1706600.7465,
-          "totalTraining": 135688.5,
-          "totalCombined": 3379863.853920091,
+          "totalTraining": 108550.8,
+          "totalCombined": 3352726.1539200908,
           "range": {
-            "low": 2397668.4876187216,
-            "high": 4287382.165426941
+            "low": 2395308.6876187217,
+            "high": 4247265.565426941
           }
         }
       },
@@ -3258,7 +3258,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -3372,23 +3372,23 @@
             "category": "AI (chatbot)",
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
+            "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -3406,66 +3406,66 @@
             "year": 2026,
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
-            "total": 51121.875,
+            "training": 5899.5,
+            "total": 49647,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "year": 2027,
             "usage": 30972.374999999996,
             "embodied": 21375,
-            "training": 11061.5625,
-            "total": 63408.9375,
+            "training": 8849.25,
+            "total": 61196.625,
             "range": {
-              "low": 33985.18125,
-              "high": 147476.8125
+              "low": 33321.4875,
+              "high": 140839.875
             }
           },
           {
             "year": 2028,
             "usage": 32520.993749999994,
             "embodied": 32062.5,
-            "training": 16592.34375,
-            "total": 81175.8375,
+            "training": 13273.875,
+            "total": 77857.36875,
             "range": {
-              "low": 46796.50125,
-              "high": 179402.51249999998
+              "low": 45800.960625,
+              "high": 169447.10624999998
             }
           },
           {
             "year": 2029,
             "usage": 34147.04343749999,
             "embodied": 48093.75,
-            "training": 24888.515625,
-            "total": 107129.30906249999,
+            "training": 19910.8125,
+            "total": 102151.60593749999,
             "range": {
-              "low": 65804.41771874999,
-              "high": 225200.42718749997
+              "low": 64311.10678125,
+              "high": 210267.31781249997
             }
           },
           {
             "year": 2030,
             "usage": 35854.395609374995,
             "embodied": 72140.625,
-            "training": 37332.7734375,
-            "total": 145327.794046875,
+            "training": 29866.21875,
+            "total": 137861.239359375,
             "range": {
-              "low": 94096.7757140625,
-              "high": 291702.132140625
+              "low": 91856.80930781251,
+              "high": 269302.468078125
             }
           }
         ],
         "summary": {
           "totalEmbodied": 3049745.799086758,
           "totalUsage": 1500118.2465,
-          "totalTraining": 84067.875,
-          "totalCombined": 4633931.920586757,
+          "totalTraining": 67254.3,
+          "totalCombined": 4617118.345586757,
           "range": {
-            "low": 3891403.7417853884,
-            "high": 5615193.982093608
+            "low": 3889781.3792853886,
+            "high": 5582451.757093608
           }
         }
       },
@@ -3837,7 +3837,7 @@
             "kwhPerAgentDay": 1.3,
             "agentEnergyBasis": "it",
             "agentHardwareGPerKwh": 100,
-            "trainingPercent": 25,
+            "trainingPercent": 20,
             "usageGrowthPercent": 50,
             "efficiencyImprovementPercent": 30,
             "trainingGrowthPercent": 50,
@@ -3951,23 +3951,23 @@
             "category": "AI (chatbot)",
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
+            "training": 5899.5,
             "electricityKwh": 142500,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "category": "AI (agents)",
             "usage": 306774,
             "embodied": 123500,
-            "training": 76693.5,
+            "training": 61354.8,
             "electricityKwh": 1482000,
             "itElectricityKwh": 1235000,
             "range": {
-              "low": 34247.5,
-              "high": 1049940
+              "low": 33067.6,
+              "high": 1021622.4
             }
           },
           {
@@ -3985,66 +3985,66 @@
             "year": 2026,
             "usage": 29497.5,
             "embodied": 14250,
-            "training": 7374.375,
-            "total": 51121.875,
+            "training": 5899.5,
+            "total": 49647,
             "range": {
-              "low": 25311.5625,
-              "high": 124865.625
+              "low": 24869.1,
+              "high": 120441
             }
           },
           {
             "year": 2027,
             "usage": 30972.374999999996,
             "embodied": 21375,
-            "training": 11061.5625,
-            "total": 63408.9375,
+            "training": 8849.25,
+            "total": 61196.625,
             "range": {
-              "low": 33985.18125,
-              "high": 147476.8125
+              "low": 33321.4875,
+              "high": 140839.875
             }
           },
           {
             "year": 2028,
             "usage": 32520.993749999994,
             "embodied": 32062.5,
-            "training": 16592.34375,
-            "total": 81175.8375,
+            "training": 13273.875,
+            "total": 77857.36875,
             "range": {
-              "low": 46796.50125,
-              "high": 179402.51249999998
+              "low": 45800.960625,
+              "high": 169447.10624999998
             }
           },
           {
             "year": 2029,
             "usage": 34147.04343749999,
             "embodied": 48093.75,
-            "training": 24888.515625,
-            "total": 107129.30906249999,
+            "training": 19910.8125,
+            "total": 102151.60593749999,
             "range": {
-              "low": 65804.41771874999,
-              "high": 225200.42718749997
+              "low": 64311.10678125,
+              "high": 210267.31781249997
             }
           },
           {
             "year": 2030,
             "usage": 35854.395609374995,
             "embodied": 72140.625,
-            "training": 37332.7734375,
-            "total": 145327.794046875,
+            "training": 29866.21875,
+            "total": 137861.239359375,
             "range": {
-              "low": 94096.7757140625,
-              "high": 291702.132140625
+              "low": 91856.80930781251,
+              "high": 269302.468078125
             }
           }
         ],
         "summary": {
           "totalEmbodied": 2423912.4657534244,
           "totalUsage": 1500118.2465,
-          "totalTraining": 84067.875,
-          "totalCombined": 4008098.5872534243,
+          "totalTraining": 67254.3,
+          "totalCombined": 3991285.012253424,
           "range": {
-            "low": 3265570.408452055,
-            "high": 4989360.648760274
+            "low": 3263948.045952055,
+            "high": 4956618.423760274
           }
         }
       },

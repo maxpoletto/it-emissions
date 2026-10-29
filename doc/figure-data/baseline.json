@@ -5,7 +5,7 @@
     "sources": [
       {
         "path": "doc/scenarios/baseline.json",
-        "sha256": "3fc7dffd4d9056fcac7317f8be00a340f75d444f0d7a0da8f39c7f40f7a8d53e"
+        "sha256": "48c1debafed3366e740b3eedfa602a2ac5c388f75846eecf225dd89ec67908cf"
       }
     ],
     "image": "fig-baseline.png",
@@ -13,7 +13,7 @@
       "width": 1600,
       "height": 900
     },
-    "sha256": "7b903020bb9ea87cb1956770213dac6b028a751dc6a5aae5825b1be2e406df09"
+    "sha256": "bb0071b032d8fa74785a5f5bc7ee4c7ff13638254dd616089e077a61a75f12e2"
   },
   "metadata": {
     "modelVersion": "2.0",
@@ -298,7 +298,7 @@
         "kwhPerAgentDay": 1.3,
         "agentEnergyBasis": "it",
         "agentHardwareGPerKwh": 100,
-        "trainingPercent": 25,
+        "trainingPercent": 20,
         "usageGrowthPercent": 50,
         "efficiencyImprovementPercent": 30,
         "trainingGrowthPercent": 50,
@@ -412,23 +412,23 @@
         "category": "AI (chatbot)",
         "usage": 29497.5,
         "embodied": 14250,
-        "training": 7374.375,
+        "training": 5899.5,
         "electricityKwh": 142500,
         "range": {
-          "low": 25311.5625,
-          "high": 124865.625
+          "low": 24869.1,
+          "high": 120441
         }
       },
       {
         "category": "AI (agents)",
         "usage": 306774,
         "embodied": 123500,
-        "training": 76693.5,
+        "training": 61354.8,
         "electricityKwh": 1482000,
         "itElectricityKwh": 1235000,
         "range": {
-          "low": 34247.5,
-          "high": 1049940
+          "low": 33067.6,
+          "high": 1021622.4
         }
       },
       {
@@ -446,66 +446,66 @@
         "year": 2026,
         "usage": 29497.5,
         "embodied": 14250,
-        "training": 7374.375,
-        "total": 51121.875,
+        "training": 5899.5,
+        "total": 49647,
         "range": {
-          "low": 25311.5625,
-          "high": 124865.625
+          "low": 24869.1,
+          "high": 120441
         }
       },
       {
         "year": 2027,
         "usage": 30972.374999999996,
         "embodied": 21375,
-        "training": 11061.5625,
-        "total": 63408.9375,
+        "training": 8849.25,
+        "total": 61196.625,
         "range": {
-          "low": 33985.18125,
-          "high": 147476.8125
+          "low": 33321.4875,
+          "high": 140839.875
         }
       },
       {
         "year": 2028,
         "usage": 32520.993749999994,
         "embodied": 32062.5,
-        "training": 16592.34375,
-        "total": 81175.8375,
+        "training": 13273.875,
+        "total": 77857.36875,
         "range": {
-          "low": 46796.50125,
-          "high": 179402.51249999998
+          "low": 45800.960625,
+          "high": 169447.10624999998
         }
       },
       {
         "year": 2029,
         "usage": 34147.04343749999,
         "embodied": 48093.75,
-        "training": 24888.515625,
-        "total": 107129.30906249999,
+        "training": 19910.8125,
+        "total": 102151.60593749999,
         "range": {
-          "low": 65804.41771874999,
-          "high": 225200.42718749997
+          "low": 64311.10678125,
+          "high": 210267.31781249997
         }
       },
       {
         "year": 2030,
         "usage": 35854.395609374995,
         "embodied": 72140.625,
-        "training": 37332.7734375,
-        "total": 145327.794046875,
+        "training": 29866.21875,
+        "total": 137861.239359375,
         "range": {
-          "low": 94096.7757140625,
-          "high": 291702.132140625
+          "low": 91856.80930781251,
+          "high": 269302.468078125
         }
       }
     ],
     "summary": {
       "totalEmbodied": 2569745.799086758,
       "totalUsage": 1500118.2465,
-      "totalTraining": 84067.875,
-      "totalCombined": 4153931.920586758,
+      "totalTraining": 67254.3,
+      "totalCombined": 4137118.3455867576,
       "range": {
-        "low": 3411403.7417853884,
-        "high": 5135193.982093608
+        "low": 3409781.3792853886,
+        "high": 5102451.757093608
       }
     }
   },

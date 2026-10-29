@@ -20,7 +20,7 @@ export const ENVIRONMENT_DEFAULTS = {
         chatUsers: 38000, queriesPerUserDay: 15, chatDays: 250, whPerQuery: 1,
         chatEnergyBasis: 'facility', chatHardwareGPerQuery: 0.1,
         agentUsers: 3800, agentDays: 250, kwhPerAgentDay: 1.3, agentEnergyBasis: 'it', agentHardwareGPerKwh: 100,
-        trainingPercent: 25, usageGrowthPercent: 50, efficiencyImprovementPercent: 30, trainingGrowthPercent: 50,
+        trainingPercent: 20, usageGrowthPercent: 50, efficiencyImprovementPercent: 30, trainingGrowthPercent: 50,
         bounds: {whPerQuery: [0.3, 3], kwhPerAgentDay: [0.1, 2.4], agentHardwareGPerKwh: [50, 150]},
         source: 'Paper chat energy and agent workload/hardware scenarios at fixed user counts; adoption is not measured'},
 };

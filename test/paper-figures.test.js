@@ -10,6 +10,7 @@ test('paper baseline is an explicit, reproducible calculator configuration', asy
     const {record, chart} = await prepareFigure('baseline');
     assert.deepEqual(record.results, report().results);
     assert.equal(record.parameters.referenceYear, 2026);
+    assert.equal(record.parameters.environments.ai.trainingPercent, 20);
     assert.equal(chart.options.scales.y.title.text, 't CO₂e/year');
     assert.equal(chart.data.datasets.length, 3, 'hardware, training and operation are separate');
     assert.ok(chart.options.plugins.assumptionRanges.bounds.filter(Boolean).length >= 5);
@@ -89,7 +90,7 @@ test('agent curves use the annual model and comparable, paired intervention savi
     const annualAgents = record.results.data.find(row => row.category === 'AI (agents)');
     assert.equal(atTenPercent.total, annualAgents.usage + annualAgents.embodied + annualAgents.training);
     assert.equal(central.points[0].total, 0);
-    assert.ok(Math.abs(analysis.curves[2].points[10].total - 935940) < 1e-6);
+    assert.ok(Math.abs(analysis.curves[2].points[10].total - 907622.4) < 1e-6);
     const lifetime = analysis.benchmarks.find(b => b.after === 'lifecycle-after');
     assert.ok(Math.abs(lifetime.comparison.savings.central - 625833.3333333333) < 1e-6);
     assert.equal(chart.data.datasets.length, 5);
