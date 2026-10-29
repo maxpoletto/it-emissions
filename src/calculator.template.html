@@ -37,9 +37,6 @@
             background-color: rgba(var(--c-grey-light), 0.5);
         }
 
-        #annotation-title {
-            margin-bottom: 0.25rem;
-        }
         #annotation-input {
             flex: 1;
             padding: 0.5rem;
@@ -192,6 +189,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
+            align-items: start;
         }
         @media(max-width: 550px) {
             .two-column {
@@ -229,24 +227,41 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* Collapsible table functionality */
-        .expand-toggle {
+        /* Shared folding controls for all input panels. */
+        .panel-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .panel-heading .section-title {
+            flex: 1;
+            margin: 0;
+        }
+        .panel-collapsed > .panel-heading {
+            margin-bottom: 0;
+        }
+        .panel-content[hidden] {
+            display: none;
+        }
+        .panel-toggle {
             background: none;
             border: none;
-            font-size: 1rem;
+            font-size: 0.8rem;
             color: rgba(var(--c-blue), 1);
             cursor: pointer;
             padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
             transition: background-color 0.2s;
             user-select: none;
+            flex-shrink: 0;
         }
 
-        .expand-toggle:hover {
+        .panel-toggle:hover {
             background-color: rgba(var(--c-blue), 0.1);
         }
 
-        .expand-toggle:focus {
+        .panel-toggle:focus-visible {
             outline: 2px solid rgba(var(--c-blue), 0.5);
         }
 
@@ -319,7 +334,7 @@
             </div>
             <!-- Annotation - Full Width Row -->
             <div class="one-column">
-                <div class="input-section">
+                <div class="input-section" id="panel-notes">
                     <h2 id="annotation-title" class="section-title">Scenario Notes</h2>
                     <p class="section-note">Add text here to describe your scenario. This note and all parameters are automatically saved in the URL so you can easily archive or share your configuration. (Below you can also export the model as a JSON file.)</p>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -330,7 +345,7 @@
             </div>
             <!-- Device Population - Full Width Row -->
             <div class="one-column">
-                <div class="input-section">
+                <div class="input-section" id="panel-device-population">
                     <h2 class="section-title">Device Population</h2>
                     <table class="parameter-table" id="device-table"></table>
                 </div>
@@ -338,13 +353,13 @@
 
             <!-- Two column layout for Embodied Emissions and Power Consumption -->
             <div class="two-column">
-                <div class="input-section">
+                <div class="input-section" id="panel-embodied">
                     <h2 class="section-title">Embodied Emissions (kg CO2e)</h2>
                     <p class="section-note">Annual hardware emissions use the mean footprint per device, divided by its lifetime.</p>
                     <table class="parameter-table" id="embodied-table"></table>
                 </div>
 
-                <div class="input-section">
+                <div class="input-section" id="panel-power">
                     <h2 class="section-title">Power Consumption (W)</h2>
                     <p class="section-note">Power is multiplied by the device duty cycles. Separate standby draw is not modeled.</p>
                     <table class="parameter-table" id="power-table"></table>
@@ -353,7 +368,7 @@
 
             <div class="one-column">
                 <!-- Compute Parameters - Full Width Row -->
-                <div class="input-section">
+                <div class="input-section" id="panel-compute">
                     <h2 class="section-title">Compute Parameters</h2>
                     <table class="parameter-table" id="compute-table"></table>
                 </div>
@@ -361,11 +376,9 @@
                 <div id="environment-inputs"></div>
 
                 <!-- Duty Cycles -->
-                <div class="input-section">
-                    <h2 class="section-title">Device Duty Cycles (fraction of time active)
-                        <button class="expand-toggle" onclick="toggleDutyCycleTable()" id="duty-cycle-toggle">&gt;&gt;</button>
-                    </h2>
-                    <table class="parameter-table" id="duty-cycle-table" style="display: none;"></table>
+                <div class="input-section" id="panel-duty-cycles">
+                    <h2 class="section-title">Device Duty Cycles (fraction of time active)</h2>
+                    <table class="parameter-table" id="duty-cycle-table"></table>
                 </div>
             </div>
 

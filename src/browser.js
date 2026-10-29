@@ -5,6 +5,8 @@ import {deviceInfoDefault, embodiedEmissionsKgCo2eDefault, powerWDefault,
 import {emissionsChart, projectionChart} from './charts.js';
 import {rowTotal} from './components.js';
 import {renderEnvironments} from './environment-inputs.js';
+import {createPanelControls} from './panels.js';
+const panels = createPanelControls(updateURL);
 const BUTTON_TIMEOUT = 1000;
 let modelInputs = createConfig();
 let rangeInputs = [];
@@ -251,21 +253,6 @@ function renderLLMChart() {
             }
         }
 
-        function toggleDutyCycleTable() {
-            const table = document.getElementById('duty-cycle-table');
-            const toggle = document.getElementById('duty-cycle-toggle');
-
-            if (table.style.display === 'none') {
-                // Show table
-                table.style.display = '';
-                toggle.textContent = '<<';
-            } else {
-                // Hide table
-                table.style.display = 'none';
-                toggle.textContent = '>>';
-            }
-        }
-
         function togglePercentage() {
             percentage = !percentage;
             renderEmissionsTable()
@@ -338,7 +325,9 @@ function renderLLMChart() {
         }
 
         function createInputTables() {
-            renderEnvironments(modelInputs.environments, updateModel);
+            renderEnvironments(modelInputs.environments, updateModel, () => {
+                document.querySelectorAll('.input-section').forEach(panels.attach);
+            });
             createCollapsibleTable('device-table', deviceInfo, ['Count', 'Lifetime', 'Days per year'], ['Count', 'Lifetime', 'Days per year'], updateModel);
             createCollapsibleTable('embodied-table', embodiedEmissionsKgCo2e, ['Mean'], ['Mean'], updateModel);
             createCollapsibleTable('power-table', powerW, ['Mean'], ['Mean'], updateModel);
@@ -418,14 +407,16 @@ function serializeState() {
         }
 
         function deserializeState(stateObj) {
-    const loaded = createConfig(stateObj);
+    const {closedPanels, ...configuration} = stateObj;
+    panels.restore(closedPanels);
+    const loaded = createConfig(configuration);
     modelInputs = loaded;
     ({deviceInfo, embodiedEmissionsKgCo2e, powerW, compute, dutyCycle6h,
         referenceYear, rangeInputs, percentage, annotation} = loaded);
 }
 
 function updateURL() {
-            const state = serializeState();
+            const state = {...serializeState(), closedPanels: panels.getClosed()};
             const stateJson = JSON.stringify(state);
             const base64State = btoa(String.fromCharCode(...new TextEncoder().encode(stateJson))); // Base64 encode to avoid quoting issues
             const newUrl = window.location.pathname + '?' + new URLSearchParams({config: base64State});
@@ -472,7 +463,7 @@ window.onload = function() {
             parseURL();
         };
 
-Object.assign(window, {copyToClipboard, exportResults, resetParameters, toggleDutyCycleTable, togglePercentage, updateAnnotation, updateModel});
+Object.assign(window, {copyToClipboard, exportResults, resetParameters, togglePercentage, updateAnnotation, updateModel});
 window.EmissionsApp = {
     getConfig: () => createConfig(serializeState()),
     getReport: () => report(serializeState()),

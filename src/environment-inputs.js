@@ -1,6 +1,6 @@
 import {ENVIRONMENT_FIELDS} from './environments.js';
 
-export function renderEnvironments(environments, update) {
+export function renderEnvironments(environments, update, onRender = () => {}) {
     const region = document.getElementById('environment-inputs');
     region.replaceChildren();
     for (const [name, schema] of Object.entries(ENVIRONMENT_FIELDS)) {
@@ -39,7 +39,7 @@ export function renderEnvironments(environments, update) {
             }
             input.addEventListener('change', () => {
                 values[field.key] = field.type === 'boolean' ? input.checked : field.type === 'select' ? input.value : Number(input.value);
-                if (field.type === 'select') renderEnvironments(environments, update);
+                if (field.type === 'select') renderEnvironments(environments, update, onRender);
                 update();
             });
             cell.append(input); row.append(cell);
@@ -63,4 +63,5 @@ export function renderEnvironments(environments, update) {
         }
         region.append(section);
     }
+    onRender();
 }

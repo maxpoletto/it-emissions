@@ -35,6 +35,11 @@ too. Deployment flags select presentation only: application code, model defaults
 saved configurations and calculations are identical. Deploy either directory as
 it stands; its `index.html` is an ordinary file and needs no external assets.
 
+Each input panel has a folding toggle (▼ open, ◀ closed). All panels start open
+except Device Duty Cycles. Bookmarked URLs preserve the fold states; Reset
+Parameters restores the default layout. Folding does not change calculations or
+exported model parameters.
+
 `src/assets/css/main.css` contains the UZH rules used by the calculator: resets,
 brand colors, typography, controls and CMS content styles. Unrelated site
 navigation, carousel and gallery styles are excluded. All four original Source

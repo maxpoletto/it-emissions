@@ -10,6 +10,102 @@ import {report} from '../../src/model.js';
 import {loadScenario} from '../../scripts/scenarios.js';
 import {buildApp} from '../../scripts/build-app.js';
 
+test('panel folding is accessible, survives redraws and bookmarks, and leaves the model unchanged', async () => {
+    const macChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    const browser = await chromium.launch({headless: true,
+        executablePath: process.env.BROWSER_EXECUTABLE ?? (existsSync(macChrome) ? macChrome : undefined)});
+    try {
+        const page = await browser.newPage({viewport: {width: 1280, height: 1000}});
+        const errors = [];
+        page.on('pageerror', error => errors.push(error.message));
+        await page.route(/^https?:/, route => route.abort());
+        const directory = await mkdtemp(path.join(tmpdir(), 'calculator-panels-'));
+        const {output} = await buildApp({output: path.join(directory, 'index.html')});
+        const url = pathToFileURL(output).href;
+        await page.goto(url);
+        await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
+        const initial = await page.evaluate(() => window.EmissionsApp.getReport());
+        const bookmark = () => JSON.parse(Buffer.from(new URL(page.url()).searchParams.get('config'), 'base64').toString('utf8'));
+        const toggle = id => page.locator('#' + id + ' > .panel-heading > .panel-toggle');
+        const assertDefaults = async () => {
+            const panels = await page.locator('.input-section').evaluateAll(sections => sections.map(section => ({
+                id: section.id, buttons: section.querySelectorAll('.panel-toggle').length,
+                open: section.querySelector('.panel-toggle').getAttribute('aria-expanded'),
+                arrow: section.querySelector('.panel-toggle').textContent,
+                controls: section.querySelector('.panel-toggle').getAttribute('aria-controls'),
+                contentId: section.querySelector('.panel-content').id,
+                hidden: section.querySelector('.panel-content').hidden,
+            })));
+            assert.equal(panels.length, 12);
+            for (const panel of panels) {
+                const open = panel.id !== 'panel-duty-cycles';
+                assert.equal(panel.buttons, 1, panel.id);
+                assert.equal(panel.open, String(open), panel.id);
+                assert.equal(panel.arrow, open ? '▼' : '◀', panel.id);
+                assert.equal(panel.controls, panel.contentId, panel.id);
+                assert.equal(panel.hidden, !open, panel.id);
+            }
+        };
+        await assertDefaults();
+        assert.equal(await page.locator('#duty-cycle-table').isVisible(), false);
+        await toggle('panel-duty-cycles').focus();
+        await page.keyboard.press('Enter');
+        assert.equal(await page.locator('#duty-cycle-table').isVisible(), true);
+        assert.match(await toggle('panel-duty-cycles').getAttribute('aria-label'), /^Collapse Device Duty Cycles/);
+        for (const id of ['panel-device-population', 'panel-embodied', 'environment-saas', 'environment-ai']) {
+            await toggle(id).click();
+            assert.equal(await toggle(id).textContent(), '◀');
+            assert.match(await toggle(id).getAttribute('aria-label'), /^Expand /);
+        }
+        assert.equal(await page.locator('#device-table').isVisible(), false);
+        assert.equal(await page.locator('#panel-embodied .section-note').isVisible(), false);
+        assert.equal(await page.locator('#power-table').isVisible(), true, 'neighboring panel remains open');
+        assert.equal(await page.locator('#panel-compute').isVisible(), false, 'empty legacy panel stays hidden');
+        assert.deepEqual(bookmark().closedPanels, ['environment-ai', 'environment-saas', 'panel-device-population', 'panel-embodied']);
+        assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), initial);
+        assert.equal('closedPanels' in await page.evaluate(() => window.EmissionsApp.getConfig()), false);
+
+        // Selectors rebuild all environment controls; folded panels must survive.
+        await page.locator('#cloud-energyBasis').selectOption('facility');
+        for (const id of ['environment-saas', 'environment-ai', 'panel-device-population', 'panel-embodied']) {
+            assert.equal(await toggle(id).getAttribute('aria-expanded'), 'false');
+        }
+        const updated = await page.evaluate(() => window.EmissionsApp.getReport());
+        await page.reload();
+        assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), updated);
+        assert.equal(await page.locator('#ai-summary').isVisible(), false);
+        assert.equal(await page.locator('#duty-cycle-table').isVisible(), true);
+        assert.equal(await page.locator('.panel-toggle').count(), 12, 'redraws do not duplicate toggles');
+        await toggle('environment-saas').focus();
+        await page.keyboard.press('Space');
+        assert.equal(await page.locator('#saas-users').isVisible(), true);
+        while (await page.locator('.panel-toggle[aria-expanded="false"]').count()) {
+            await page.locator('.panel-toggle[aria-expanded="false"]').first().click();
+        }
+        assert.deepEqual(bookmark().closedPanels, []);
+        await page.reload();
+        assert.equal(await page.locator('.panel-toggle[aria-expanded="false"]').count(), 0,
+            'explicitly opening every panel is preserved, including duty cycles');
+
+        const oldBookmark = bookmark();
+        delete oldBookmark.closedPanels;
+        await page.goto(url + '?' + new URLSearchParams({config: Buffer.from(JSON.stringify(oldBookmark)).toString('base64')}));
+        await assertDefaults();
+        assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), updated);
+        await toggle('panel-notes').click();
+        await toggle('panel-duty-cycles').click();
+        await page.getByRole('button', {name: 'Reset Parameters', exact: true}).click();
+        await assertDefaults();
+        assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), initial);
+        await toggle('panel-device-population').click();
+        await toggle('panel-embodied').click();
+        await mkdir(new URL('../../output/', import.meta.url), {recursive: true});
+        await page.locator('#panel-notes').scrollIntoViewIfNeeded();
+        await page.screenshot({path: fileURLToPath(new URL('../../output/panel-folding.png', import.meta.url))});
+        assert.deepEqual(errors, []);
+    } finally {await browser.close();}
+});
+
 test('standalone file works offline, recalculates, restores URLs and exports the shared model', async () => {
     const macChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
     const browser = await chromium.launch({headless: true,
