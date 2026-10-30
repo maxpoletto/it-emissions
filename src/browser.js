@@ -10,7 +10,7 @@ const panels = createPanelControls(updateURL);
 const BUTTON_TIMEOUT = 1000;
 let modelInputs = createConfig();
 let rangeInputs = [];
-let referenceYear = new Date().getFullYear();
+let referenceYear = modelInputs.referenceYear;
 let deviceInfo = {}, embodiedEmissionsKgCo2e = {}, powerW = {}, compute = {}, llms = {}, dutyCycle6h = {};
 // Globals
         let stochastic = false;
@@ -386,7 +386,7 @@ function renderOutput() {
         }
 
         function resetParameters() {
-    deserializeState({referenceYear});
+    deserializeState({});
     document.getElementById('annotation-input').value = '';
     createInputTables();
     updateModel();

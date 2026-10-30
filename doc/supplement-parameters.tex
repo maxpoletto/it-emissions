@@ -1,14 +1,18 @@
 \section{Model Parameters and Review Scenarios}
 \label{app:parameters}
 
-This appendix inventories the configurable defaults used by the UZH IT emissions model and the additional scenario parameters introduced for the revision. Values are grouped by the model objects in the emissions calculator. Displayed values may be rounded; exact inputs are retained in the saved scenario files.
+This appendix inventories the configurable defaults used by the UZH IT emissions model and the additional scenario parameters introduced for the revision. Values are grouped by the model objects in the emissions calculator. The saved paper baseline uses the same calculation defaults as a new calculator configuration; its descriptive annotation differs. Displayed values may be rounded; exact inputs are retained in the saved scenario files.
 
 Device means drive the deterministic calculation. SD, minimum, and maximum
 values below are product-reference metadata, not sampled population
 distributions. The low-device scenario substitutes the listed footprint minima.
 The sensitivity-range columns also list exploratory alternatives; only bounds
 declared in the saved scenarios enter the figure whiskers. Missing bounds mean
-that uncertainty has not been quantified.
+that uncertainty has not been quantified. Cloud and local data-center bounds are empty by default. All inclusion switches and electricity
+boundaries are listed explicitly below. The six-year pooled laptop lifetime is
+also retained in the managed-device sensitivity; the eight-year managed-laptop
+lifetime reported in Section~\ref{sec:model:details} is not a separate modeled
+cohort.
 
 {\footnotesize
 \setlength{\tabcolsep}{2pt}
@@ -48,21 +52,21 @@ A/V equipment & 700 & 109 & 644 & 862 & Scaled display/monitor proxy \\ \hline
 Printers & 1,100 & 200 & 967 & 1,367 & Ecoinvent printer/copier proxy \\ \hline
 \end{longtable}
 
-\begin{longtable}{|L{0.16\textwidth}|r|r|r|r|L{0.36\textwidth}|}
-\caption{Operational power defaults.}\label{tab:param-power}\\
+\begin{longtable}{|L{0.16\textwidth}|r|r|r|r|r|L{0.31\textwidth}|}
+\caption{Operational power defaults. Standby values are retained reference data and are not used in the calculation.}\label{tab:param-power}\\
 \hline
-\textbf{Device} & \textbf{Mean W} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Source / basis} \\ \hline
+\textbf{Device} & \textbf{Mean W} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \shortstack{Standby\\W} & \textbf{Source / basis} \\ \hline
 \endfirsthead
 \hline
-\textbf{Device} & \textbf{Mean W} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \textbf{Source / basis} \\ \hline
+\textbf{Device} & \textbf{Mean W} & \textbf{SD} & \textbf{Min} & \textbf{Max} & \shortstack{Standby\\W} & \textbf{Source / basis} \\ \hline
 \endhead
-Laptops & 50 & 20 & 20 & 100 & Manufacturer data sheets and conservative active-use default \\ \hline
-Monitors & 50 & 10 & 30 & 90 & Manufacturer data sheets \\ \hline
-Desktops & 100 & 20 & 60 & 200 & Manufacturer data sheets \\ \hline
-Servers & 400 & 100 & 200 & 600 & UZH server-class proxy \\ \hline
-Mobile phones & 10 & 2 & 5 & 20 & Battery-capacity and charger-efficiency charging estimate \\ \hline
-A/V equipment & 250 & 50 & 150 & 350 & Lecture-room equipment proxy \\ \hline
-Printers & 1,000 & 200 & 600 & 1,400 & Printer/copier active-use estimate; standby omitted \\ \hline
+Laptops & 50 & 20 & 20 & 100 & 1 & Manufacturer data sheets and conservative active-use default \\ \hline
+Monitors & 50 & 10 & 30 & 90 & 1 & Manufacturer data sheets \\ \hline
+Desktops & 100 & 20 & 60 & 200 & 1 & Manufacturer data sheets \\ \hline
+Servers & 400 & 100 & 200 & 600 & 1 & UZH server-class proxy \\ \hline
+Mobile phones & 10 & 2 & 5 & 20 & 0 & Battery-capacity and charger-efficiency charging estimate \\ \hline
+A/V equipment & 250 & 50 & 150 & 350 & 1 & Lecture-room equipment proxy \\ \hline
+Printers & 1,000 & 200 & 600 & 1,400 & 90 & Printer/copier active-use estimate; standby omitted \\ \hline
 \end{longtable}
 
 \begin{longtable}{|L{0.20\textwidth}|r|r|r|r|L{0.32\textwidth}|}
@@ -80,6 +84,27 @@ Mobile phones & 0.0 & 0.0 & 0.0 & 0.5 & Evening charging window \\ \hline
 Monitors & 0.1 & 0.5 & 1.0 & 0.3 & Weekday daytime use \\ \hline
 A/V equipment & 0.0 & 0.3 & 0.6 & 0.1 & Teaching-room schedule proxy \\ \hline
 Printers & 0.0 & 0.0 & 0.01 & 0.0 & Short active-use window; no separate standby \\ \hline
+\end{longtable}
+
+
+\begin{longtable}{|L{0.29\textwidth}|r|L{0.15\textwidth}|L{0.31\textwidth}|}
+\caption{Campus-network and productivity-SaaS inputs.}\label{tab:param-services}\\
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Basis / bounds} \\ \hline
+\endfirsthead
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Unit} & \textbf{Basis / bounds} \\ \hline
+\endhead
+Network access points & 4,000 & count & UZH inventory proxy \\ \hline
+Network access-point power & 15 & W & Continuous operation \\ \hline
+Network access-point footprint & 50 & kg \coe & Equipment proxy \\ \hline
+Network switches per access point & 0.1 & ratio & 400 switches for 4,000 access points \\ \hline
+Network switch power & 250 & W & Continuous operation \\ \hline
+Network switch footprint & 290 & kg \coe & Desktop-equivalent proxy \\ \hline
+Network hardware lifetime & 8 & years & Annual hardware allocation \\ \hline
+Network electricity multiplier & 1 & ratio & Bounds 0.67--1.33; hardware held fixed \\ \hline
+SaaS users & 38,000 & users & Illustrative campus population \\ \hline
+SaaS emissions factor & 3 & kg \coe/user/year & Bounds 1--5; composite service allowance \\ \hline
 \end{longtable}
 
 \begin{longtable}{|L{0.27\textwidth}|r|L{0.10\textwidth}|L{0.27\textwidth}|L{0.18\textwidth}|}
@@ -105,8 +130,30 @@ CSCS IT electricity & 3.6 & GWh/year & Space-based allocation; compute-only work
 CSCS PUE & 1.2 & ratio & Conservative use of CSCS efficiency report & Fixed in figures; editable bounds in app \\ \hline
 CSCS electricity intensity & 50 & g \coe/kWh & Separate Swiss factor & Fixed in figures \\ \hline
 CSCS server-equivalent power & 1.5 & kW IT & Central node-power proxy & 1--2 \\ \hline
-CSCS hardware footprint / life & 1,100 / 5 & kg \coe\ / years & Server proxy, not measured node inventory & Fixed in figures \\ \hline
+CSCS hardware footprint & 1,100 & kg \coe/server & Server proxy, not measured node inventory & Fixed in figures \\ \hline
+CSCS hardware lifetime & 5 & years & Server proxy & Fixed in figures \\ \hline
 \end{longtable}
+
+
+\begin{longtable}{|l|r|l|r|}
+\caption{Fixed Swiss consumption-intensity profile. Two-hour bins repeat each day; local device duty cycles weight these values. The mean is displayed as approximately 50 g \coe/kWh elsewhere.}\label{tab:param-grid}\\
+\hline
+\textbf{Hours} & \textbf{g \coe/kWh} & \textbf{Hours} & \textbf{g \coe/kWh} \\ \hline
+\endfirsthead
+\hline
+\textbf{Hours} & \textbf{g \coe/kWh} & \textbf{Hours} & \textbf{g \coe/kWh} \\ \hline
+\endhead
+00--02 & 63 & 12--14 & 45 \\ \hline
+02--04 & 58 & 14--16 & 45 \\ \hline
+04--06 & 58 & 16--18 & 49 \\ \hline
+06--08 & 52 & 18--20 & 54 \\ \hline
+08--10 & 49 & 20--22 & 62 \\ \hline
+10--12 & 47 & 22--24 & 63 \\ \hline
+\end{longtable}
+
+The hourly profile is rescaled when the mean campus intensity is changed.
+Disabling the profile uses that mean at every hour; cloud compute, CSCS, and AI
+use their independently configured constant factors.
 
 \begin{longtable}{|L{0.23\textwidth}|r|L{0.15\textwidth}|L{0.25\textwidth}|L{0.16\textwidth}|}
 \caption{LLM and agentic-AI defaults.}\label{tab:param-ai}\\
@@ -119,7 +166,8 @@ CSCS hardware footprint / life & 1,100 / 5 & kg \coe\ / years & Server proxy, no
 User population & 38,000 & users & UZH population & Fixed for UZH scenarios \\ \hline
 Chat users & 38,000 & users & Illustrative ordinary-chat scenario & Independent of agent users \\ \hline
 Ordinary chat volume & 15 & queries/user/day & Scenario assumption & 10--30 queries/user/day \\ \hline
-Chat / agent active days & 250 each & days/year & Separate workday-use inputs & 200--365 days/year \\ \hline
+Chat active days & 250 & days/year & Workday-use assumption & 200--365 days/year \\ \hline
+Agent active days & 250 & days/year & Independent workday-use input & 200--365 days/year \\ \hline
 Ordinary query energy & 1.0 & Wh/query & Conservative value above recent 0.3 Wh estimates & 0.3--3 Wh/query \\ \hline
 Training overhead & 20 & \% & Conservative inference/training allocation & 0--100\% \\ \hline
 AI electricity intensity & 207 & g \coe/kWh & EU electricity generation intensity & 50--400 g \coe/kWh \\ \hline
@@ -130,11 +178,53 @@ Chat energy boundary & Facility & scope & Wh/query includes facility overhead & 
 Agent energy boundary & Facility & scope & Inference electricity includes data-center overhead & Training added separately; no extra PUE \\ \hline
 Agent hardware basis & Facility & scope & Hardware footprint allocated per facility kWh & IT electricity basis also supported \\ \hline
 Annual usage growth & 50 & \% & Aggressive growth scenario & 0--100\% \\ \hline
-Annual efficiency growth & 30 & \% & Hardware/software improvement scenario & 0--50\% \\ \hline
+Annual query-energy reduction & 30 & \% & Hardware/software improvement scenario & 0--50\% \\ \hline
 Annual training growth & 30 & \% & Frontier-model training growth scenario & 0--100\% \\ \hline
-Agentic AI adoption & 10 (3,800) & \% (users) & Illustrative central scenario, no campus survey & 5--20\% (1,900--7,600 users) \\ \hline
+Agent users & 3,800 & users & 10\% of the reference population; illustrative & 1,900--7,600 users (5--20\%) \\ \hline
 Agentic AI energy & 1.5 & Facility kWh/active user-day & Ritchie and Claude Code case study & 1--3; inference only \\ \hline
 \end{longtable}
+
+
+\begin{longtable}{|L{0.30\textwidth}|L{0.15\textwidth}|L{0.46\textwidth}|}
+\caption{Model options, reference settings, and compatibility controls.}\label{tab:param-options}\\
+\hline
+\textbf{Setting} & \textbf{Default} & \textbf{Meaning} \\ \hline
+\endfirsthead
+\hline
+\textbf{Setting} & \textbf{Default} & \textbf{Meaning} \\ \hline
+\endhead
+Configuration version & 2.0 & Current model schema \\ \hline
+Reference year & 2026 & First year of the chatbot projection \\ \hline
+Chat projection horizon & 5 years & Fixed horizon, 2026--2030 at the default reference year \\ \hline
+Annual hours & 8,760 & Fixed 365-day year for cloud, networking, and CSCS \\ \hline
+Include SaaS & Yes & Independent service toggle \\ \hline
+Enable cloud migration & Yes & Migration share is still zero by default \\ \hline
+Include campus networking & Yes & Independent service toggle \\ \hline
+Include CSCS & Yes & Independent service toggle \\ \hline
+Include hosted AI & Yes & Independent service toggle \\ \hline
+Local enabled flag & Yes & Retained configuration field; has no calculation effect \\ \hline
+Networking method & Inventory & Alternative: legacy percentage allowance \\ \hline
+CSCS method & Electricity allocation & Alternative: legacy average-power estimate \\ \hline
+Campus hourly profile & Yes & Use the two-hour intensity profile with device duty cycles \\ \hline
+Local server electricity basis & IT only & PUE adds facility overhead \\ \hline
+Cloud power basis & IT only & PUE adds facility overhead \\ \hline
+CSCS electricity basis & IT only & PUE adds facility overhead \\ \hline
+Legacy networking allowance & 10\% & Inactive in inventory mode; applies to laptop, desktop, and server emissions \\ \hline
+Legacy CSCS power & 66 kW & Inactive in electricity-allocation mode \\ \hline
+Compatibility mode & None & Legacy imports preserve their historical settings \\ \hline
+Scenario annotation & Empty & Descriptive text; paper baseline supplies a scenario note \\ \hline
+Percentage chart & No & Presentation only; absolute emissions are the default \\ \hline
+Custom range inputs & None & Additional user-declared bounds; environment bounds are separate \\ \hline
+Legacy compute container & Empty & Old compute keys migrate to environment settings \\ \hline
+Source notes & Environment-specific text & The \texttt{source} strings record provenance; they do not enter calculations \\ \hline
+\end{longtable}
+
+Version-1 imports retain their original scope and defaults: SaaS excluded,
+percentage-based networking, power-only CSCS at the Swiss profile mean,
+25\% training allocation, 50\% annual training growth, and no agent users.
+Their inactive agent defaults remain 1.3 IT kWh/user-day and 100 g \coe/IT kWh.
+Explicit saved values take precedence. Panel folding and annotations do not
+affect emissions.
 
 \begin{longtable}{|L{0.19\textwidth}|L{0.15\textwidth}|L{0.15\textwidth}|L{0.24\textwidth}|L{0.18\textwidth}|}
 \caption{Added boundary-completeness scenarios.}\label{tab:param-boundary}\\
@@ -151,6 +241,24 @@ CSCS facility overhead & 36 \tcoe/year & Fixed in figures & PUE 1.2 on compute-o
 CSCS embodied emissions & \ModelCscsHardwareT{} \tcoe/year & 45--90 \tcoe/year & Server-equivalent power 1.5 kW; range 1--2 & Allocation and hardware mix uncertainty unquantified \\ \hline
 Agentic AI example A & \ModelAgentFivePercentT{} \tcoe/year & 5\% users, 1.5 facility kWh/day & Heavy-use scenario & Includes training and hardware; no extra PUE \\ \hline
 Agentic AI main-chart scenario & \ModelAgentDefaultT{} \tcoe/year & 10\% users, 1.5 facility kWh/day & Illustrative adoption scenario & Training 20\%, hardware 30 g \coe/kWh facility \\ \hline
-Agentic AI example B & \ModelAgentHighT{} \tcoe/year & 10\% users, 3 facility kWh/day & Heavy-agent scenario & Includes training and hardware; no extra PUE \\ \hline
+Agentic AI example B & \ModelAgentHighT{} \tcoe/year & 20\% users, 1.5 facility kWh/day & Heavy-agent scenario & Includes training and hardware; no extra PUE \\ \hline
+\end{longtable}
+
+\begin{longtable}{|L{0.24\textwidth}|L{0.67\textwidth}|}
+\caption{Saved paper scenarios and their differences from the baseline. Unlisted parameters retain their parent-scenario values.}\label{tab:param-scenarios}\\
+\hline
+\textbf{Scenario} & \textbf{Changes / definition} \\ \hline
+\endfirsthead
+\hline
+\textbf{Scenario} & \textbf{Changes / definition} \\ \hline
+\endhead
+Baseline & All defaults listed above; descriptive paper annotation \\ \hline
+Cloud migration & 100\% of local servers migrated one-for-one; other environments unchanged \\ \hline
+Managed devices / high chat & 10,440 laptops and 2,439 phones; 30 queries/user/day at 3 Wh/query; laptop lifetime remains 6 years \\ \hline
+Low device footprints & Mean embodied footprint replaced by the Min column of Table~\ref{tab:param-embodied} for each local-device type \\ \hline
+Combined sensitivity & Low device footprints plus 30 queries/user/day at 3 Wh/query; broad baseline device counts retained \\ \hline
+Chat growth & 2026--2030; 50\% annual workload growth, 30\% query-energy reduction, 30\% training-emissions growth \\ \hline
+Agent adoption & 5--20\% adoption in one-percentage-point steps at 1, 1.5, and 3 facility kWh/user-day; other agent factors fixed \\ \hline
+Lifetime intervention & Before: 4-year laptops and 3-year phones. After: 6-year laptops and 4-year phones; all other assumptions paired \\ \hline
 \end{longtable}
 }

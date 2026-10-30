@@ -6,7 +6,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {chromium} from 'playwright';
-import {report} from '../../src/model.js';
+import {report, createConfig} from '../../src/model.js';
 import {loadScenario} from '../../scripts/scenarios.js';
 import {buildApp} from '../../scripts/build-app.js';
 
@@ -117,11 +117,13 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         await page.route('https://**/*', route => route.abort());
         const directory = await mkdtemp(path.join(tmpdir(), 'calculator-offline-'));
         const {output} = await buildApp({deploymentEnvironment: 'uzh', output: path.join(directory, 'index.html')});
+        await page.clock.setFixedTime(new Date('2031-06-01T12:00:00Z'));
         const url = pathToFileURL(output).href;
         await page.goto(url);
         await page.waitForFunction(() => window.EmissionsApp?.getReport().results.data.length > 0);
         const initial = await page.evaluate(() => window.EmissionsApp.getReport());
         assert.deepEqual(initial, report(initial.parameters));
+        assert.deepEqual(initial.parameters, createConfig(), 'all browser defaults agree with the shared model regardless of the calendar year');
         assert.equal(await page.locator('#saas-kgPerUserYear').inputValue(), '3');
         assert.equal(await page.getByRole('spinbutton', {name: 'Productivity cloud services (SaaS): Emissions per user-year (kg CO₂e) low assumption', exact: true}).inputValue(), '1');
         assert.equal(await page.getByRole('spinbutton', {name: 'Productivity cloud services (SaaS): Emissions per user-year (kg CO₂e) high assumption', exact: true}).inputValue(), '5');
@@ -154,8 +156,10 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         assert.equal(await queryLow.inputValue(), '12');
         assert.equal(await queryHigh.inputValue(), '25');
         assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), bounded);
+        await page.evaluate(() => window.EmissionsApp.setConfig({...window.EmissionsApp.getConfig(), referenceYear: 2032}));
         await page.getByRole('button', {name: 'Reset Parameters', exact: true}).click();
         assert.equal(await queryLow.inputValue(), '10');
+        assert.equal((await page.evaluate(() => window.EmissionsApp.getConfig())).referenceYear, createConfig().referenceYear);
         assert.equal(await queryHigh.inputValue(), '30');
         assert.equal(await page.locator('#power-table th').count(), 2, 'only operationally active power inputs are editable');
         await page.locator('#cloud-energyBasis').selectOption('facility');

@@ -46,7 +46,7 @@ export async function paperResults() {
         ChatFinalHighT: base.results.projection.at(-1).range.high / 1000,
         AgentDefaultT: rowTotal(row(base, 'AI (agents)')) / 1000,
         AgentFivePercentT: agentCase(Math.round(population * 0.05), 1.5) / 1000,
-        AgentHighT: agentCase(Math.round(population * 0.1), 3) / 1000,
+        AgentHighT: agentCase(Math.round(population * 0.2), 1.5) / 1000,
         SensOneChatPercent: percent(rowTotal(row(scenarios.sens1, 'AI (chatbot)')), scenarios.sens1.results.summary.totalCombined),
         LowDeviceEmbodiedPercent: percent(scenarios.sens2.results.summary.totalEmbodied, scenarios.sens2.results.summary.totalCombined),
         CombinedChatPercent: percent(rowTotal(row(combined, 'AI (chatbot)')), combined.results.summary.totalCombined),
