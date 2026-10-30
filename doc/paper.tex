@@ -826,7 +826,7 @@ Agentic AI is different. The main result graphs therefore split AI into ``AI
 scenario in which 10\% of the UZH population uses coding or research agents
 heavily on workdays at 1.5 kWh/user-day, yielding \ModelAgentDefaultT{}
 \tcoe/year once facility overhead, training and amortized hardware are included.
-This is about half of current embodied emissions from laptops, and about 10\% of
+This is about 40\% of current embodied emissions from laptops, and about 10\% of
 total IT emissions. However, if 20\% of the population adopted such intense
 agent use, emissions would be \ModelAgentHighT{} \tcoe/year, comparable to major
 existing operational IT categories. Figure~\ref{fig:agentic:ai} shows the
@@ -874,10 +874,9 @@ to 3 Wh, and (3) assume that each of the 38,000 people at UZH queries a chatbot
 Similarly, if we cut our estimate for the embodied emissions of every type of
 device to the lowest value found in the literature (as opposed to a more
 representative middle-of-the-road value), but keep all ordinary-chat parameters
-at their default values, embodied hardware emissions account for
+at their default values, embodied hardware emissions still account for
 \ModelLowDeviceEmbodiedPercent{}\% of the total and simple LLM emissions
-continue to be a small fraction of the total, as seen in
-Figure~\ref{fig:sens2}.
+continue to be a small fraction of the total, as seen in Figure~\ref{fig:sens2}.
 
 \begin{figure}[htbp]
   \centering
@@ -892,24 +891,22 @@ Combining the ``low embodied emissions'' scenario with the ``pessimal ordinary
 LLM'' scenario makes simple generative AI visible but still not dominant,
 contributing \ModelCombinedChatPercent{}\% of total emissions, or
 \ModelCombinedWithoutAgentsPercent{}\% if the illustrative
-agentic-AI bar is excluded from the denominator.
+agentic-AI amount is excluded from the denominator.
 
 Regional context matters as expected. Moving from the Swiss electricity
-intensity of approximately 50 \gcoekwh\ to 207 or 400 \gcoekwh\ increases local operational
-emissions by factors of about 3.9 or 7.4. This change affects campus devices,
-servers, and networking; external services retain their separate factors.
-Embodied emissions remain important for end-user devices, while operation
-becomes more prominent when the relevant serving regions have higher-carbon
-electricity. Shorter device refresh cycles push in the opposite direction:
-they increase the embodied-emissions share and make device-lifetime policy more
-important.
+intensity of approximately 50 \gcoekwh\ to the European average 207 \gcoekwh\
+roughly quadruples local operational emissions. Embodied emissions remain
+important for end-user devices, but operation becomes more prominent when the
+relevant serving regions have higher-carbon electricity. Shorter device refresh
+cycles push in the opposite direction: they increase the embodied-emissions
+share and make device-lifetime policy more important.
 
-Networking, productivity SaaS, and CSCS do not change the conclusion that device
-lifetimes are central, but they are large enough to matter. The bottom-up
-networking estimate implies roughly 50--100 \tcoe/year operational emissions
-plus \ModelNetworkHardwareT{} \tcoe/year of embodied emissions, with
-\ModelNetworkTotalT{} \tcoe/year
-shown in the figures. The preliminary productivity-SaaS estimate spans 38--190
+Networking, SaaS, and supercomputing are each non-negligible, but they do not
+change the conclusion that device lifetimes are central and that agentic AI may
+be a major emissions contributor. The bottom-up networking estimate implies
+roughly 50--100 \tcoe/year operational emissions plus \ModelNetworkHardwareT{}
+\tcoe/year of embodied emissions, with \ModelNetworkTotalT{} \tcoe/year shown in
+the figures. The preliminary productivity-SaaS estimate spans 38--190
 \tcoe/year, with 114 \tcoe/year shown in the figures. The CSCS scenario spans
 \ModelCscsLowT{}--\ModelCscsHighT{} \tcoe/year over the declared
 server-equivalent power bounds; the central result is \ModelCscsTotalT{}
