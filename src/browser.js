@@ -370,15 +370,6 @@ function renderLLMChart() {
 }
 
 function renderOutput() {
-            const hosted = resultsEmissions.filter(r => r.category.startsWith('AI') || r.category === 'LLM');
-            const aiTotal = hosted.reduce((n, row) => n + rowTotal(row), 0) / 1000;
-            const total = rowTotal(resultsEmissions.at(-1)) / 1000;
-            const format = value => value.toLocaleString(undefined, {maximumFractionDigits: 1});
-            const activity = category => hosted.filter(row => row.category === category).reduce((n, row) => n + rowTotal(row), 0) / 1000;
-            document.getElementById('ai-summary').textContent = 'Chat: ' + format(activity(modelInputs.compatibility === 'v1' ? 'LLM' : 'AI (chatbot)'))
-                + ' t; agents: ' + format(activity('AI (agents)')) + ' t; modelled hosted AI: '
-                + aiTotal.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' t CO₂e/year; total IT: '
-                + total.toLocaleString(undefined, {maximumFractionDigits: 1}) + ' t CO₂e/year.';
             document.getElementById('percentage-checkbox').checked = percentage;
             renderEmissionsTable();
             renderEmissionsChart();

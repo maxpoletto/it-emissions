@@ -73,7 +73,7 @@ test('panel folding is accessible, survives redraws and bookmarks, and leaves th
         const updated = await page.evaluate(() => window.EmissionsApp.getReport());
         await page.reload();
         assert.deepEqual(await page.evaluate(() => window.EmissionsApp.getReport()), updated);
-        assert.equal(await page.locator('#ai-summary').isVisible(), false);
+        assert.equal(await page.locator('#environment-ai .parameter-table').isVisible(), false);
         assert.equal(await page.locator('#duty-cycle-table').isVisible(), true);
         assert.equal(await page.locator('.panel-toggle').count(), 12, 'redraws do not duplicate toggles');
         await toggle('environment-saas').focus();
@@ -163,8 +163,8 @@ test('standalone file works offline, recalculates, restores URLs and exports the
         assert.equal(await queryHigh.inputValue(), '30');
         assert.equal(await page.locator('#power-table th').count(), 2, 'only operationally active power inputs are editable');
         await page.locator('#cloud-energyBasis').selectOption('facility');
-        assert.match(await page.locator('#ai-summary').textContent(), /Chat: .*agents: .*AI:/,
-            'changing an environment selector preserves the refreshed summary');
+        assert.ok(await page.locator('#results-tbody tr').count() > 0,
+            'changing an environment selector preserves the main results table');
         await page.locator('#saas-users').fill('100');
         await page.locator('#saas-users').dispatchEvent('change');
         assert.equal(await page.evaluate(() => window.EmissionsApp.getReport().results.data.find(r => r.category === 'Productivity SaaS').usage), 300);
@@ -186,7 +186,10 @@ test('standalone file works offline, recalculates, restores URLs and exports the
             await page.locator('#ai-' + field).fill('0');
             await page.locator('#ai-' + field).dispatchEvent('change');
         }
-        assert.match(await page.locator('#ai-summary').textContent(), /AI: 0 t/);
+        const aiRows = page.locator('#results-tbody tr').filter({hasText: /^AI \((?:chatbot|agents)\)/});
+        assert.equal(await aiRows.count(), 2);
+        for (const row of await aiRows.all())
+            assert.deepEqual((await row.locator('td').allTextContents()).slice(1, 4), ['0', '0', '0']);
         await page.locator('#local-pue').fill('0.5');
         await page.locator('#local-pue').dispatchEvent('change');
         assert.match(await page.locator('#model-error').textContent(), /PUE/);

@@ -57,10 +57,6 @@ export function renderEnvironments(environments, update, onRender = () => {}) {
             body.append(row);
         }
         table.append(body); section.append(title, note, table);
-        if (name === 'ai') {
-            const summary = document.createElement('p'); summary.id = 'ai-summary';
-            summary.className = 'section-note'; summary.setAttribute('aria-live', 'polite'); section.append(summary);
-        }
         region.append(section);
     }
     onRender();
