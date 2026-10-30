@@ -974,16 +974,26 @@ university but do not consider IT-related emissions specifically. For example,
 Larsen et al. lump IT with ``equipment'', including machinery and science and
 technology equipment.
 
-Many carbon footprint studies treat IT as a minor subcomponent, despite IT
-infrastructure representing 5-10\% of total institutional emissions. For
-example, \textcite{herth:quantifying:2022} make a comprehensive carbon
-assessment of TU Delft and find that ICT constitutes 8\% of emissions, but do
-not break that down further, making it difficult to know how to improve.
+Many carbon footprint studies treat IT as a subcomponent of an institutional
+inventory, although it can account for a substantial share of total emissions.
+For example, \textcite{herth:quantifying:2022} make a comprehensive carbon
+assessment of TU Delft and find that ICT constitutes 8\% of emissions. Their
+appendix breaks ICT down into procurement categories such as computer equipment,
+software, and subscriptions, using expenditure-based emission factors rather
+than a device- and workload-based model.
 \textcite{helmers:universities:2021} exclude IT impacts from their 20-university
 comparison study, claiming that ``almost all universities worldwide will be
-working with quite similar IT technology''. \textcite{kiehle:2023} include IT
-equipment in a carbon accounting of the University of Oulu but limit themselves
-to lifecycle analysis of equipment purchased in the last 3 years.
+working with quite similar IT technology''. \textcite{kiehle:2023} include
+university-purchased laptops and mobile phones in their carbon accounting of
+the University of Oulu. They annualize manufacturer lifecycle footprints over
+an assumed three-year service life, accounting for purchases in the reporting
+year and the preceding two years.
+
+As part of the same Oulu research programme, \textcite{javid:2022} investigates
+ICT equipment use across campus and home workplaces. His master's thesis
+combines a staff survey of equipment and usage habits with electricity
+measurements of laptops and monitors. It illustrates how targeted data collection
+can support more detailed modeling of university IT emissions.
 
 We are not alone in struggling with data availability problems, including
 incomplete asset inventories, sparse energy consumption data, etc.
@@ -1007,14 +1017,14 @@ environmental input-output (EIO) models. For example, García-Alaminos et al. us
 a multi-regional input-output framework (EEMRIO) to estimate the categories
 (scopes 1, 2, and 3) of a university's carbon footprint based on analysis of
 expenditures and other financial data. There are important tradeoffs between
-bottom-up precision and top-down comprehensiveness~\cite{hilty:2009:lca}.
-Bottom-up approaches provide higher accuracy for specific sources and
-transparency through clear traceability. They also make it easier to identify
-specific improvement areas. However, they require extensive primary data
-collection, force up-front decisions about what components to include or not,
-and may miss system-wide effects. Conversely, top-down approaches offer
-efficiency and a broader system perspective, but sacrifice the precision and
-granularity necessary for operational decision-making.
+bottom-up detail and top-down comprehensiveness~\cite{hilty:2009:lca}.
+Bottom-up approaches provide greater operational detail and traceability, which
+can make it easier to identify specific improvement areas. Their accuracy,
+however, depends on the quality of the underlying data and assumptions. They
+require extensive primary data collection, force up-front decisions about what
+components to include or not, and may miss system-wide effects. Conversely,
+top-down approaches offer efficiency and a broader system perspective, but
+usually provide less detail for decisions about specific devices or workloads.
 
 The field of AI is evolving rapidly and the main AI vendors are secretive about
 the architecture and scale of their models. This has led to many efforts to
@@ -1025,10 +1035,17 @@ extensively~\cite{budennyy2022eco2ai,castano2023exploring,epoch2024optimallyallo
 \textcite{lacoste:mlco2} and \textcite{faiz2024llmcarbon} have developed more
 systematic approaches to estimate the footprint of models based on factors like
 electricity emissions intensity, hardware specifications, and network
-architecture. Agentic systems are newer and less well covered by peer-reviewed
-measurement; transparent case studies such as
-\textcite{couch:claude:code:energy} are useful primarily for scenario
-construction rather than as universal baselines.
+architecture. More recently, \textcite{saig2026cleer} introduced CLEER, which
+estimates accelerator energy use for closed-model inference from empirical
+measurements of open-model proxies across hardware and serving configurations.
+It provides separate estimates for cached and uncached input tokens and output
+tokens, with uncertainty reflecting the proxy configurations. These estimates
+concern inference accelerator energy; facility overhead, training, and embodied
+hardware require separate accounting.
+
+Agentic systems are newer and less well covered by peer-reviewed measurement;
+transparent case studies such as \textcite{couch:claude:code:energy} are useful
+primarily for scenario construction rather than as universal baselines.
 
 \textcite{watershed:2026} proposes a framework for estimating organizational
 emissions from purchased AI services. Its accounting boundary includes
@@ -1063,23 +1080,23 @@ We have presented a simple but powerful model to estimate the carbon footprint
 of IT infrastructure and IT-related activities at the University of Zürich.
 While the concrete parameter values we chose are specific to UZH, we have
 attempted to create a framework that can be applied to other universities (and
-maybe other large campus facilities) and can help provide a basis for evaluation
-and planning.
+maybe other large campus facilities) and can help provide a basis for emissions
+evaluation and emissions-reduction planning.
 
 Our model has broad system boundaries: it includes both university- and
 student-owned devices, cloud and supercomputing facilities, productivity SaaS,
-and generative-AI services. Whenever possible it accounts for both embodied and
-operational emissions. The model is bottom-up and exposes almost 100
-configurable parameters to support different environments and enable exploration
-of different scenarios. A complete parameter inventory is provided in
-Appendix~\ref{app:parameters}. The model's source code is available at
+and AI services. Whenever possible it accounts for both embodied and operational
+emissions. The model is bottom-up and exposes numerous configurable parameters
+to support different environments and enable exploration of different scenarios.
+A complete parameter inventory is provided in Appendix~\ref{app:parameters}. The
+model's source code is available at
 \url{https://github.com/maxpoletto/it-emissions} and can be freely modified
 under an MIT License. At the time of writing, the model is also available as an
 interactive web application at \url{https://poletto.org/it-emissions}.
 
-Within the context of UZH, our analysis shows that, at least on the Swiss grid,
-embodied emissions dominate the IT carbon footprint, while operational impacts
-are comparatively modest but not negligible. In particular:
+Within the context of UZH, under current assumptions about AI usage and other
+key parameters, embodied emissions dominate the IT carbon footprint. In
+particular:
 
 \begin{itemize}
 
@@ -1089,10 +1106,8 @@ are comparatively modest but not negligible. In particular:
   Operational emissions account for \ModelEndUserOperationalPercent{}\% of total emissions of end-user devices
   (laptops, monitors, phones, etc.).
 
-  \item Embodied emissions of end-user devices remain the largest category even
-  when we consider only university-owned devices (equivalent to about
-  $\frac{1}{4}$ of the population), although the share falls once SaaS and
-  supercomputing are included in the broad boundary.
+  \item Including student-owned devices materially changes the assessment and
+  highlights the importance of device lifetimes across the university community.
 
   \item Data center cooling and efficiency represent a potential savings
   opportunity. The model assigns \ModelLocalOverheadT{} \tcoe/year to local
@@ -1109,11 +1124,9 @@ are comparatively modest but not negligible. In particular:
 
 \end{itemize}
 
-The sensitivity scenarios show why these priorities depend on device footprints,
-lifetimes, and workload intensity. The corresponding policy recommendations in
-Section~\ref{sec:recommendations} emphasize lengthening device lifecycles,
-improving data collection and procurement processes, and implementing
-workload-aware AI governance.
+Our policy recommendations in Section~\ref{sec:recommendations} emphasize
+lengthening device lifecycles, improving data collection and procurement
+processes, and implementing workload-aware AI governance.
 
 \appendix
 \include{supplement-parameters}
