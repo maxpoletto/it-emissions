@@ -30,7 +30,7 @@ export function withRanges(configuration, rows, divisor = 1) {
     configuration.plugins = [...(configuration.plugins ?? []), assumptionRanges];
     configuration.options.plugins.assumptionRanges = {bounds};
     configuration.options.plugins.subtitle = {display: true,
-        text: 'Whiskers show assumption ranges; other uncertainty is not quantified', font: {size: 12}};
+        text: 'Whiskers show assumption ranges', font: {size: 12}};
     const highest = Math.max(...bounds.filter(Boolean).map(b => b.high));
     configuration.options.scales.y.suggestedMax = highest * 1.08;
     configuration.options.plugins.tooltip = {callbacks: {
@@ -97,7 +97,7 @@ export function agentAdoptionChart({curves, benchmarks, energyBasis = 'it'}, {di
             borderColor: i ? '#555' : '#b07313', borderDash: i ? [3, 6] : [12, 6], borderWidth: 3, pointRadius: 0})),
     ]}, options: {responsive: true, animation: false, maintainAspectRatio: false,
         plugins: {title: {display: true, text: 'Agent adoption compared with annual savings'},
-            subtitle: {display: true, text: 'Energy scenarios, not adoption forecasts; ordinary chat excluded'},
+            subtitle: {display: true, text: 'Illustrative scenarios. Ordinary chat excluded'},
             legend: {display: true, position: 'bottom'}},
         scales: {x: {type: 'linear', min: Math.min(...curves.flatMap(curve => curve.points.map(point => point.adoptionPercent))),
             ticks: {stepSize: 5},
